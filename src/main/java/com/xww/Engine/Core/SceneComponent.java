@@ -11,8 +11,7 @@ public abstract class SceneComponent extends Component {
     protected boolean isAlive = true;
     protected Vector size; // 场景大小
     protected Anchor anchorMode = Anchor.LEFT_TOP; // 锚点位置
-    protected Vector worldPosition; // 游戏世界位置 并且是实际画的位置
-
+    protected Vector worldPosition = Vector.getZero(); // 游戏世界位置 并且是实际画的位置
 
     protected double one_frame_gap = 1; // 每一帧更新的增加
 
@@ -100,5 +99,14 @@ public abstract class SceneComponent extends Component {
 
     public void removeChildren(SceneComponent child){
         this.children_to_remove.add(child);
+    }
+
+    public Vector getWorldPosition() {
+        return worldPosition;
+    }
+
+    protected void addChild(SceneComponent child) {
+        child.parent = this;
+        this.children_to_add.add(child);
     }
 }
