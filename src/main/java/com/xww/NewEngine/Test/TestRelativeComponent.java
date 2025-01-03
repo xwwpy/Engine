@@ -10,8 +10,8 @@ import com.xww.NewEngine.core.Vector.Vector;
 import java.awt.*;
 
 public class TestRelativeComponent extends RelativeComponent {
-    public TestRelativeComponent(Component parent, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, Vector relative_position, boolean WhetherPinned, int order) {
-        super(parent, size, anchorMode, velocity, acceleration, relative_position, WhetherPinned, order);
+    public TestRelativeComponent(Component parent, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, Vector relative_position, boolean WhetherPinned, int order, int CollisionRegion) {
+        super(parent, size, anchorMode, velocity, acceleration, relative_position, WhetherPinned, order, CollisionRegion);
         Timer timer = new Timer(3456, new Timer.TimerCallBack() {
             public void run(Base obj) {
                 ((TestRelativeComponent) obj).isAlive = false;
@@ -23,7 +23,6 @@ public class TestRelativeComponent extends RelativeComponent {
 
     @Override
     public void on_update(Graphics g) {
-        super.on_update(g);
         g.setColor(Color.YELLOW);
         g.fillRect(
                 this.worldPosition.getX(),
@@ -31,5 +30,6 @@ public class TestRelativeComponent extends RelativeComponent {
                 this.size.getX(),
                 this.size.getY()
         );
+        super.on_update(g);
     }
 }

@@ -115,4 +115,13 @@ public class Vector {
         y /= d;
         return this;
     }
+
+    public double distance(Vector vector) {
+        return Math.sqrt(Math.pow(vector.x - this.x, 2) + Math.pow(vector.y - this.y, 2));
+    }
+
+    @Override
+    public String toString() {
+        return "{ x: " + x + ", y: " + y + "}";
+    }
 }

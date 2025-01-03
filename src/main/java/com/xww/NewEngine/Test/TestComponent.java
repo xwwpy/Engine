@@ -1,6 +1,7 @@
 package com.xww.NewEngine.Test;
 
 import com.xww.NewEngine.core.Anchor.AnchorMode;
+import com.xww.NewEngine.core.Collision.RectCollider;
 import com.xww.NewEngine.core.Component.FreeComponent;
 import com.xww.NewEngine.core.Timer.Timer;
 import com.xww.NewEngine.core.Vector.Vector;
@@ -15,8 +16,8 @@ public class TestComponent extends FreeComponent {
     int countR = 1;
     int countG = 1;
     int countB = 1;
-    public TestComponent(Vector worldPosition, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, int order) {
-        super(worldPosition, GameFrame.PositionType.World, size, anchorMode, velocity, acceleration, order);
+    public TestComponent(Vector worldPosition, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, int order, int collisionRegion) {
+        super(worldPosition, GameFrame.PositionType.World, size, anchorMode, velocity, acceleration, order, collisionRegion);
         Timer timer = new Timer(500, (obj)->{
             TestComponent testComponent = ((TestComponent)obj);
             testComponent.countG = random.nextInt(255);
@@ -25,6 +26,7 @@ public class TestComponent extends FreeComponent {
         }, this);
         timer.setRun_times(Timer.INFINITE_TIMES);
         this.addTimer(timer);
+        this.addCollider(new RectCollider(Vector.Zero(), this, size));
     }
 
     @Override

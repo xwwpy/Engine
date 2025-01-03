@@ -25,7 +25,8 @@ public abstract class RelativeComponent extends Component {
                              Vector acceleration,
                              Vector relative_position,
                              boolean WhetherPinned,
-                             int order){
+                             int order,
+                             int CollisionRegion){
         if (parent == null){
             throw new RuntimeException("应该使用自由节点作为顶层节点");
         }
@@ -36,6 +37,7 @@ public abstract class RelativeComponent extends Component {
         this.acceleration = acceleration;
         this.WhetherPinned = WhetherPinned;
         this.order = order;
+        this.CollisionRegion = CollisionRegion;
         this.relative_position = relative_position;
         this.worldPosition = parent.getWorldPosition().add(relative_position);
         this.on_create();

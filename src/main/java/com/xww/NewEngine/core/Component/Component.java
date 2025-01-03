@@ -5,6 +5,7 @@ import com.xww.NewEngine.core.Anchor.AnchorMode;
 import com.xww.NewEngine.core.Base;
 import com.xww.NewEngine.core.Collision.ActionAfterCollision;
 import com.xww.NewEngine.core.Collision.BaseCollider;
+import com.xww.NewEngine.core.Collision.CollisionHandler;
 import com.xww.NewEngine.core.Vector.Vector;
 import com.xww.NewEngine.gui.GameFrame;
 import com.xww.NewEngine.core.Timer.Timer;
@@ -32,6 +33,7 @@ public abstract class Component implements Base, Comparable<Component> {
     protected Set<Timer> timer_to_remove = new HashSet<>();
     protected Vector worldPosition; // 组件世界坐标
     protected GameFrame.PositionType positionType = GameFrame.PositionType.World; // 默认为世界坐标
+
     protected Vector size; // 组件大小
     protected AnchorMode anchorMode = AnchorMode.LeftTop; // 锚点模式 是指坐标指定的位置
 
@@ -41,6 +43,13 @@ public abstract class Component implements Base, Comparable<Component> {
     protected int order = 0; // 绘制顺序 越大图层越靠前
 
     protected boolean isAlive = true;
+
+    /**
+     * 上次的移动, 用于碰撞发生时的回退
+     */
+    protected Vector lastMove = Vector.Zero();
+
+    protected int CollisionRegion = -1; // -1 代表不检测
 
 
     public static void addComponent(Component component) {
@@ -65,8 +74,14 @@ public abstract class Component implements Base, Comparable<Component> {
         // 更新定时器
         update_timer();
         // 更新碰撞器组件
-        // TODO
         update_collider();
+        drawCollider(g);
+    }
+
+    protected void drawCollider(Graphics g) {
+        colliders.forEach(collider -> {
+            collider.draw(g);
+        });
     }
 
     private void update_collider() {
@@ -121,28 +136,37 @@ public abstract class Component implements Base, Comparable<Component> {
         // 检查碰撞
         if (checkCollision()) {
             // 发生碰撞后的回调函数
-            ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(this);
-            switch (actionAfterCollisionType){
-                case stop:
-                    // 回退移动
-                    this.return_move();
-                    // 将速度和加速度清零
-                    this.clearVeAc();
-                    break;
-                case rebound:
-                    // 将速度进行反转
-                    this.reboundVelocity();
-                    break;
-                case die:
-                    this.setAlive(false);
-                    break;
-                default:
-                    System.out.println("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
-                    break;
-                
-            }
+            collisionAction();
         }
     }
+
+    /**
+     * 碰撞发生后的行为
+     */
+    protected void collisionAction() {
+        ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(this);
+        switch (actionAfterCollisionType){
+            case stop:
+                // 回退移动
+                this.return_move();
+                // 将速度和加速度清零
+                this.clearVeAc();
+                break;
+            case rebound:
+                // 将速度进行反转
+                this.return_move();
+                this.reboundVelocity();
+                break;
+            case die:
+                this.setAlive(false);
+                break;
+            default:
+                System.out.println("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
+                break;
+
+        }
+    }
+
 
     protected void reboundVelocity() {
         this.velocity.divide_self(-1);
@@ -156,23 +180,35 @@ public abstract class Component implements Base, Comparable<Component> {
         this.acceleration = Vector.Zero();
     }
 
-    // TODO
+    /**
+     * 主动检测碰撞
+     */
     protected boolean checkCollision() {
-        return false;
+        return CollisionHandler.checkCollision(this);
+    }
+
+    /**
+     * 被动接受碰撞事件
+     * @param other 发生碰撞的物体
+     */
+
+    public void receiveCollision(Component other){
+        collisionAction();
     }
 
     /**
      * 预移动
      */
     protected void pre_move() {
-        this.worldPosition = this.worldPosition.add_to_self(GameFrame.getFrameVelocity(this.velocity));
+        lastMove = GameFrame.getFrameVelocity(this.velocity);
+        this.worldPosition = this.worldPosition.add_to_self(lastMove);
     }
 
     /**
      * 回退运动
      */
     protected void return_move() {
-        this.worldPosition = this.worldPosition.sub_to_self(GameFrame.getFrameVelocity(this.velocity));
+        this.worldPosition = this.worldPosition.sub_to_self(lastMove);
     }
     /**
      * 移动
@@ -254,10 +290,23 @@ public abstract class Component implements Base, Comparable<Component> {
         return GameFrame.context.getRealDrawPosition(GameFrame.getLeftTopWorldPosition(this), this.positionType);
     }
 
+    public Vector getLeftTopWorldPosition(){
+        return GameFrame.getLeftTopWorldPosition(this);
+    }
+
     public void addTimer(Timer timer) {
         this.timer_to_add.add(timer);
     }
     public void addCollider(BaseCollider collider){
         this.colliders_to_add.add(collider);
+        CollisionHandler.colliders.add(collider);
+    }
+
+    public Set<BaseCollider> getColliders() {
+        return colliders;
+    }
+
+    public int getCollisionRegion() {
+        return CollisionRegion;
     }
 }

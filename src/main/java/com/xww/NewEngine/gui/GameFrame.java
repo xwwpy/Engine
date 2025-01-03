@@ -3,6 +3,7 @@ package com.xww.NewEngine.gui;
 import com.xww.NewEngine.Test.TestComponent;
 import com.xww.NewEngine.Test.TestRelativeComponent;
 import com.xww.NewEngine.core.Anchor.AnchorMode;
+import com.xww.NewEngine.core.Collision.CircleCollider;
 import com.xww.NewEngine.core.Component.Component;
 import com.xww.NewEngine.core.Component.impl.FpsComponent;
 import com.xww.NewEngine.core.Component.impl.TimeComponent;
@@ -43,17 +44,25 @@ public class GameFrame extends JFrame{
     }
 
     private static void init_test() {
-        TestComponent component = new TestComponent(Vector.Zero(), Vector.build(100, 100), AnchorMode.LeftTop, Vector.build(100, 0), Vector.Zero(), 0);
-        TestRelativeComponent child1 = new TestRelativeComponent(component, Vector.build(100, 100), AnchorMode.LeftTop, Vector.build(-100, 0), Vector.Zero(),   Vector.build(100, 200), false, 1);
+        TestComponent component = new TestComponent(Vector.Zero(), Vector.build(50, 50), AnchorMode.LeftTop, Vector.build(10, 0), Vector.Zero(), 0, 1);
+        TestRelativeComponent child1 = new TestRelativeComponent(component, Vector.build(100, 100), AnchorMode.LeftTop, Vector.build(-100, 0), Vector.Zero(),   Vector.build(100, 200), false, 1, 2);
         component.addChild(child1);
-        TestRelativeComponent child2 = new TestRelativeComponent(child1, Vector.build(100, 100), AnchorMode.LeftTop, Vector.build(300, 0), Vector.Zero(),  Vector.build(100, 200), false, 1);
+        TestRelativeComponent child2 = new TestRelativeComponent(child1, Vector.build(50, 50), AnchorMode.LeftTop, Vector.build(10, 0), Vector.Zero(),  Vector.build(100, 200), false, 1, 3);
         child1.addChild(child2);
         Component.addComponent(component);
-        Component.addComponent(new TestComponent(Vector.build(100, 100), Vector.build(100, 100), AnchorMode.Center, Vector.build(0, 100), Vector.Zero(), 0));
-        Component.addComponent(new TestComponent(Vector.build(200, 200), Vector.build(100, 100), AnchorMode.CenterTop, Vector.Zero(), Vector.Zero(), 0));
-        Component.addComponent(new TestComponent(Vector.build(300, 300), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0));
-        Component.addComponent(new TestComponent(Vector.build(500, 100), Vector.build(200, 100), AnchorMode.Center, Vector.Zero(), Vector.Zero(), 0));
+        Component.addComponent(new TestComponent(Vector.build(200, 200), Vector.build(100, 100), AnchorMode.Center, Vector.build(0, 50), Vector.Zero(), 0, 4));
+        Component.addComponent(new TestComponent(Vector.build(300, 300), Vector.build(100, 100), AnchorMode.CenterTop, Vector.Zero(), Vector.Zero(), 0, 5));
+        Component.addComponent(new TestComponent(Vector.build(400, 400), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 6));
+        Component.addComponent(new TestComponent(Vector.build(600, 200), Vector.build(200, 100), AnchorMode.Center, Vector.Zero(), Vector.Zero(), 0, 7));
 
+        Component.addComponent(new TestComponent(Vector.build(200, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 8));
+        TestComponent testComponent = new TestComponent(Vector.build(600, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.build(200, 0), Vector.Zero(), 0, 9);
+        testComponent.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent, 30));
+        testComponent.addCollider(new CircleCollider(Vector.build(200, 0), testComponent, 40));
+        Component.addComponent(testComponent);
+        TestComponent testComponent1 = new TestComponent(Vector.build(1100, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 10);
+        testComponent1.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent1, 50));
+        Component.addComponent(testComponent1);
         Component.addComponent(new FpsComponent());
         Component.addComponent(new TimeComponent());
     }
@@ -152,6 +161,7 @@ public class GameFrame extends JFrame{
             case Center:
                 return position.sub(Vector.build(component.getSize().getFullX() / 2, component.getSize().getFullY() / 2));
             default:
+                System.out.println("未支持的锚点模式");
                 return position;
         }
     }

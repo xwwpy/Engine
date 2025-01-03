@@ -13,7 +13,8 @@ public abstract class FreeComponent extends Component{
                          AnchorMode anchorMode,
                          Vector velocity,
                          Vector acceleration,
-                         int order){
+                         int order,
+                         int CollisionRegion){
         this.parent = null;
         this.worldPosition = worldPosition;
         this.positionType = positionType;
@@ -22,6 +23,7 @@ public abstract class FreeComponent extends Component{
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.order = order;
+        this.CollisionRegion = CollisionRegion;
         this.on_create();
     }
 }
