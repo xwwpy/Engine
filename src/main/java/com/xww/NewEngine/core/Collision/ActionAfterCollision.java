@@ -11,5 +11,6 @@ public class ActionAfterCollision {
         stop, // 停止
         rebound, // 反弹
         die, // 消失
+        nullAction, // 不做处理
     }
 }

@@ -1,12 +1,7 @@
 package com.xww.NewEngine.gui;
 
-import com.xww.NewEngine.Test.TestComponent;
-import com.xww.NewEngine.Test.TestRelativeComponent;
-import com.xww.NewEngine.core.Anchor.AnchorMode;
-import com.xww.NewEngine.core.Collision.CircleCollider;
 import com.xww.NewEngine.core.Component.Component;
-import com.xww.NewEngine.core.Component.impl.FpsComponent;
-import com.xww.NewEngine.core.Component.impl.TimeComponent;
+import com.xww.NewEngine.core.Component.impl.ScreenInfoComponent;
 import com.xww.NewEngine.core.Event.TimeEventManager;
 import com.xww.NewEngine.core.Vector.Vector;
 import com.xww.NewEngine.setting.FrameSetting;
@@ -25,12 +20,17 @@ public class GameFrame extends JFrame{
     // 每一帧指定耗时 单位nanos
     private int each_frame_target_time = 1000_000_000 / FrameSetting.DEFAULT_FPS;
     public int current_fps = FrameSetting.DEFAULT_FPS;
-    public Vector screen_position;
-    public Vector camera_position = new Vector(0, 0);
+    public Vector camera_position = new Vector(100, 0);
+
+    private static boolean initFlag = false;
     private GameFrame(String title) {
         super(title);
     }
-    private static void init() {
+
+    /**
+     * 调用开始之前必须线初始化
+     */
+    public static void init() {
         context = new GameFrame(FrameSetting.DEFAULT_TITLE);
         gamePanel = new GamePanel();
         context.setSize(FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
@@ -39,38 +39,16 @@ public class GameFrame extends JFrame{
         context.setResizable(false);
         context.add(gamePanel);
         game_on_start();
-        init_test();
-        context.setVisible(true);
-    }
-
-    private static void init_test() {
-        TestComponent component = new TestComponent(Vector.Zero(), Vector.build(50, 50), AnchorMode.LeftTop, Vector.build(10, 0), Vector.Zero(), 0, 1);
-        TestRelativeComponent child1 = new TestRelativeComponent(component, Vector.build(100, 100), AnchorMode.LeftTop, Vector.build(-100, 0), Vector.Zero(),   Vector.build(100, 200), false, 1, 2);
-        component.addChild(child1);
-        TestRelativeComponent child2 = new TestRelativeComponent(child1, Vector.build(50, 50), AnchorMode.LeftTop, Vector.build(10, 0), Vector.Zero(),  Vector.build(100, 200), false, 1, 3);
-        child1.addChild(child2);
-        Component.addComponent(component);
-        Component.addComponent(new TestComponent(Vector.build(200, 200), Vector.build(100, 100), AnchorMode.Center, Vector.build(0, 50), Vector.Zero(), 0, 4));
-        Component.addComponent(new TestComponent(Vector.build(300, 300), Vector.build(100, 100), AnchorMode.CenterTop, Vector.Zero(), Vector.Zero(), 0, 5));
-        Component.addComponent(new TestComponent(Vector.build(400, 400), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 6));
-        Component.addComponent(new TestComponent(Vector.build(600, 200), Vector.build(200, 100), AnchorMode.Center, Vector.Zero(), Vector.Zero(), 0, 7));
-
-        Component.addComponent(new TestComponent(Vector.build(200, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 8));
-        TestComponent testComponent = new TestComponent(Vector.build(600, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.build(200, 0), Vector.Zero(), 0, 9);
-        testComponent.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent, 30));
-        testComponent.addCollider(new CircleCollider(Vector.build(200, 0), testComponent, 40));
-        Component.addComponent(testComponent);
-        TestComponent testComponent1 = new TestComponent(Vector.build(1100, 600), Vector.build(100, 100), AnchorMode.RightTop, Vector.Zero(), Vector.Zero(), 0, 10);
-        testComponent1.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent1, 50));
-        Component.addComponent(testComponent1);
-        Component.addComponent(new FpsComponent());
-        Component.addComponent(new TimeComponent());
+        initFlag = true;
     }
 
 
     public static void start() {
+        if (!initFlag){
+            System.out.println("游戏主循环开始之前必须调用初始化逻辑");
+        }
         // 初始化
-        init();
+        context.setVisible(true);
         // 主循环
         while (true) {
             double start_time = System.nanoTime();
@@ -93,6 +71,8 @@ public class GameFrame extends JFrame{
 
     private static void game_on_start() {
         TimeEventManager.start();
+        // 添加更新屏幕位置的组件
+        Component.addComponent(new ScreenInfoComponent());
     }
 
     static void on_update(Graphics g) {
@@ -107,6 +87,8 @@ public class GameFrame extends JFrame{
     }
 
     private static void updateComponent(Graphics g) {
+        Component.components.addAll(Component.components_to_add);
+        Component.components_to_add.clear();
         Component.components_to_remove.forEach(component -> {
             component.on_destroy();
             Component.components.remove(component);
@@ -135,7 +117,7 @@ public class GameFrame extends JFrame{
     public Vector getRealDrawPosition(Vector position, PositionType type) {
         switch(type) {
             case World:
-                return position.sub_to_self(GameFrame.context.camera_position);
+                return position.sub(GameFrame.context.camera_position);
             case Screen:
                 return position;
             default:
@@ -185,9 +167,6 @@ class GamePanel extends JPanel {
         Graphics graphics = image.createGraphics();
         graphics.setColor(Color.BLACK);
         graphics.clearRect(0, 0, FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
-        // 更新屏幕坐标
-        Point screen_position = this.getLocationOnScreen();
-        GameFrame.context.screen_position = new Vector(screen_position.x, screen_position.y);
         GameFrame.on_update(graphics);
         g.drawImage(image, 0, 0, null);
     }

@@ -18,11 +18,11 @@ public class TestComponent extends FreeComponent {
     int countB = 1;
     public TestComponent(Vector worldPosition, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, int order, int collisionRegion) {
         super(worldPosition, GameFrame.PositionType.World, size, anchorMode, velocity, acceleration, order, collisionRegion);
-        Timer timer = new Timer(500, (obj)->{
+        Timer timer = new Timer(50, (obj)->{
             TestComponent testComponent = ((TestComponent)obj);
             testComponent.countG = random.nextInt(255);
-            testComponent.countB = random.nextInt(255);
-            testComponent.countR = random.nextInt(255);
+            testComponent.countB = random.nextInt(235);
+            testComponent.countR = random.nextInt(225);
         }, this);
         timer.setRun_times(Timer.INFINITE_TIMES);
         this.addTimer(timer);

@@ -1,6 +1,9 @@
 package com.xww.NewEngine.core.Vector;
 
+import java.util.Random;
+
 public class Vector {
+    public static Random random = new Random();
     public double x, y;
 
     public Vector(double x, double y) {
@@ -14,6 +17,10 @@ public class Vector {
 
     public static Vector Zero() {
         return Vector.build(0, 0);
+    }
+
+    public static Vector random(int i, int i1, int i2, int i3) {
+        return Vector.build(random.nextInt(i, i1), random.nextInt(i2, i3));
     }
 
     public Vector add(Vector v) {
@@ -106,11 +113,11 @@ public class Vector {
         this.y = y;
     }
 
-    public Vector divide(int d) {
+    public Vector divide(double d) {
         return Vector.build(x / d, y / d);
     }
 
-    public Vector divide_self(int d) {
+    public Vector divide_self(double d) {
         x /= d;
         y /= d;
         return this;

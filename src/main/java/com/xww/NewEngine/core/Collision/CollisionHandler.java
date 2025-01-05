@@ -12,7 +12,7 @@ public class CollisionHandler {
         Set<BaseCollider> colliderSet = component.getColliders();
         outer: for (BaseCollider other: colliders) {
             for (BaseCollider collider: colliderSet) {
-                if (other.owner == collider.owner || other.owner.getCollisionRegion() == -1 || other.owner.getCollisionRegion() == collider.owner.getCollisionRegion()) {
+                if (other.owner.getCollisionRegion() == -1 || collider.owner.getCollisionRegion() == -1 || other.owner.getCollisionRegion() == collider.owner.getCollisionRegion()) {
                     continue outer;
                 } else {
                     if (collider.checkCollision(other)) {

@@ -28,11 +28,25 @@ public class CircleCollider extends BaseCollider{
             double distance = circle_point_position1.distance(circle_point_position2);
             return distance < (this.radius + otherCircle.radius);
         } else if (other instanceof RectCollider otherRect){
-            Vector circle_point_position = this.owner.getLeftTopWorldPosition().add(this.relativePosition).add_to_self(Vector.build(this.radius, this.radius));
-            Vector rect_center_pointer = otherRect.owner.getLeftTopWorldPosition().add(otherRect.relativePosition).add_to_self(otherRect.getSize().divide(2));
-            double distanceX = Math.abs(circle_point_position.getFullX() - rect_center_pointer.getFullX());
-            double distanceY = Math.abs(circle_point_position.getFullY() - rect_center_pointer.getFullY());
-            return (distanceX <= (otherRect.getSize().getFullX() / 2 + this.radius) && distanceY <= (otherRect.getSize().getFullY() / 2 + this.radius));
+            Vector rectSize = otherRect.getSize();
+            Vector rectCenter = otherRect.owner.getLeftTopWorldPosition().add(otherRect.relativePosition).add_to_self(otherRect.getSize().divide(2));
+            Vector circleCenter = this.owner.getLeftTopWorldPosition().add(this.relativePosition).add_to_self(Vector.build(this.radius, this.radius));
+
+            double rectHalfWidth = rectSize.getFullX() / 2;
+            double rectHalfHeight = rectSize.getFullY() / 2;
+
+            // 2. 找到圆心在矩形坐标系中的最近点
+            double closestX = Math.max(rectCenter.getFullX() - rectHalfWidth,
+                    Math.min(circleCenter.getFullX(), rectCenter.getFullX() + rectHalfWidth));
+            double closestY = Math.max(rectCenter.getFullY() - rectHalfHeight,
+                    Math.min(circleCenter.getFullY(), rectCenter.getFullY() + rectHalfHeight));
+
+            // 3. 计算圆心到最近点的距离
+            double distanceX = circleCenter.getFullX() - closestX;
+            double distanceY = circleCenter.getFullY() - closestY;
+
+            // 4. 判断是否发生碰撞
+            return (distanceX * distanceX + distanceY * distanceY) <= (radius * radius);
 //            {
 //                System.out.println("center -- rect :" + rect_center_pointer + "--" + "circle: " + circle_point_position);
 //                return true;

@@ -1,11 +1,12 @@
 package com.xww.NewEngine.core.Component;
 
 import com.xww.NewEngine.core.Anchor.AnchorMode;
+import com.xww.NewEngine.core.Collision.BaseCollider;
 import com.xww.NewEngine.core.Vector.Vector;
 import com.xww.NewEngine.gui.GameFrame;
 
 public abstract class RelativeComponent extends Component {
-    // 相对附属对象的位置
+    // 指定锚点位置相对附属对象左上角的位置
     protected Vector relative_position = Vector.Zero();
 
     /**
@@ -38,8 +39,10 @@ public abstract class RelativeComponent extends Component {
         this.WhetherPinned = WhetherPinned;
         this.order = order;
         this.CollisionRegion = CollisionRegion;
-        this.relative_position = relative_position;
-        this.worldPosition = parent.getWorldPosition().add(relative_position);
+        this.worldPosition = parent.getLeftTopWorldPosition().add(relative_position);
+        // 将相对位置更新为真正的相对父类左上角的相对距离
+        // 需要此操作的原因是父节点不同锚点的类型 会有不同的结果
+        this.relative_position = relative_position.sub_to_self(parent.getWorldPosition().sub(parent.getLeftTopWorldPosition()));
         this.on_create();
     }
 
@@ -57,5 +60,16 @@ public abstract class RelativeComponent extends Component {
     protected void pre_move() {
         super.pre_move();
         this.relative_position.add_to_self(GameFrame.getFrameVelocity(this.velocity)).add_to_self(GameFrame.getFrameVelocity(this.parent.getVelocity()));
+    }
+
+    @Override
+    public void addCollider(BaseCollider collider) {
+        if (WhetherPinned){
+            collider.setRelativePosition(collider.getRelativePosition().add(this.getLeftTopWorldPosition().sub(parent.getLeftTopWorldPosition())));
+            collider.setOwner(this.parent);
+            this.parent.addCollider(collider);
+        } else{
+            super.addCollider(collider);
+        }
     }
 }

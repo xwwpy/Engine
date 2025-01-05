@@ -28,7 +28,6 @@ public class RectCollider extends BaseCollider{
             double up_y_1 = position.getFullY();
             double down_y_1 = position.getFullY() + this.size.getFullY();
 
-
             Vector shapePosition = otherRect.owner.getLeftTopWorldPosition().add(otherRect.relativePosition);
             double left_x_2 = shapePosition.getFullX();
             double right_x_2 = shapePosition.getFullX() + otherRect.size.getFullX();

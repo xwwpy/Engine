@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 public class TimeComponent extends FreeComponent {
     public TimeComponent() {
-        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 1, -1);
+        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1);
     }
 
     @Override

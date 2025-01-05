@@ -6,7 +6,7 @@ import com.xww.NewEngine.core.Vector.Vector;
 import java.awt.*;
 
 public abstract class BaseCollider {
-    public static final Color boundaryColor = Color.GREEN;
+    public static final Color boundaryColor = Color.MAGENTA;
     protected Vector relativePosition; // 碰撞体左上角相对拥有者左上角的相对位置
 
     protected Component owner;
@@ -24,8 +24,8 @@ public abstract class BaseCollider {
 //        return false;
 //    }
 
-    public Vector getWorldPosition(){
-        return owner.getWorldPosition().add(relativePosition);
+    public Vector getLeftTopPosition(){
+        return owner.getLeftTopWorldPosition().add(relativePosition);
     }
 
     public Vector getDrawPosition(){
@@ -49,4 +49,12 @@ public abstract class BaseCollider {
     }
 
     public abstract boolean checkCollision(BaseCollider other);
+
+    public void setOwner(Component component) {
+        this.owner = component;
+    }
+
+    public Component getOwner() {
+        return owner;
+    }
 }

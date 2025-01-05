@@ -17,7 +17,8 @@ public abstract class Component implements Base, Comparable<Component> {
 
     public static final ActionAfterCollision.CollisionCallBack ComponentDefaultCallBack = (obj)-> ActionAfterCollision.ActionAfterCollisionType.rebound;
 
-    public static Set<Component> components = new HashSet<>(); // 所有组件 只包含自由组件和顶层相对组件节点
+    public static Set<Component> components = new HashSet<>(); // 所有组件 只包含自由组件
+    public static Set<Component> components_to_add = new HashSet<>();
     public static Set<Component> components_to_remove = new HashSet<>();
     protected Component parent; // 父组件 当父组件为null时视为独立组件
     protected Set<Component> children_to_add = new HashSet<>();
@@ -53,7 +54,7 @@ public abstract class Component implements Base, Comparable<Component> {
 
 
     public static void addComponent(Component component) {
-        components.add(component);
+        components_to_add.add(component);
     }
 
     @Override
@@ -88,6 +89,7 @@ public abstract class Component implements Base, Comparable<Component> {
         colliders.addAll(colliders_to_add);
         colliders_to_add.clear();
         colliders.removeAll(colliders_to_remove);
+        CollisionHandler.colliders.removeAll(colliders_to_remove);
         colliders_to_remove.clear();
         colliders.forEach((collider)->{
             if (!collider.isAlive()){
@@ -137,6 +139,8 @@ public abstract class Component implements Base, Comparable<Component> {
         if (checkCollision()) {
             // 发生碰撞后的回调函数
             collisionAction();
+            // 只有是自己触发的碰撞才回退移动
+            this.return_move();
         }
     }
 
@@ -147,18 +151,18 @@ public abstract class Component implements Base, Comparable<Component> {
         ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(this);
         switch (actionAfterCollisionType){
             case stop:
-                // 回退移动
-                this.return_move();
                 // 将速度和加速度清零
                 this.clearVeAc();
                 break;
             case rebound:
                 // 将速度进行反转
-                this.return_move();
                 this.reboundVelocity();
                 break;
             case die:
                 this.setAlive(false);
+                break;
+            case nullAction:
+                lastMove = Vector.Zero();
                 break;
             default:
                 System.out.println("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
@@ -298,6 +302,7 @@ public abstract class Component implements Base, Comparable<Component> {
         this.timer_to_add.add(timer);
     }
     public void addCollider(BaseCollider collider){
+        collider.setOwner(this);
         this.colliders_to_add.add(collider);
         CollisionHandler.colliders.add(collider);
     }
