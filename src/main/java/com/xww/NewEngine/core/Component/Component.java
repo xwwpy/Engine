@@ -9,17 +9,32 @@ import com.xww.NewEngine.core.Collision.CollisionHandler;
 import com.xww.NewEngine.core.Vector.Vector;
 import com.xww.NewEngine.gui.GameFrame;
 import com.xww.NewEngine.core.Timer.Timer;
+import com.xww.NewEngine.setting.DebugSetting;
+import com.xww.projects.game01.Main;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public abstract class Component implements Base, Comparable<Component> {
 
+    public static Set<Component> can_drag_object_to_add = new HashSet<>();
+    public static Set<Component> can_drag_object = new HashSet<>();
+
+    public static Set<Component> can_drag_object_to_remove = new HashSet<>();
+
     public static final ActionAfterCollision.CollisionCallBack ComponentDefaultCallBack = (obj)-> ActionAfterCollision.ActionAfterCollisionType.rebound;
 
-    public static Set<Component> components = new HashSet<>(); // 所有组件 只包含自由组件
+    public static Set<Component> components = new HashSet<>(); // 只包含自由组件 即顶层组件
     public static Set<Component> components_to_add = new HashSet<>();
     public static Set<Component> components_to_remove = new HashSet<>();
+
+    public static Set<Component> allComponents = new HashSet<>(); // 所有组件 包括自由组件和子组件
+    public static Set<Component> allComponents_to_add = new HashSet<>();
+    public static Set<Component> allComponents_to_remove = new HashSet<>();
+
+
     protected Component parent; // 父组件 当父组件为null时视为独立组件
     protected Set<Component> children_to_add = new HashSet<>();
     protected Set<Component> children = new HashSet<>();
@@ -52,6 +67,12 @@ public abstract class Component implements Base, Comparable<Component> {
 
     protected int CollisionRegion = -1; // -1 代表不检测
 
+    protected Vector last_mouse_check_self_position = Vector.Zero();
+    
+    public boolean whetherCanDrag = false;
+    
+    protected boolean whetherBeRegisteredCanDrag = false;
+
 
     public static void addComponent(Component component) {
         components_to_add.add(component);
@@ -69,6 +90,11 @@ public abstract class Component implements Base, Comparable<Component> {
 
     @Override
     public void on_update(Graphics g) {
+        if (!this.isAlive()){
+            Component.components_to_remove.add(this);
+        }
+        // 检查拖动属性
+        checkDrag();
         checkMove();
         // 更新子组件
         update_children(g);
@@ -77,6 +103,22 @@ public abstract class Component implements Base, Comparable<Component> {
         // 更新碰撞器组件
         update_collider();
         drawCollider(g);
+        if (whetherBeRegisteredCanDrag && whetherCanDrag){
+            g.setColor(DebugSetting.DebugInfoColor);
+            g.drawString("can drag", this.getDrawPosition().getX() - 20, this.getDrawPosition().getY() - 20);
+        }
+    }
+
+    protected void checkDrag() {
+        if (whetherCanDrag && !whetherBeRegisteredCanDrag){
+            Component.registerDragComponent(this);
+            this.whetherBeRegisteredCanDrag = true;
+            return;
+        }
+        if (whetherBeRegisteredCanDrag && !whetherCanDrag) {
+            Component.unregisterDragComponent(this);
+            this.whetherBeRegisteredCanDrag = false;
+        }
     }
 
     protected void drawCollider(Graphics g) {
@@ -226,6 +268,7 @@ public abstract class Component implements Base, Comparable<Component> {
     public void addChild(Component child) {
         child.parent = this;
         this.children_to_add.add(child);
+        allComponents_to_add.add(child);
     }
 
     public void setOrder(int order) {
@@ -313,5 +356,80 @@ public abstract class Component implements Base, Comparable<Component> {
 
     public int getCollisionRegion() {
         return CollisionRegion;
+    }
+
+    public void processMouseEvent(MouseEvent e){
+        // TODO
+    }
+
+    public void processKeyEvent(KeyEvent e){
+        // TODO
+    }
+
+    public void changePosition(Vector tar) {
+        this.worldPosition.add_to_self(tar);
+    }
+
+    public static void updateDragComponents() {
+        can_drag_object.addAll(can_drag_object_to_add);
+        can_drag_object_to_add.clear();
+        can_drag_object.forEach((Component) -> {
+            if (!Component.isAlive){
+                can_drag_object_to_remove.add(Component);
+            }
+        });
+        can_drag_object.removeAll(can_drag_object_to_remove);
+        can_drag_object_to_remove.clear();
+
+    }
+
+
+    public void process_mouse_choose_self(int x, int y) {
+        int x_gap = x - this.last_mouse_check_self_position.getX();
+        int y_gap = y - this.last_mouse_check_self_position.getY();
+        // 防止误差
+        if(Math.abs(x_gap) <= 1){
+            x_gap = 0;
+        }
+        if(Math.abs(y_gap) <= 1){
+            y_gap = 0;
+        }
+        this.changePosition(new Vector(x_gap, y_gap));
+        last_mouse_check_self_position = new Vector(x, y);
+    }
+
+    public boolean whether_mouse_in(double x, double y) {
+        Vector absolutePosition = this.getDrawPosition();
+        if (x >= absolutePosition.getFullX() && x <= absolutePosition.getFullX() + this.size.getFullX()
+                && y >= absolutePosition.getFullY() && y <= absolutePosition.getFullY() + this.size.getFullY()) {
+            this.last_mouse_check_self_position = new Vector(x, y + 29);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void process_mouse_release() {
+        // do nothing
+    }
+
+    /**
+     * 注册可拖拽组件 必须先被添加在组件列表中 或者作为 子类节点
+     */
+    public static void registerDragComponent(Component component){
+        if (component.getSize().getX() == 0 && component.getSize().getY() == 0){
+            return;
+        }
+        can_drag_object_to_add.add(component);
+    }
+    /**
+     * 解注册可拖拽组件
+     */
+    public static void unregisterDragComponent(Component component) {
+        Component.can_drag_object_to_remove.add(component);
+    }
+
+    public void registerDrag() {
+        this.whetherCanDrag = true;
     }
 }

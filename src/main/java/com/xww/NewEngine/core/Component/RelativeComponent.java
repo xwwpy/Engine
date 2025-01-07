@@ -72,4 +72,14 @@ public abstract class RelativeComponent extends Component {
             super.addCollider(collider);
         }
     }
+
+    @Override
+    protected void checkDrag() {
+        if (WhetherPinned){
+            this.whetherCanDrag = false;
+            this.whetherBeRegisteredCanDrag = false;
+            return;
+        }
+        super.checkDrag();
+    }
 }

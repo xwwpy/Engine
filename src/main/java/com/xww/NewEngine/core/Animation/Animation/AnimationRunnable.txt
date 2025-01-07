@@ -1,0 +1,9 @@
+package com.xww.NewEngine.core.Animation.Animation;
+
+import java.awt.*;
+
+@FunctionalInterface
+public interface AnimationRunnable {
+    public abstract boolean run(Graphics graphics);
+}
+
