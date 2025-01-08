@@ -20,9 +20,6 @@ public class MouseMessageHandler implements MessageHandler {
             case MouseReleased -> processMouseReleased((MouseEvent) message.getMessage());
             case MouseEnter -> processMouseEnter((MouseEvent) message.getMessage());
             case MouseExit -> processMouseExit((MouseEvent) message.getMessage());
-//            case MouseMoved -> {
-//                processMouseMoved((MouseEvent) message.getMessage());
-//            }
             default -> {
             } // do nothing
         }
@@ -56,25 +53,39 @@ public class MouseMessageHandler implements MessageHandler {
     private static void processMousePressed(MouseEvent message) {
         int x = message.getX();
         int y = message.getY() - 29; // 减去标题栏高度
-        for (Component object : Component.can_drag_object){
-            if(object.whether_mouse_in(x, y)){
-                checked = true;
-                object.process_mouse_choose_self(x, y + 29);
-                checked_object = object;
-                return;
-            }
+        try {
+            Component.can_drag_object.stream().sorted().forEach(object -> {
+                if(object.whether_mouse_in(x, y)){
+                    checked = true;
+                    checked_object = object;
+                    throw new RuntimeException();
+                }
+            });
+        } catch (RuntimeException e) {
+            // do nothing
         }
     }
 
     private static void processMouseClicked(MouseEvent message) {
         int x = message.getX();
         int y = message.getY() - 29; // 减去标题栏高度
-        for (Component object : Component.allComponents){
-            if(object.whether_mouse_in(x, y)){
-                object.whetherCanDrag = !object.whetherCanDrag;
-                return;
-            }
+        try {
+            Component.allComponents.stream().sorted().forEach(object -> {
+                if(object.whether_mouse_in(x, y)){
+                    object.whetherCanDrag = !object.whetherCanDrag;
+                    throw new RuntimeException();
+                }
+            });
+        } catch (RuntimeException e) {
+            // do nothing
         }
+
+//        for (Component object : Component.allComponents){
+//            if(object.whether_mouse_in(x, y)){
+//                object.whetherCanDrag = !object.whetherCanDrag;
+//                return;
+//            }
+//        }
     }
 
     @Override

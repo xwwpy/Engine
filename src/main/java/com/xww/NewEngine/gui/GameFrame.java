@@ -51,9 +51,8 @@ public class GameFrame extends JFrame{
     public static Set<MessageHandler> messageHandlers_to_remove = new HashSet<>();
 
     // 每一帧指定耗时 单位nanos
-    private int each_frame_target_time = 1000_000_000 / FrameSetting.DEFAULT_FPS;
-    public int current_fps = FrameSetting.DEFAULT_FPS;
-    public Vector camera_position = new Vector(100, 0);
+    private long each_frame_target_time = 1000_000_000 / FrameSetting.DEFAULT_FPS;
+    public long current_fps = FrameSetting.DEFAULT_FPS;
 
     private static boolean initFlag = false;
     private GameFrame(String title) {
@@ -158,11 +157,15 @@ public class GameFrame extends JFrame{
         update_time();
         // 更新组件
         updateComponent(g);
+        // 更新相机位置
+        Camera.updateCamera();
 
         // 更新鼠标位置
         messageHandlers.forEach((handler)->{
             if (handler.checkValid() && handler instanceof MouseMessageHandler){
-                ((MouseMessageHandler) handler).processMouseMoved(new MouseEvent(context, 0, 0, 0, MouseInfo.getPointerInfo().getLocation().x - ScreenInfoComponent.screen_position.getX(), MouseInfo.getPointerInfo().getLocation().y - ScreenInfoComponent.screen_position.getY(), 0, false));
+                Point point = MouseInfo.getPointerInfo().getLocation();
+                Vector screen_position = ScreenInfoComponent.screen_position;
+                ((MouseMessageHandler) handler).processMouseMoved(new MouseEvent(context, 0, 0, 0, point.x - screen_position.getX(), point.y - screen_position.getY(), 0, false));
             }
         });
 
@@ -210,7 +213,7 @@ public class GameFrame extends JFrame{
     // 得到相对屏幕坐标
     public Vector getRealDrawPosition(Vector position, PositionType type) {
         return switch (type) {
-            case World -> position.sub(GameFrame.context.camera_position);
+            case World -> position.sub(Camera.camera_position);
             case Screen -> position;
             default -> Vector.Zero();
         };

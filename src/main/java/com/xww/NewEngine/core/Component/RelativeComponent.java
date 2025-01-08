@@ -7,14 +7,14 @@ import com.xww.NewEngine.gui.GameFrame;
 
 public abstract class RelativeComponent extends Component {
     // 指定锚点位置相对附属对象左上角的位置
-    protected Vector relative_position = Vector.Zero();
+    protected Vector relative_position;
 
     /**
      * 是否固定 如果固定则速度和父类保持一致 且 始终维持创建时指定的相对位置
      * 并且当本身具有碰撞体时 会影响父类的移动
      * 若不固定则其与父类的运动是独立的不会相互影响
      */
-    protected boolean WhetherPinned = false;
+    protected boolean WhetherPinned;
 
     /**
      * 指定父类

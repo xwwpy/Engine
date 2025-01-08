@@ -388,12 +388,12 @@ public abstract class Component implements Base, Comparable<Component> {
         int x_gap = x - this.last_mouse_check_self_position.getX();
         int y_gap = y - this.last_mouse_check_self_position.getY();
         // 防止误差
-        if(Math.abs(x_gap) <= 1){
-            x_gap = 0;
-        }
-        if(Math.abs(y_gap) <= 1){
-            y_gap = 0;
-        }
+//        if(Math.abs(x_gap) <= 1){
+//            x_gap = 0;
+//        }
+//        if(Math.abs(y_gap) <= 1){
+//            y_gap = 0;
+//        }
         this.changePosition(new Vector(x_gap, y_gap));
         last_mouse_check_self_position = new Vector(x, y);
     }

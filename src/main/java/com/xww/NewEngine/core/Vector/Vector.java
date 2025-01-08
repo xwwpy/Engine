@@ -1,5 +1,7 @@
 package com.xww.NewEngine.core.Vector;
 
+import com.xww.NewEngine.Utils.StringUtils;
+
 import java.util.Random;
 
 public class Vector {
@@ -129,6 +131,6 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "{ x: " + x + ", y: " + y + "}";
+        return "{ x: " + StringUtils.getTargetAccuracy(x, 3) + ", y: " + StringUtils.getTargetAccuracy(y, 3) + "}";
     }
 }

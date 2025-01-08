@@ -3,6 +3,8 @@ package com.xww.NewEngine.core.Event.Message.Impl;
 
 import com.xww.NewEngine.core.Event.Message.Message;
 import com.xww.NewEngine.core.Event.Message.MessageHandler;
+import com.xww.NewEngine.core.Vector.Vector;
+import com.xww.NewEngine.gui.Camera;
 import com.xww.NewEngine.gui.GameFrame;
 import com.xww.NewEngine.setting.DebugSetting;
 import com.xww.NewEngine.setting.FrameSetting;
@@ -33,14 +35,20 @@ public class KeyBoardMessageHandler implements MessageHandler {
     public static void processKeyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
             case KeyEvent.VK_UP:
+                Camera.velocity.add_to_self(Vector.build(0, -10));
                 break;
             case KeyEvent.VK_DOWN:
+                Camera.velocity.add_to_self(Vector.build(0, 10));
                 break;
             case KeyEvent.VK_LEFT:
+                Camera.velocity.add_to_self(Vector.build(-10, 0));
                 break;
             case KeyEvent.VK_RIGHT:
+                Camera.velocity.add_to_self(Vector.build(10, 0));
                 break;
             case KeyEvent.VK_C:
+                Camera.velocity = Vector.Zero();
+                Camera.camera_position = Vector.Zero();
                 break;
             case KeyEvent.VK_M:
                 break;
@@ -49,7 +57,6 @@ public class KeyBoardMessageHandler implements MessageHandler {
     public static void processKeyReleased(KeyEvent e) {
         switch (e.getKeyCode()){
             case KeyEvent.VK_UP | KeyEvent.VK_DOWN | KeyEvent.VK_LEFT | KeyEvent.VK_RIGHT:
-//                        camera.velocity.clear();
                 break;
             case KeyEvent.VK_SPACE:
                 DebugSetting.IS_DEBUG_ON = !DebugSetting.IS_DEBUG_ON;
@@ -58,10 +65,9 @@ public class KeyBoardMessageHandler implements MessageHandler {
                 GameFrame.context.changeFps(FrameSetting.DEFAULT_FPS * 2);
                 break;
             case KeyEvent.VK_G:
-                GameFrame.context.changeFps(FrameSetting.DEFAULT_FPS / 2);
                 if (FrameSetting.DEFAULT_FPS <= 2){
                     FrameSetting.DEFAULT_FPS = 1;
-                }
+                } else GameFrame.context.changeFps(FrameSetting.DEFAULT_FPS / 2);
                 break;
 
         }
