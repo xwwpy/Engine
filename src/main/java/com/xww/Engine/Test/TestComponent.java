@@ -1,11 +1,11 @@
-package com.xww.NewEngine.Test;
+package com.xww.Engine.Test;
 
-import com.xww.NewEngine.core.Anchor.AnchorMode;
-import com.xww.NewEngine.core.Collision.RectCollider;
-import com.xww.NewEngine.core.Component.FreeComponent;
-import com.xww.NewEngine.core.Timer.Timer;
-import com.xww.NewEngine.core.Vector.Vector;
-import com.xww.NewEngine.gui.GameFrame;
+import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Collision.RectCollider;
+import com.xww.Engine.core.Component.FreeComponent;
+import com.xww.Engine.core.Timer.Timer;
+import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
 import java.util.Random;

@@ -1,11 +1,9 @@
-package com.xww.NewEngine.Test;
+package com.xww.Engine.Test;
 
-import com.xww.NewEngine.core.Anchor.AnchorMode;
-import com.xww.NewEngine.core.Base;
-import com.xww.NewEngine.core.Component.Component;
-import com.xww.NewEngine.core.Component.RelativeComponent;
-import com.xww.NewEngine.core.Timer.Timer;
-import com.xww.NewEngine.core.Vector.Vector;
+import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Component.Component;
+import com.xww.Engine.core.Component.RelativeComponent;
+import com.xww.Engine.core.Vector.Vector;
 
 import java.awt.*;
 
