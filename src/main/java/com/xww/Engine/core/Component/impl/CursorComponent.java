@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class CursorComponent extends FreeComponent {
     public CursorComponent() {
-        super(Vector.Zero(), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true);
+        super(Vector.Zero(), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true, false);
         Timer updatePositionTimer = new Timer(0, (obj)->{
             Point location = MouseInfo.getPointerInfo().getLocation();
             this.worldPosition = Vector.build(location.x, location.y - 29).sub_to_self(ScreenInfoComponent.screen_position);

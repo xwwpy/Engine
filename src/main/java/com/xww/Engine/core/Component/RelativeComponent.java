@@ -34,7 +34,8 @@ public abstract class RelativeComponent extends Component {
                              int order,
                              int CollisionRegion,
                              int mass,
-                             boolean whetherShowDebugInfo){
+                             boolean whetherShowDebugInfo,
+                             boolean is_drag_on){
         if (parent == null){
             throw new RuntimeException("应该使用自由节点作为顶层节点");
         }
@@ -47,6 +48,7 @@ public abstract class RelativeComponent extends Component {
         this.order = order;
         this.mass = mass;
         this.whetherShowDebugInfo = whetherShowDebugInfo;
+        this.is_drag_on = is_drag_on;
         this.CollisionRegion = CollisionRegion;
         this.worldPosition = parent.getLeftTopWorldPosition().add(relative_position);
         // 将相对位置更新为真正的相对父类左上角的相对距离

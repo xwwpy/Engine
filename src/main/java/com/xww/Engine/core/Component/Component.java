@@ -70,8 +70,8 @@ public abstract class Component implements Base, Comparable<Component> {
     protected int CollisionRegion = -1; // -1 代表不检测
 
     protected Vector last_mouse_check_self_position = Vector.Zero();
-    
-    public boolean whetherCanDrag = false;
+    protected boolean is_drag_on = false; // 当此属性为false时 一定不会被注册到 can_drag_object中
+    public boolean whetherCanDrag = false; // 当该组件可以被拖动时 该属性如果是true 则可以拖动并注册到拖动组件中
     
     protected boolean whetherBeRegisteredCanDrag = false;
 
@@ -123,6 +123,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     protected void checkDrag() {
+        if (!is_drag_on) return;
         if (whetherCanDrag && !whetherBeRegisteredCanDrag){
             Component.registerDragComponent(this);
             this.whetherBeRegisteredCanDrag = true;
@@ -241,6 +242,7 @@ public abstract class Component implements Base, Comparable<Component> {
                 // 设置新的速度
                 this.setVelocity(v1Prime);
                 collisionInfo.getColliderComponent().setVelocity(v2Prime);
+                collisionInfo.getColliderComponent().return_move();
                 break;
             default:
                 throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
@@ -289,6 +291,7 @@ public abstract class Component implements Base, Comparable<Component> {
      */
     protected void return_move() {
         this.worldPosition = this.worldPosition.sub_to_self(lastMove);
+        lastMove = Vector.Zero();
     }
     /**
      * 移动

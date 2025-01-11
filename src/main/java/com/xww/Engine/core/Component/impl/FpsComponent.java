@@ -11,7 +11,7 @@ import java.awt.*;
 public class FpsComponent extends FreeComponent {
     private long current_fps = GameFrame.context.current_fps;
     public FpsComponent() {
-        super(Vector.build(10, 10), GameFrame.PositionType.Screen, Vector.build(0, 0), AnchorMode.LeftTop, Vector.Zero(), Vector.build(0, 0), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true);
+        super(Vector.build(10, 10), GameFrame.PositionType.Screen, Vector.build(0, 0), AnchorMode.LeftTop, Vector.Zero(), Vector.build(0, 0), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true, false);
         Timer fpsTimer = new Timer(1000, (obj)->{
             ((FpsComponent) obj).current_fps = GameFrame.context.current_fps;
         }, this);

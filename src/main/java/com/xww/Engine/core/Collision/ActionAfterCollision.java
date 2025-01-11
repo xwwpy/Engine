@@ -66,6 +66,26 @@ public class ActionAfterCollision {
         RectRight,
         RectTop,
         RectBottom;
+
+        public collisionDirection reverse() {
+            switch(this){
+                case RectTop -> {
+                    return RectBottom;
+                }
+                case RectBottom -> {
+                    return RectTop;
+                }
+                case RectLeft -> {
+                    return RectRight;
+                }
+                case RectRight -> {
+                    return RectLeft;
+                }
+                default -> {
+                    throw new RuntimeException("collisionDirection reverse error: 不支持的类型反转");
+                }
+            }
+        }
     }
 
 }

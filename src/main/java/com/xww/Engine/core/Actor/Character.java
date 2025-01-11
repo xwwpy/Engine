@@ -22,8 +22,9 @@ public abstract class Character extends FreeComponent {
                      int order,
                      int CollisionRegion,
                      int mass,
-                     boolean whetherShowDebugInfo) {
-        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo);
+                     boolean whetherShowDebugInfo,
+                     boolean is_drag_on) {
+        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo, is_drag_on);
     }
 
     public void addAnimation(String name, Animation animation) {

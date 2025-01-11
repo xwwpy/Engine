@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class TimeComponent extends FreeComponent {
     public TimeComponent() {
-        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, 10, true);
+        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, 10, true, false);
     }
 
     @Override

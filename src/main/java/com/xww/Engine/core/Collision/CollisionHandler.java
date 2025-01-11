@@ -11,20 +11,21 @@ public class CollisionHandler {
 
     public static ActionAfterCollision.CollisionInfo checkCollision(Component component) {
         Set<BaseCollider> colliderSet = component.getColliders();
-        outer: for (BaseCollider other: colliders) {
             for (BaseCollider collider: colliderSet) {
-                if (other.owner.getCollisionRegion() == -1 || collider.owner.getCollisionRegion() == -1 || other.owner.getCollisionRegion() == collider.owner.getCollisionRegion()) {
-                    continue outer;
-                } else {
-                    ActionAfterCollision.CollisionInfo collisionInfo = collider.checkCollision(other);
-                    if (collisionInfo.isWhetherCollider()) {
-                        ActionAfterCollision.CollisionInfo collisionInfo1 = new ActionAfterCollision.CollisionInfo(true, ActionAfterCollision.collisionDirection.RectLeft, collider.owner, other, collider);
-                        other.owner.receiveCollision(collisionInfo1);
-                        return collisionInfo;
+                for (BaseCollider other: colliders) {
+                    if (!(other.owner.getCollisionRegion() == -1 || collider.owner.getCollisionRegion() == -1 || other.owner.getCollisionRegion() == collider.owner.getCollisionRegion())) {
+                        ActionAfterCollision.CollisionInfo collisionInfo = collider.checkCollision(other);
+                        collider.setLastCollisionDirection(collisionInfo.getCollisionDirection());
+                        if (collisionInfo.isWhetherCollider()) {
+                            ActionAfterCollision.CollisionInfo collisionInfo1 = new ActionAfterCollision.CollisionInfo(true, ActionAfterCollision.collisionDirection.RectLeft, collider.owner, other, collider);
+                            other.owner.receiveCollision(collisionInfo1);
+                            other.setLastCollisionDirection(collisionInfo.getCollisionDirection().reverse());
+                            return collisionInfo;
+                        }
                     }
                 }
+                collider.setLastCollisionDirection(null);
             }
-        }
         return ActionAfterCollision.CollisionInfo.NoCollisionInfo();
     }
 

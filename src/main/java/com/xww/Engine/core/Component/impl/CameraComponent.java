@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class CameraComponent extends FreeComponent {
     public CameraComponent() {
-        super(Vector.build(300, 20), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true);
+        super(Vector.build(300, 20), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true, false);
     }
 
     @Override

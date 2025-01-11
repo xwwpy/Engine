@@ -16,7 +16,8 @@ public abstract class FreeComponent extends Component{
                          int order,
                          int CollisionRegion,
                          int mass,
-                         boolean whetherShowDebugInfo){
+                         boolean whetherShowDebugInfo,
+                         boolean is_drag_on){
         this.parent = null;
         this.worldPosition = worldPosition;
         this.positionType = positionType;
@@ -28,6 +29,7 @@ public abstract class FreeComponent extends Component{
         this.CollisionRegion = CollisionRegion;
         this.mass = mass;
         this.whetherShowDebugInfo = whetherShowDebugInfo;
+        this.is_drag_on = is_drag_on;
         this.on_create();
     }
 }
