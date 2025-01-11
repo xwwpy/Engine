@@ -20,8 +20,10 @@ public abstract class Character extends FreeComponent {
                      Vector velocity,
                      Vector acceleration,
                      int order,
-                     int CollisionRegion) {
-        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion);
+                     int CollisionRegion,
+                     int mass,
+                     boolean whetherShowDebugInfo) {
+        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo);
     }
 
     public void addAnimation(String name, Animation animation) {
