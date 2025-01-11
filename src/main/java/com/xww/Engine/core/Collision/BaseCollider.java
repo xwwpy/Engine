@@ -48,7 +48,7 @@ public abstract class BaseCollider {
         this.relativePosition = relativePosition;
     }
 
-    public abstract boolean checkCollision(BaseCollider other);
+    public abstract ActionAfterCollision.CollisionInfo checkCollision(BaseCollider other);
 
     public void setOwner(Component component) {
         this.owner = component;

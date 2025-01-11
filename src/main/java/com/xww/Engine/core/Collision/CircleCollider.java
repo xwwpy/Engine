@@ -21,12 +21,12 @@ public class CircleCollider extends BaseCollider{
     }
 
     @Override
-    public boolean checkCollision(BaseCollider other) {
+    public ActionAfterCollision.CollisionInfo checkCollision(BaseCollider other) {
         if (other instanceof CircleCollider otherCircle){
             Vector circle_point_position1 = this.owner.getLeftTopWorldPosition().add(this.relativePosition).add_to_self(Vector.build(this.radius, this.radius));
             Vector circle_point_position2 = otherCircle.owner.getLeftTopWorldPosition().add(otherCircle.relativePosition).add_to_self(Vector.build(otherCircle.radius, otherCircle.radius));
             double distance = circle_point_position1.distance(circle_point_position2);
-            return distance < (this.radius + otherCircle.radius);
+            return new ActionAfterCollision.CollisionInfo(distance < (this.radius + otherCircle.radius), ActionAfterCollision.collisionDirection.RectLeft, other.owner, this, other);
         } else if (other instanceof RectCollider otherRect){
             Vector rectSize = otherRect.getSize();
             Vector rectCenter = otherRect.owner.getLeftTopWorldPosition().add(otherRect.relativePosition).add_to_self(otherRect.getSize().divide(2));
@@ -46,7 +46,7 @@ public class CircleCollider extends BaseCollider{
             double distanceY = circleCenter.getFullY() - closestY;
 
             // 4. 判断是否发生碰撞
-            return (distanceX * distanceX + distanceY * distanceY) <= (radius * radius);
+            return new ActionAfterCollision.CollisionInfo((distanceX * distanceX + distanceY * distanceY) <= (radius * radius), ActionAfterCollision.collisionDirection.RectLeft, other.owner, this, other);
 //            {
 //                System.out.println("center -- rect :" + rect_center_pointer + "--" + "circle: " + circle_point_position);
 //                return true;
@@ -54,7 +54,7 @@ public class CircleCollider extends BaseCollider{
 //            return false;
         } else {
             System.out.println("Circle碰撞体不支持的碰撞检测");
-            return false;
+            return ActionAfterCollision.CollisionInfo.NoCollisionInfo();
         }
     }
 }

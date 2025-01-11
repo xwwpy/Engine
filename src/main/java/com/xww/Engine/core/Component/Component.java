@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
+@SuppressWarnings("all")
 public abstract class Component implements Base, Comparable<Component> {
 
     public static Set<Component> can_drag_object_to_add = new HashSet<>();
@@ -121,9 +122,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     protected void drawCollider(Graphics g) {
-        colliders.forEach(collider -> {
-            collider.draw(g);
-        });
+        colliders.forEach(collider -> collider.draw(g));
     }
 
     private void update_collider() {
@@ -177,9 +176,10 @@ public abstract class Component implements Base, Comparable<Component> {
         // 预移动
         pre_move();
         // 检查碰撞
-        if (checkCollision()) {
+        ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
+        if (collisionInfo.isWhetherCollider()) {
             // 发生碰撞后的回调函数
-            collisionAction();
+            collisionAction(collisionInfo);
             // 只有是自己触发的碰撞才回退移动
             this.return_move();
         }
@@ -188,8 +188,8 @@ public abstract class Component implements Base, Comparable<Component> {
     /**
      * 碰撞发生后的行为
      */
-    protected void collisionAction() {
-        ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(this);
+    protected void collisionAction(ActionAfterCollision.CollisionInfo collisionInfo) {
+        ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(collisionInfo);
         switch (actionAfterCollisionType){
             case stop:
                 // 将速度和加速度清零
@@ -228,17 +228,17 @@ public abstract class Component implements Base, Comparable<Component> {
     /**
      * 主动检测碰撞
      */
-    protected boolean checkCollision() {
+    protected ActionAfterCollision.CollisionInfo checkCollision() {
         return CollisionHandler.checkCollision(this);
     }
 
     /**
      * 被动接受碰撞事件
-     * @param other 发生碰撞的物体
+     * @param collisionInfo 发生碰撞的信息
      */
 
-    public void receiveCollision(Component other){
-        collisionAction();
+    public void receiveCollision(ActionAfterCollision.CollisionInfo collisionInfo){
+        collisionAction(collisionInfo);
     }
 
     /**
