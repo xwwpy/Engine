@@ -58,7 +58,7 @@ public abstract class Component implements Base, Comparable<Component> {
 
     protected int order = 0; // 绘制顺序 越大图层越靠前
 
-    protected int mass = 1; // 质量
+    protected int mass = 1; // 质量 -1 代表固定 质量无限大
 
     protected boolean isAlive = true;
 
@@ -226,11 +226,18 @@ public abstract class Component implements Base, Comparable<Component> {
                 }
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
+                if (m1 == -1){
+                    collisionInfo.getColliderComponent().reboundVelocity();
+                    return;
+                } else if (m2 == -1){
+                    this.reboundVelocity();
+                    return;
+                }
                 Vector v1 = this.velocity;
                 Vector v2 = collisionInfo.getOtherCollider().getOwner().getVelocity();
                 // 计算碰撞后的速度
-                Vector v1Prime = v1.scale((m1 - m2) / (m1 + m2)).add(v2.scale(2 * m2 / (m1 + m2)));
-                Vector v2Prime = v2.scale((m2 - m1) / (m1 + m2)).add(v1.scale(2 * m1 / (m1 + m2)));
+                Vector v1Prime = v1.scale((m1 - m2) / (m1 + m2)).add_to_self(v2.scale(2 * m2 / (m1 + m2)));
+                Vector v2Prime = v2.scale((m2 - m1) / (m1 + m2)).add_to_self(v1.scale(2 * m1 / (m1 + m2)));
                 // 设置新的速度
                 this.setVelocity(v1Prime);
                 collisionInfo.getColliderComponent().setVelocity(v2Prime);

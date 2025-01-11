@@ -20,6 +20,7 @@ public class DebugSetting {
             g.drawString("order: " + component.getOrder(), drawPosition.getX(), drawPosition.getY() + 50);
             g.drawString("collisionRegion: " + component.getCollisionRegion(), drawPosition.getX(), drawPosition.getY() + 60);
             g.drawString("alive: " + component.isAlive(), drawPosition.getX(), drawPosition.getY() + 70);
+            g.drawString("mass: " + component.getMass(), drawPosition.getX(), drawPosition.getY() + 80);
         }
     }
 }
