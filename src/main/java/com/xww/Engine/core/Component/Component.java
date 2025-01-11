@@ -24,7 +24,9 @@ public abstract class Component implements Base, Comparable<Component> {
 
     public static Set<Component> can_drag_object_to_remove = new HashSet<>();
 
-    public static final ActionAfterCollision.CollisionCallBack ComponentDefaultCallBack = (obj)-> ActionAfterCollision.ActionAfterCollisionType.physics;
+    public static final ActionAfterCollision.ActionAfterCollisionType ComponentDefaultCollisionType = ActionAfterCollision.ActionAfterCollisionType.physics;
+
+    protected ActionAfterCollision.ActionAfterCollisionType callBack = ComponentDefaultCollisionType;
 
     public static Set<Component> components = new HashSet<>(); // 只包含自由组件 即顶层组件
     public static Set<Component> components_to_add = new HashSet<>();
@@ -204,8 +206,7 @@ public abstract class Component implements Base, Comparable<Component> {
      * @param flag 自己触发的碰撞 ture 被动接受为 false
      */
     protected void collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
-        ActionAfterCollision.ActionAfterCollisionType actionAfterCollisionType = ComponentDefaultCallBack.callBack(collisionInfo);
-        switch (actionAfterCollisionType){
+        switch (this.getCollisionType()){
             case stop:
                 // 将速度和加速度清零
                 this.clearVeAc();
@@ -223,6 +224,12 @@ public abstract class Component implements Base, Comparable<Component> {
             case physics:
                 // 对于此逻辑双方只需执行一次
                 if (!flag){
+                    return;
+                }
+                // 如果另一方不是物理碰撞 则进行反弹
+                if (collisionInfo.getColliderComponent().getCollisionType() != ActionAfterCollision.ActionAfterCollisionType.physics){
+                    // 将另一个不是物理碰撞的当作质量无限大
+                    this.reboundVelocity();
                     return;
                 }
                 double m1 = this.mass;
@@ -245,7 +252,7 @@ public abstract class Component implements Base, Comparable<Component> {
                 collisionInfo.getColliderComponent().return_move();
                 break;
             default:
-                throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
+                throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + this.getCollisionType());
         }
     }
 
@@ -480,5 +487,13 @@ public abstract class Component implements Base, Comparable<Component> {
 
     public void registerDrag() {
         this.whetherCanDrag = true;
+    }
+
+    public ActionAfterCollision.ActionAfterCollisionType getCollisionType() {
+        return this.callBack;
+    }
+
+    public void setCallBack(ActionAfterCollision.ActionAfterCollisionType callBack){
+        this.callBack = callBack;
     }
 }

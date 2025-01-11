@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.LockSupport;
+
 @SuppressWarnings("all")
 public class GameFrame extends JFrame{
     // 游戏画板
@@ -141,11 +143,7 @@ public class GameFrame extends JFrame{
             double end_time = System.nanoTime();
             double each_frame_time = end_time - start_time;
             if (each_frame_time < context.each_frame_target_time){
-                try {
-                    Thread.sleep((long) (context.each_frame_target_time - each_frame_time) / 1000_000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                LockSupport.parkNanos((long) (context.each_frame_target_time - each_frame_time));
             }
             double whole_time = System.nanoTime() - start_time;
             context.current_fps = (int) (1_000_000_000 / whole_time);
@@ -213,6 +211,9 @@ public class GameFrame extends JFrame{
         );
     }
     public void changeFps(int fps) {
+        if (fps <= FrameSetting.MIN_FPS || fps >= FrameSetting.MAX_FPS) {
+            return;
+        }
         FrameSetting.DEFAULT_FPS = fps;
         this.each_frame_target_time = 1_000_000_000 / FrameSetting.DEFAULT_FPS;
     }

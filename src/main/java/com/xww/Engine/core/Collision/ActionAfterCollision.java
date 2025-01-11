@@ -3,9 +3,9 @@ package com.xww.Engine.core.Collision;
 import com.xww.Engine.core.Component.Component;
 
 public class ActionAfterCollision {
-    public static interface CollisionCallBack{
-        public abstract ActionAfterCollisionType callBack(CollisionInfo collisionInfo);
-    }
+//    public static interface CollisionCallBack{
+//        public abstract ActionAfterCollisionType callBack(CollisionInfo collisionInfo);
+//    }
 
     public static enum ActionAfterCollisionType{
         stop, // 停止

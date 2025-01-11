@@ -37,11 +37,11 @@ public class Main {
         Component.addComponent(new TestComponent(Vector.build(600, 200), Vector.build(200, 100), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 7));
         Component.addComponent(new TestComponent(Vector.build(200, 600), Vector.build(100, 100), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 8));
 
-        TestComponent testComponent = new TestComponent(Vector.build(600, 550), Vector.build(100, 150), AnchorMode.RightTop, Vector.build(300, 50), Vector.Zero(), 0, 9);
+        TestComponent testComponent = new TestComponent(Vector.build(600, 550), Vector.build(100, 150), AnchorMode.RightTop, Vector.build(500, 200), Vector.Zero(), 0, 9);
         testComponent.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent, 30));
         testComponent.addCollider(new CircleCollider(Vector.build(200, 0), testComponent, 40));
         Component.addComponent(testComponent);
-        testComponent.setMass(3000);
+        testComponent.setMass(6000);
 
         TestRelativeComponent testRelativeComponent = new TestRelativeComponent(testComponent, Vector.build(50, 60), AnchorMode.LeftTop, Vector.build(500, 0), Vector.build(50, 20), Vector.build(300, 0), true, 0, 11);
         testComponent.addChild(testRelativeComponent);
