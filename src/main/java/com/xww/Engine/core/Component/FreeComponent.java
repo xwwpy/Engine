@@ -14,7 +14,9 @@ public abstract class FreeComponent extends Component{
                          Vector velocity,
                          Vector acceleration,
                          int order,
-                         int CollisionRegion){
+                         int CollisionRegion,
+                         int mass,
+                         boolean whetherShowDebugInfo){
         this.parent = null;
         this.worldPosition = worldPosition;
         this.positionType = positionType;
@@ -24,6 +26,8 @@ public abstract class FreeComponent extends Component{
         this.acceleration = acceleration;
         this.order = order;
         this.CollisionRegion = CollisionRegion;
+        this.mass = mass;
+        this.whetherShowDebugInfo = whetherShowDebugInfo;
         this.on_create();
     }
 }

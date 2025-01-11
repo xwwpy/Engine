@@ -12,14 +12,17 @@ import java.awt.*;
 
 public class TimeComponent extends FreeComponent {
     public TimeComponent() {
-        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1);
+        super(Vector.build(FrameSetting.DEFAULT_WIDTH - 200, 30), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, 10, true);
     }
 
     @Override
     public void on_update(Graphics g) {
         super.on_update(g);
+    }
+
+    @Override
+    protected void showDebugInfo(Graphics g) {
         g.setColor(Color.GREEN);
         g.drawString("运行时间: " + StringUtils.getTargetAccuracy(TimeEventManager.getRunTime(), 3), this.getDrawPosition().getX(), this.getDrawPosition().getY());
-
     }
 }

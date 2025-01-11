@@ -12,7 +12,7 @@ import java.awt.*;
 public class ScreenInfoComponent extends FreeComponent {
     public static Vector screen_position = Vector.Zero();
     public ScreenInfoComponent() {
-        super(Vector.build(30, 40), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1);
+        super(Vector.build(30, 40), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true);
         Timer timer = new Timer(0, (obj) ->{
             // 更新屏幕坐标
             Point screen_position = GameFrame.context.getLocationOnScreen();
@@ -25,6 +25,10 @@ public class ScreenInfoComponent extends FreeComponent {
     @Override
     public void on_update(Graphics g) {
         super.on_update(g);
+    }
+
+    @Override
+    protected void showDebugInfo(Graphics g) {
         g.setColor(DebugSetting.DebugInfoColor);
         Vector drawPosition = this.getDrawPosition();
         g.drawString("screen position: " + screen_position.toString(), drawPosition.getX(), drawPosition.getY());

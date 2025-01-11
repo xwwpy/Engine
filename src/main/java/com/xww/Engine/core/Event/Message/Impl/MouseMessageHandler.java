@@ -72,6 +72,10 @@ public class MouseMessageHandler implements MessageHandler {
         try {
             Component.allComponents.stream().sorted().forEach(object -> {
                 if(object.whether_mouse_in(x, y)){
+                    if (message.getClickCount() == 3) {
+                        object.setWhetherShowDebugInfo(!object.isWhetherShowDebugInfo());
+                        throw new RuntimeException();
+                    }
                     object.whetherCanDrag = !object.whetherCanDrag;
                     throw new RuntimeException();
                 }

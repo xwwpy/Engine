@@ -1,6 +1,5 @@
 package com.xww.Engine.core.Collision;
 
-import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Component.Component;
 
 public class ActionAfterCollision {
@@ -13,6 +12,7 @@ public class ActionAfterCollision {
         rebound, // 反弹
         die, // 消失
         nullAction, // 不做处理
+        physics // 模拟物理
     }
 
     public static class CollisionInfo {
@@ -59,6 +59,7 @@ public class ActionAfterCollision {
     }
 
     public static enum collisionDirection{
+        // TODO
 
         // 相对矩形
         RectLeft,

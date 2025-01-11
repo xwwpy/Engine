@@ -69,7 +69,6 @@ public class KeyBoardMessageHandler implements MessageHandler {
                     FrameSetting.DEFAULT_FPS = 1;
                 } else GameFrame.context.changeFps(FrameSetting.DEFAULT_FPS / 2);
                 break;
-
         }
     }
 }

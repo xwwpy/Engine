@@ -21,6 +21,7 @@ public class RectCollider extends BaseCollider{
 
     @Override
     public ActionAfterCollision.CollisionInfo checkCollision(BaseCollider other) {
+        // TODO 实现碰撞方向的检测
         if (other instanceof RectCollider otherRect){
             Vector position = this.owner.getLeftTopWorldPosition().add(this.relativePosition);
             double left_x_1 = position.getFullX();
@@ -46,5 +47,9 @@ public class RectCollider extends BaseCollider{
 
     public Vector getSize() {
         return size;
+    }
+
+    public void setSize(Vector size) {
+        this.size = size;
     }
 }
