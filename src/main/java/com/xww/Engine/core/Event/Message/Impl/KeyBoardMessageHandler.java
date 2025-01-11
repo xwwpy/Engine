@@ -12,13 +12,22 @@ import com.xww.Engine.setting.FrameSetting;
 import java.awt.event.KeyEvent;
 
 
-public class KeyBoardMessageHandler implements MessageHandler {
+public class KeyBoardMessageHandler extends MessageHandler {
+
+    public static KeyBoardMessageHandler keyBoardMessageHandlerInstance = new KeyBoardMessageHandler();
+    private KeyBoardMessageHandler(){}
+
 
     @Override
     public void handle(Message message) {
+        updateComponents();
         if (message.getMessageType().equals(Message.MessageType.KeyBoard)){
             KeyEvent msg = (KeyEvent) message.getMessage();
             if (msg == null) return;
+            // 注册了接受键盘事件的组件 处理事件
+            components.stream().sorted().forEach(component -> {
+                component.processKeyEvent(msg);
+            });
             if (msg.getID() == KeyEvent.KEY_PRESSED){
                 processKeyPressed(msg);
             }else if (msg.getID() == KeyEvent.KEY_RELEASED){

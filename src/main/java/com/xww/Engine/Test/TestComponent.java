@@ -3,11 +3,13 @@ package com.xww.Engine.Test;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.FreeComponent;
+import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class TestComponent extends FreeComponent {

@@ -6,20 +6,33 @@ import com.xww.Engine.core.Event.Message.Message;
 import com.xww.Engine.core.Event.Message.MessageHandler;
 
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
-public class MouseMessageHandler implements MessageHandler {
+public class MouseMessageHandler extends MessageHandler {
 
+    public static MouseMessageHandler mouseMessageHandlerInstance = new MouseMessageHandler();
     private static boolean checked = false;
     private static Component checked_object = null;
+
+    private MouseMessageHandler(){}
+
     @Override
     public void handle(Message message) {
         Message.MessageType type = message.getMessageType();
+        updateComponents();
+        if (message.getMessage() instanceof MouseEvent mouseEvent){
+            components.stream().sorted().forEach(component -> {
+                component.processMouseEvent(mouseEvent);
+            });
+        }
         switch (type) {
             case MouseClicked -> processMouseClicked((MouseEvent) message.getMessage());
             case MousePressed -> processMousePressed((MouseEvent) message.getMessage());
             case MouseReleased -> processMouseReleased((MouseEvent) message.getMessage());
             case MouseEnter -> processMouseEnter((MouseEvent) message.getMessage());
             case MouseExit -> processMouseExit((MouseEvent) message.getMessage());
+            case MouseMoved -> processMouseMoved((MouseEvent) message.getMessage());
             default -> {
             } // do nothing
         }
@@ -38,7 +51,6 @@ public class MouseMessageHandler implements MessageHandler {
     }
 
     private static void processMouseEnter(MouseEvent message) {
-
 
     }
 
@@ -83,19 +95,11 @@ public class MouseMessageHandler implements MessageHandler {
         } catch (RuntimeException e) {
             // do nothing
         }
-
-//        for (Component object : Component.allComponents){
-//            if(object.whether_mouse_in(x, y)){
-//                object.whetherCanDrag = !object.whetherCanDrag;
-//                return;
-//            }
-//        }
     }
 
     @Override
     public boolean checkValid() {
         return true;
     }
-
 
 }

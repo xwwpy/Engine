@@ -10,7 +10,8 @@ public class Message {
         MouseReleased,
         MouseClicked,
         MouseEnter,
-        MouseExit, MouseMoved,
+        MouseExit,
+        MouseMoved,
     }
 
     public static enum ColliderType {

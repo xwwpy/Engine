@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
-
+@SuppressWarnings("all")
 public class GameFrame extends JFrame{
     // 游戏画板
     public static class GamePanel extends JPanel {
@@ -123,8 +123,8 @@ public class GameFrame extends JFrame{
                 process_message(new Message(e, Message.MessageType.MouseExit));
             }
         });
-        messageHandlers.add(new MouseMessageHandler());
-        messageHandlers.add(new KeyBoardMessageHandler());
+        messageHandlers.add(MouseMessageHandler.mouseMessageHandlerInstance);
+        messageHandlers.add(KeyBoardMessageHandler.keyBoardMessageHandlerInstance);
     }
 
 
@@ -168,10 +168,10 @@ public class GameFrame extends JFrame{
 
         // 更新鼠标位置
         messageHandlers.forEach((handler)->{
-            if (handler.checkValid() && handler instanceof MouseMessageHandler){
+            if (handler.checkValid() && handler instanceof MouseMessageHandler mouseMessageHandler){
                 Point point = MouseInfo.getPointerInfo().getLocation();
                 Vector screen_position = ScreenInfoComponent.screen_position;
-                ((MouseMessageHandler) handler).processMouseMoved(new MouseEvent(context, 0, 0, 0, point.x - screen_position.getX(), point.y - screen_position.getY(), 0, false));
+                mouseMessageHandler.handle(new Message(new MouseEvent(context, 0, 0, 0, point.x - screen_position.getX(), point.y - screen_position.getY(), 0, false), Message.MessageType.MouseMoved));
             }
         });
 

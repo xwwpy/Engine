@@ -452,6 +452,9 @@ public abstract class Component implements Base, Comparable<Component> {
         }
     }
 
+    /**
+     * 被选中后 释放鼠标调用的函数
+     */
     public void process_mouse_release() {
         // do nothing
     }
