@@ -37,8 +37,8 @@ public class RectCollider extends BaseCollider{
             // 判断两矩形是否相交
             return new ActionAfterCollision.CollisionInfo(!(right_x_1 < left_x_2 || left_x_1 > right_x_2 || down_y_1 < up_y_2 || up_y_1 > down_y_2), ActionAfterCollision.collisionDirection.RectLeft, other.owner, this, other);
 
-        } else if (other instanceof  CircleCollider){
-            return other.checkCollision(this);
+        } else if (other instanceof CircleCollider otherCircle){
+            return CollisionHandler.checkCollisionRectWithCircle(otherCircle, this);
         } else {
             System.out.println("Rect 碰撞体不支持此碰撞检测");
             return ActionAfterCollision.CollisionInfo.NoCollisionInfo();

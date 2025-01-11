@@ -224,18 +224,16 @@ public abstract class Component implements Base, Comparable<Component> {
                 if (!flag){
                     return;
                 }
-                Vector otherVector = collisionInfo.getOtherCollider().getOwner().getVelocity();
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
                 Vector v1 = this.velocity;
-                Vector v2 = otherVector;
+                Vector v2 = collisionInfo.getOtherCollider().getOwner().getVelocity();
                 // 计算碰撞后的速度
                 Vector v1Prime = v1.scale((m1 - m2) / (m1 + m2)).add(v2.scale(2 * m2 / (m1 + m2)));
                 Vector v2Prime = v2.scale((m2 - m1) / (m1 + m2)).add(v1.scale(2 * m1 / (m1 + m2)));
-
                 // 设置新的速度
-                this.velocity = v1Prime;
-                collisionInfo.getOtherCollider().getOwner().setVelocity(v2Prime);
+                this.setVelocity(v1Prime);
+                collisionInfo.getColliderComponent().setVelocity(v2Prime);
                 break;
             default:
                 throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + actionAfterCollisionType);
@@ -268,7 +266,6 @@ public abstract class Component implements Base, Comparable<Component> {
      */
 
     public void receiveCollision(ActionAfterCollision.CollisionInfo collisionInfo){
-
         collisionAction(collisionInfo, false);
     }
 
@@ -299,6 +296,14 @@ public abstract class Component implements Base, Comparable<Component> {
         child.parent = this;
         this.children_to_add.add(child);
         allComponents_to_add.add(child);
+    }
+
+    public int getMass() {
+        return mass;
+    }
+
+    public void setMass(int mass) {
+        this.mass = mass;
     }
 
     public void setOrder(int order) {
