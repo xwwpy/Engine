@@ -7,7 +7,7 @@ import java.util.Set;
 
 public abstract class MessageHandler {
     protected final Set<Component> components_to_add = new HashSet<>();
-    protected final Set<Component> components = new HashSet<>();
+    public final Set<Component> components = new HashSet<>();
     protected final Set<Component> components_to_remove = new HashSet<>();
 
 

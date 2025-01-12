@@ -7,6 +7,7 @@ import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Event.Message.Message;
 import com.xww.Engine.core.Event.Message.MessageHandler;
 import com.xww.Engine.core.Event.TimeEventManager;
+import com.xww.Engine.core.Scene.SceneManager;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.setting.FrameSetting;
 
@@ -159,11 +160,8 @@ public class GameFrame extends JFrame{
     static void on_update(Graphics g) {
         // 更新时间事件管理器
         update_time();
-        // 更新组件
-        updateComponent(g);
         // 更新相机位置
         Camera.updateCamera();
-
         // 更新鼠标位置
         messageHandlers.forEach((handler)->{
             if (handler.checkValid() && handler instanceof MouseMessageHandler mouseMessageHandler){
@@ -172,35 +170,12 @@ public class GameFrame extends JFrame{
                 mouseMessageHandler.handle(new Message(new MouseEvent(context, 0, 0, 0, point.x - screen_position.getX(), point.y - screen_position.getY(), 0, false), Message.MessageType.MouseMoved));
             }
         });
-
+        // 更新场景
+        SceneManager.sceneManagerIns.on_update(g);
     }
 
     private static void update_time() {
         TimeEventManager.tick();
-    }
-
-    private static void updateComponent(Graphics g) {
-        Component.components.addAll(Component.components_to_add);
-        Component.allComponents_to_add.addAll(Component.components_to_add);
-
-        Component.components_to_add.clear();
-
-        Component.allComponents_to_remove.addAll(Component.components_to_remove);
-
-        Component.components_to_remove.forEach(component -> {
-            component.on_destroy();
-            Component.components.remove(component);
-        });
-        Component.components_to_remove.clear();
-        Component.components.stream().sorted().forEach(component -> {
-            component.on_update(g);
-        });
-        Component.allComponents.addAll(Component.allComponents_to_add);
-        Component.allComponents_to_add.clear();
-        Component.allComponents.removeAll(Component.allComponents_to_remove);
-        Component.allComponents_to_remove.clear();
-        // 更新拖拽组件
-        Component.updateDragComponents();
     }
 
     // 将窗口置于屏幕中心
@@ -254,6 +229,9 @@ public class GameFrame extends JFrame{
     }
 
     public static void process_message(Message message) {
+        // 不同场景处理消息
+        SceneManager.sceneManagerIns.processMessage(message);
+        // 全局消息处理器
         for (MessageHandler messageHandler : messageHandlers) {
             messageHandler.handle(message);
             if (!messageHandler.checkValid()){

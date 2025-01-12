@@ -1,6 +1,7 @@
 package com.xww.projects.game01;
 
 import com.xww.Engine.Test.TestCharacter;
+import com.xww.Engine.Test.TestCircle;
 import com.xww.Engine.Test.TestComponent;
 import com.xww.Engine.Test.TestRelativeComponent;
 import com.xww.Engine.core.Anchor.AnchorMode;
@@ -41,7 +42,7 @@ public class Main {
         testComponent.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent, 30));
         testComponent.addCollider(new CircleCollider(Vector.build(200, 0), testComponent, 40));
         Component.addComponent(testComponent);
-        testComponent.setMass(6000);
+        testComponent.setMass(100);
 
         TestRelativeComponent testRelativeComponent = new TestRelativeComponent(testComponent, Vector.build(50, 60), AnchorMode.LeftTop, Vector.build(500, 0), Vector.build(50, 20), Vector.build(300, 0), true, 0, 11);
         testComponent.addChild(testRelativeComponent);
@@ -57,7 +58,6 @@ public class Main {
         Component.addComponent(new TimeComponent());
         Component.addComponent(new CursorComponent());
         Component.addComponent(new CameraComponent());
-
         TestComponent boundaryLeft = new TestComponent(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 100);
         boundaryLeft.addCollider(new RectCollider(Vector.build(0, 0), boundaryLeft, boundaryLeft.getSize()));
         Component.addComponent(boundaryLeft);

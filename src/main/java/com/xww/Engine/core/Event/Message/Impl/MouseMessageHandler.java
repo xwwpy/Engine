@@ -6,8 +6,6 @@ import com.xww.Engine.core.Event.Message.Message;
 import com.xww.Engine.core.Event.Message.MessageHandler;
 
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
 
 public class MouseMessageHandler extends MessageHandler {
 
@@ -20,12 +18,6 @@ public class MouseMessageHandler extends MessageHandler {
     @Override
     public void handle(Message message) {
         Message.MessageType type = message.getMessageType();
-        updateComponents();
-        if (message.getMessage() instanceof MouseEvent mouseEvent){
-            components.stream().sorted().forEach(component -> {
-                component.processMouseEvent(mouseEvent);
-            });
-        }
         switch (type) {
             case MouseClicked -> processMouseClicked((MouseEvent) message.getMessage());
             case MousePressed -> processMousePressed((MouseEvent) message.getMessage());
