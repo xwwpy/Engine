@@ -133,4 +133,13 @@ public class Vector {
     public String toString() {
         return "{ x: " + StringUtils.getTargetAccuracy(x, 3) + ", y: " + StringUtils.getTargetAccuracy(y, 3) + "}";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Vector v){
+            // 1*10e-6的允许误差
+            return !(Math.abs(v.x - x) > 1 * 10e-6) && !(Math.abs(v.y - y) > 1 * 10e-6);
+        }
+        return super.equals(obj);
+    }
 }

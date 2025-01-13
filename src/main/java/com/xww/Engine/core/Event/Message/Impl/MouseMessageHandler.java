@@ -80,7 +80,7 @@ public class MouseMessageHandler extends MessageHandler {
                         object.setWhetherShowDebugInfo(!object.isWhetherShowDebugInfo());
                         throw new RuntimeException();
                     }
-                    object.whetherCanDrag = !object.whetherCanDrag;
+                    object.setWhetherCanDrag(!object.whetherCanDrag);
                     throw new RuntimeException();
                 }
             });

@@ -1,7 +1,6 @@
 package com.xww.projects.game01;
 
 import com.xww.Engine.Test.TestCharacter;
-import com.xww.Engine.Test.TestCircle;
 import com.xww.Engine.Test.TestComponent;
 import com.xww.Engine.Test.TestRelativeComponent;
 import com.xww.Engine.core.Anchor.AnchorMode;
@@ -15,6 +14,7 @@ import com.xww.Engine.core.Component.impl.TimeComponent;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.FrameSetting;
+import com.xww.projects.game01.Test.TestCard;
 
 public class Main {
     public static void main(String[] args) {
@@ -76,5 +76,6 @@ public class Main {
         boundaryBottom.setMass(-1);
         TestCharacter testCharacter = new TestCharacter(Vector.build(300, 300), Vector.build(100, 100));
         Component.addComponent(testCharacter);
+        Component.addComponent(new TestCard(Vector.build(100, 400)));
     }
 }

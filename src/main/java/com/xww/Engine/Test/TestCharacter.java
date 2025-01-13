@@ -8,7 +8,7 @@ import com.xww.Engine.core.Vector.Vector;
 
 public class TestCharacter extends Character{
     public TestCharacter(Vector worldPosition, Vector size) {
-        super(worldPosition, size, Vector.build(100, 200), Vector.Zero(), Integer.MAX_VALUE, 1000, 10, true, true);
+        super(worldPosition, size, Vector.build(100, 200), Vector.Zero(), Integer.MAX_VALUE - 11, 1000, 10, true, true);
         initIdleAnimation(size);
         this.addCollider(new RectCollider(Vector.Zero(), this, size));
     }

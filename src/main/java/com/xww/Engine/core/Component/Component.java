@@ -110,11 +110,15 @@ public abstract class Component implements Base, Comparable<Component> {
         // 更新碰撞器组件
         update_collider();
         drawCollider(g);
+        drawWhetherCanDrag(g);
+        if (whetherShowDebugInfo && DebugSetting.IS_DEBUG_ON) showDebugInfo(g);
+    }
+
+    public void drawWhetherCanDrag(Graphics g) {
         if (whetherBeRegisteredCanDrag && whetherCanDrag){
             g.setColor(DebugSetting.DebugInfoColor);
             g.drawString("can drag", this.getDrawPosition().getX() - 20, this.getDrawPosition().getY() - 20);
         }
-        if (whetherShowDebugInfo && DebugSetting.IS_DEBUG_ON) showDebugInfo(g);
     }
 
     /**
@@ -495,5 +499,9 @@ public abstract class Component implements Base, Comparable<Component> {
 
     public void setCallBack(ActionAfterCollision.ActionAfterCollisionType callBack){
         this.callBack = callBack;
+    }
+
+    public void setWhetherCanDrag(boolean whetherCanDrag) {
+        this.whetherCanDrag = whetherCanDrag;
     }
 }
