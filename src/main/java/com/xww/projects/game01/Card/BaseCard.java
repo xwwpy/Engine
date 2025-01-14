@@ -11,7 +11,7 @@ import java.awt.*;
 
 
 public abstract class BaseCard extends FreeComponent {
-    public static final Vector card_size = new Vector(110, 120);
+    public static final Vector card_size = new Vector(90, 100);
     protected final Image card_image;
     protected int coolDownTime; // 单位毫秒
     protected int currentCoolDownTime = 0;
@@ -80,7 +80,9 @@ public abstract class BaseCard extends FreeComponent {
         this.is_cool_down = true;
     }
 
-    protected abstract void generateFail();
+    protected void generateFail(){
+        // default => do nothing
+    }
 
     @Override
     public boolean whether_mouse_in(double x, double y) {
@@ -117,6 +119,7 @@ public abstract class BaseCard extends FreeComponent {
                 // 种植成功后执行的逻辑
                 generateSuccess();
             } else {
+                // 种植失败后执行的逻辑
                 generateFail();
             }
         }

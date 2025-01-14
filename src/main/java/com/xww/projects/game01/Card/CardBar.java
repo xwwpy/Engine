@@ -6,7 +6,7 @@ import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 
 public class CardBar extends FreeComponent {
-    // TODO 目前不考虑多线程的影响
+    // 目前不考虑多线程的影响
     public static int CurrentSun = 100;
     private int currentCanAccommodateCardsNum; // 当前可以容纳的卡片数量
     private int realAccommodateCardsNum; // 实际容纳的卡片数量

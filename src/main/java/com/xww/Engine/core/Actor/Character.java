@@ -11,7 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Character extends FreeComponent {
-
+    protected int life;
+    protected int currentLife;
+    protected int atk;
+    protected int atk_interval; // 攻击间隔或者其它特殊行为的间隔
+    protected boolean whetherCanAtk = true;
     protected Map<String, Animation> animations = new HashMap<>();
     protected Animation currentAnimation;
 
@@ -23,8 +27,15 @@ public abstract class Character extends FreeComponent {
                      int CollisionRegion,
                      int mass,
                      boolean whetherShowDebugInfo,
-                     boolean is_drag_on) {
+                     boolean is_drag_on,
+                     int life,
+                     int atk,
+                     int atk_interval) {
         super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo, is_drag_on);
+        this.life = life;
+        this.currentLife = life;
+        this.atk = atk;
+        this.atk_interval = atk_interval;
     }
 
     public void addAnimation(String name, Animation animation) {
@@ -50,4 +61,10 @@ public abstract class Character extends FreeComponent {
      * 选择动画
      */
     public abstract void selectCurrentAnimation();
+
+    /**
+     * 尝试进行攻击
+     * @return 是否攻击成功
+     */
+    protected abstract boolean tryAtk();
 }

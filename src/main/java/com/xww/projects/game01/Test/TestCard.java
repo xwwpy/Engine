@@ -1,5 +1,7 @@
 package com.xww.projects.game01.Test;
 
+import com.xww.Engine.Test.TestCircle;
+import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.projects.game01.Card.BaseCard;
@@ -11,13 +13,11 @@ public class TestCard extends BaseCard {
 
     @Override
     public boolean generateCharacter(Vector position) {
-        Component.addComponent(new TestCard(position));
+        TestCard card = new TestCard(position);
+        card.addCollider(new RectCollider(Vector.Zero(), this, card.size));
+        card.CollisionRegion = ++TestCircle.collisionRegion;
+        Component.addComponent(card);
         return true;
-    }
-
-    @Override
-    protected void generateFail() {
-        // do nothing
     }
 
 }

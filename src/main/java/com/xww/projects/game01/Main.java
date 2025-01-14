@@ -14,6 +14,7 @@ import com.xww.Engine.core.Component.impl.TimeComponent;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.FrameSetting;
+import com.xww.projects.game01.Chess.Chess;
 import com.xww.projects.game01.Test.TestCard;
 
 public class Main {
@@ -77,5 +78,6 @@ public class Main {
         TestCharacter testCharacter = new TestCharacter(Vector.build(300, 300), Vector.build(100, 100));
         Component.addComponent(testCharacter);
         Component.addComponent(new TestCard(Vector.build(100, 400)));
+        Component.addComponent(Chess.createChess(5, 9, Vector.build((int) (747 * 2.3), (int) (320 * 2.3)), Vector.build(100, 125), Vector.build(300, 88), "/Applications/程序/项目文件/javaProject/project01/src/game/game07/Resources/res/images/bg5.jpg"));
     }
 }
