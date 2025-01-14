@@ -58,7 +58,8 @@ public class MouseMessageHandler extends MessageHandler {
         int x = message.getX();
         int y = message.getY() - 29; // 减去标题栏高度
         try {
-            Component.can_drag_object.stream().sorted().forEach(object -> {
+            // 从优先级更高的组件开始遍历
+            Component.can_drag_object.stream().sorted((Component o1, Component o2)-> Integer.compare(o2.getOrder(), o1.getOrder())).forEach(object -> {
                 if(object.whether_mouse_in(x, y)){
                     checked = true;
                     checked_object = object;
@@ -74,13 +75,14 @@ public class MouseMessageHandler extends MessageHandler {
         int x = message.getX();
         int y = message.getY() - 29; // 减去标题栏高度
         try {
-            Component.allComponents.stream().sorted().forEach(object -> {
+            // 从优先级更高的组件开始遍历
+            Component.allComponents.stream().sorted((Component o1, Component o2)-> Integer.compare(o2.getOrder(), o1.getOrder())).forEach(object -> {
                 if(object.whether_mouse_in(x, y)){
-                    if (message.getClickCount() == 3) {
+                    if (message.getClickCount() == 2) {
                         object.setWhetherShowDebugInfo(!object.isWhetherShowDebugInfo());
-                        throw new RuntimeException();
+                    } else {
+                        object.setWhetherCanDrag(!object.whetherCanDrag);
                     }
-                    object.setWhetherCanDrag(!object.whetherCanDrag);
                     throw new RuntimeException();
                 }
             });
