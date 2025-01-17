@@ -41,7 +41,7 @@ public class CardBar extends FreeComponent {
     @Override
     public void on_update(Graphics g) {
         for (int i = 0; i < realAccommodateCardsNum; i++) {
-            // TODO
+            // TODO 思考是否需要直接作为子类
             cards[i].on_update(g);
         }
         super.on_update(g);
