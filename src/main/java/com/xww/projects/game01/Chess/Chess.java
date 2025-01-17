@@ -6,7 +6,7 @@ import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.DebugSetting;
-import com.xww.projects.game01.Plant.BasePlant;
+import com.xww.projects.game01.object.Plant.BasePlant;
 
 import java.awt.*;
 
@@ -43,7 +43,19 @@ public class Chess extends FreeComponent {
         return new Chess(row, col, size, start_position, latticeSize, path);
     }
 
-    public PlantType addPlant(BasePlant plant, int row, int col){
+    public Vector getRowAndColumn(Vector position){
+        Vector start_position = this.start_position;
+        Vector latticeSize = this.latticeSize;
+        Vector position_in_chess = position.sub(start_position);
+        int row = (position_in_chess.getY() / latticeSize.getY()) + 1;
+        int col = (position_in_chess.getX() / latticeSize.getX()) + 1;
+        return new Vector(row, col);
+    }
+
+    public PlantType addPlant(BasePlant plant, Vector position){
+        Vector rowAndColumn = getRowAndColumn(position);
+        int row = rowAndColumn.getX();
+        int col = rowAndColumn.getY();
         if(!checkValid(row, col)){
             return PlantType.OUTBOUND;
         }
@@ -61,6 +73,24 @@ public class Chess extends FreeComponent {
             return PlantType.PLANT;
         }
     }
+//    public PlantType addPlant(BasePlant plant, int row, int col){
+//        if(!checkValid(row, col)){
+//            return PlantType.OUTBOUND;
+//        }
+//        BasePlant plant1 = this.getPlant(row, col);
+//        if (plant1 != null){
+//            BasePlant plant_after_fusion = plant.tryFusion(plant1);
+//            if (plant_after_fusion != null){
+//                plants[(row - 1) * col + col] = plant_after_fusion;
+//                return PlantType.FUSION;
+//            } else {
+//                return PlantType.NONE;
+//            }
+//        } else {
+//            plants[(row - 1) * col + col] = plant;
+//            return PlantType.PLANT;
+//        }
+//    }
 
     private boolean checkValid(int row, int col) {
         return row > 0 && row <= this.row && col > 0 && col <= this.col;

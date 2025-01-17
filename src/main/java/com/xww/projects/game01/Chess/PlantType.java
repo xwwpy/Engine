@@ -1,5 +1,8 @@
 package com.xww.projects.game01.Chess;
 
+/**
+ * 种植植物的类型
+ */
 public enum PlantType {
     PLANT, // 单纯的种植
     FUSION, // 融合

@@ -142,4 +142,14 @@ public class Vector {
         }
         return super.equals(obj);
     }
+
+    public Vector mul(double mulNum) {
+        return Vector.build(this.x * mulNum, this.y * mulNum);
+    }
+
+    public Vector mul_to_self(double mulNum) {
+        this.x *=  mulNum;
+        this.y *= mulNum;
+        return this;
+    }
 }

@@ -504,4 +504,13 @@ public abstract class Component implements Base, Comparable<Component> {
     public void setWhetherCanDrag(boolean whetherCanDrag) {
         this.whetherCanDrag = whetherCanDrag;
     }
+
+    /**
+     * 判断是否与此组件检测碰撞
+     * @param other 其它组件
+     * @return true 检测碰撞 false 不检测碰撞
+     */
+    public boolean whetherCheckCollision(Component other) {
+        return !(other.getCollisionRegion() == -1 || this.getCollisionRegion() == -1 || this.getCollisionRegion() == other.getCollisionRegion());
+    }
 }

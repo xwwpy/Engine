@@ -1,11 +1,12 @@
-package com.xww.projects.game01.Zombie;
+package com.xww.projects.game01.object;
 
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Vector.Vector;
 
-public abstract class BaseZombie extends Character {
+public abstract class BaseObject extends Character {
 
-    public BaseZombie(Vector worldPosition,
+    protected ObjectType objectType; // 对象所属的类型
+    public BaseObject(Vector worldPosition,
                       Vector size,
                       Vector velocity,
                       Vector acceleration,
@@ -16,8 +17,17 @@ public abstract class BaseZombie extends Character {
                       boolean is_drag_on,
                       int life,
                       int atk,
-                      int atk_interval) {
+                      int atk_interval,
+                      ObjectType objectType) {
         super(worldPosition, size, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo, is_drag_on, life, atk, atk_interval);
+        this.objectType = objectType;
     }
 
+    public ObjectType getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(ObjectType objectType) {
+        this.objectType = objectType;
+    }
 }

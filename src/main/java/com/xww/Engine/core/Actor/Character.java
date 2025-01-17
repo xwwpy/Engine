@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("all")
 public abstract class Character extends FreeComponent {
     protected int life;
     protected int currentLife;
@@ -67,4 +68,52 @@ public abstract class Character extends FreeComponent {
      * @return 是否攻击成功
      */
     protected abstract boolean tryAtk();
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    public int getCurrentLife() {
+        return currentLife;
+    }
+
+    public void setCurrentLife(int currentLife) {
+        this.currentLife = currentLife;
+    }
+
+    public int getAtk() {
+        return atk;
+    }
+
+    public void setAtk(int atk) {
+        this.atk = atk;
+    }
+
+    public int getAtk_interval() {
+        return atk_interval;
+    }
+
+    public void setAtk_interval(int atk_interval) {
+        this.atk_interval = atk_interval;
+    }
+
+    public boolean isWhetherCanAtk() {
+        return whetherCanAtk;
+    }
+
+    public void setWhetherCanAtk(boolean whetherCanAtk) {
+        this.whetherCanAtk = whetherCanAtk;
+    }
+
+    public Animation getCurrentAnimation() {
+        return currentAnimation;
+    }
+
+    public void setCurrentAnimation(Animation currentAnimation) {
+        this.currentAnimation = currentAnimation;
+    }
 }

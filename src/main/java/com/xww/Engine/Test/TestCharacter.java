@@ -8,7 +8,7 @@ import com.xww.Engine.core.Vector.Vector;
 
 public class TestCharacter extends Character{
     public TestCharacter(Vector worldPosition, Vector size) {
-        super(worldPosition, size, Vector.build(100, 200), Vector.Zero(), Integer.MAX_VALUE - 11, 1000, 10, true, true);
+        super(worldPosition, size, Vector.build(100, 200), Vector.Zero(), Integer.MAX_VALUE - 11, 1000, 10, true, true, 100, 100, 100);
         initIdleAnimation(size);
         this.addCollider(new RectCollider(Vector.Zero(), this, size));
     }
@@ -17,6 +17,12 @@ public class TestCharacter extends Character{
     public void selectCurrentAnimation() {
         this.currentAnimation = animations.get("idle");
     }
+
+    @Override
+    protected boolean tryAtk() {
+        return false;
+    }
+
     private void initIdleAnimation(Vector size) {
         this.currentAnimation = new Animation(this, 100);
         this.animations.put("idle", this.currentAnimation);
