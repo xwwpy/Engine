@@ -409,17 +409,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public Vector getDrawPosition() {
-//        switch (this.positionType){
-//            case World -> {
-                return GameFrame.getRealDrawPosition(this.getLeftTopWorldPosition());
-//            }
-//            case Screen -> {
-//                return
-//            }
-//            default -> {
-//                throw new RuntimeException("未知的坐标类型");
-//            }
-//        }
+          return GameFrame.getRealDrawPosition(this.getLeftTopWorldPosition());
     }
 
     public Vector getLeftTopWorldPosition(){

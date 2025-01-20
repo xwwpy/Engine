@@ -63,6 +63,7 @@ public abstract class BaseCard extends FreeComponent {
     }
 
     /**
+     * @param position 屏幕的位置
      * @return 是否成功种植或者融合
      */
     protected abstract boolean generateCharacter(Vector position);
