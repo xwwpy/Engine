@@ -192,13 +192,14 @@ public class GameFrame extends JFrame{
         FrameSetting.DEFAULT_FPS = fps;
         this.each_frame_target_time = 1_000_000_000 / FrameSetting.DEFAULT_FPS;
     }
-    // 得到相对屏幕坐标
-    public Vector getRealDrawPosition(Vector position, PositionType type) {
-        return switch (type) {
-            case World -> position.sub(Camera.camera_position);
-            case Screen -> position;
-            default -> Vector.Zero();
-        };
+
+    /**
+     *
+     * @param position 世界坐标
+     * @return 实际画的位置
+     */
+    public static Vector getRealDrawPosition(Vector position) {
+        return position.sub(Camera.camera_position);
     }
 
     public static Vector getLeftTopWorldPosition(Component component) {

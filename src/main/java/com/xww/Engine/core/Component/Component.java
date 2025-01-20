@@ -7,6 +7,7 @@ import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.BaseCollider;
 import com.xww.Engine.core.Collision.CollisionHandler;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.gui.Camera;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.setting.DebugSetting;
@@ -346,7 +347,17 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public Vector getWorldPosition() {
-        return worldPosition;
+        switch (this.positionType) {
+            case World -> {
+                return worldPosition;
+            }
+            case Screen -> {
+                return Camera.camera_position.add(worldPosition);
+            }
+            default -> {
+                throw new RuntimeException("Component 组件目前不支持 获取世界坐标的坐标类型: " + this.positionType);
+            }
+        }
     }
 
     public void setWorldPosition(Vector worldPosition) {
@@ -398,7 +409,17 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public Vector getDrawPosition() {
-        return GameFrame.context.getRealDrawPosition(GameFrame.getLeftTopWorldPosition(this), this.positionType);
+//        switch (this.positionType){
+//            case World -> {
+                return GameFrame.getRealDrawPosition(this.getLeftTopWorldPosition());
+//            }
+//            case Screen -> {
+//                return
+//            }
+//            default -> {
+//                throw new RuntimeException("未知的坐标类型");
+//            }
+//        }
     }
 
     public Vector getLeftTopWorldPosition(){

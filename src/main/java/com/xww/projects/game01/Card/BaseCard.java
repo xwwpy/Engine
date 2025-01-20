@@ -63,7 +63,6 @@ public abstract class BaseCard extends FreeComponent {
     }
 
     /**
-     *
      * @return 是否成功种植或者融合
      */
     protected abstract boolean generateCharacter(Vector position);
@@ -115,7 +114,7 @@ public abstract class BaseCard extends FreeComponent {
     @Override
     public void process_mouse_release() {
         if (this.card_cost <= CardBar.CurrentSun){
-            if (generateCharacter(this.getWorldPosition().add(this.virtual_card_position))) {
+            if (generateCharacter(this.getDrawPosition().add(this.virtual_card_position))) {
                 // 种植成功后执行的逻辑
                 generateSuccess();
             } else {
