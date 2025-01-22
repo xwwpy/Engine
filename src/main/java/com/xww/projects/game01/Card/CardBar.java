@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class CardBar extends FreeComponent {
     // 目前不考虑多线程的影响
-    public static int CurrentSun = 100;
+    public static int CurrentSun = 1000;
     private final int currentCanAccommodateCardsNum; // 当前可以容纳的卡片数量
     private int realAccommodateCardsNum; // 实际容纳的卡片数量
 
@@ -17,8 +17,8 @@ public class CardBar extends FreeComponent {
 
 
 
-    private CardBar(Vector worldPosition, int currentCanAccommodateCardsNum) {
-        super(worldPosition, GameFrame.PositionType.Screen, getCardBarSize(currentCanAccommodateCardsNum), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 11, -1, -1, false, false);
+    public CardBar(int currentCanAccommodateCardsNum) {
+        super(Vector.build(100, 10), GameFrame.PositionType.Screen, getCardBarSize(currentCanAccommodateCardsNum), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 11, -1, -1, true, false);
         this.currentCanAccommodateCardsNum = currentCanAccommodateCardsNum;
         this.realAccommodateCardsNum = 0;
         cards = new BaseCard[this.currentCanAccommodateCardsNum];
@@ -45,5 +45,10 @@ public class CardBar extends FreeComponent {
             cards[i].on_update(g);
         }
         super.on_update(g);
+    }
+
+    @Override
+    protected void showDebugInfo(Graphics g) {
+        g.drawString("current sun: " + CurrentSun, this.getDrawPosition().getX(), this.getDrawPosition().getY());
     }
 }
