@@ -76,7 +76,7 @@ public class MouseMessageHandler extends MessageHandler {
         int y = message.getY() - 29; // 减去标题栏高度
         try {
             // 从优先级更高的组件开始遍历
-            Component.allComponents.stream().sorted((Component o1, Component o2)-> Integer.compare(o2.getOrder(), o1.getOrder())).forEach(object -> {
+            mouseMessageHandlerInstance.components.stream().sorted((Component o1, Component o2)-> Integer.compare(o2.getOrder(), o1.getOrder())).forEach(object -> {
                 if(object.whether_mouse_in(x, y)){
                     if (message.getClickCount() == 2) {
                         object.setWhetherShowDebugInfo(!object.isWhetherShowDebugInfo());

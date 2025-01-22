@@ -6,6 +6,7 @@ import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.BaseCollider;
 import com.xww.Engine.core.Collision.CollisionHandler;
+import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.Camera;
 import com.xww.Engine.gui.GameFrame;
@@ -83,7 +84,14 @@ public abstract class Component implements Base, Comparable<Component> {
 
 
     public static void addComponent(Component component) {
+        addComponent(component, true);
+    }
+
+    public static void addComponent(Component component, boolean registerMouseFlag) {
         components_to_add.add(component);
+        if (registerMouseFlag) {
+            MouseMessageHandler.mouseMessageHandlerInstance.registerComponent(component);
+        }
     }
 
     @Override
@@ -314,10 +322,25 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
 
+    /**
+     * 默认注册到监听鼠标事件的对象组中
+     */
     public void addChild(Component child) {
+        addChild(child, true);
+    }
+
+    /**
+     *
+     * @param child
+     * @param registerMouseFlag 指定是否注册到监听鼠标事件的对象组中
+     */
+    public void addChild(Component child, boolean registerMouseFlag) {
         child.parent = this;
         this.children_to_add.add(child);
         allComponents_to_add.add(child);
+        if (registerMouseFlag) {
+            MouseMessageHandler.mouseMessageHandlerInstance.registerComponent(child);
+        }
     }
 
     public int getMass() {

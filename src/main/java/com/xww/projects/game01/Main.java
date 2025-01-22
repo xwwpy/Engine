@@ -40,11 +40,11 @@ public class Main {
         Component.addComponent(new TestComponent(Vector.build(600, 200), Vector.build(200, 100), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 7));
         Component.addComponent(new TestComponent(Vector.build(200, 600), Vector.build(100, 100), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 8));
 
-        TestComponent testComponent = new TestComponent(Vector.build(600, 550), Vector.build(100, 150), AnchorMode.RightTop, Vector.build(500, 200), Vector.Zero(), 0, 9);
+        TestComponent testComponent = new TestComponent(Vector.build(600, 550), Vector.build(100, 150), AnchorMode.RightTop, Vector.build(0, 0), Vector.Zero(), 0, 9);
         testComponent.addCollider(new CircleCollider(Vector.build(-100, 0), testComponent, 30));
         testComponent.addCollider(new CircleCollider(Vector.build(200, 0), testComponent, 40));
         Component.addComponent(testComponent);
-        testComponent.setMass(100);
+        testComponent.setMass(10000);
 
         TestRelativeComponent testRelativeComponent = new TestRelativeComponent(testComponent, Vector.build(50, 60), AnchorMode.LeftTop, Vector.build(500, 0), Vector.build(50, 20), Vector.build(300, 0), true, 0, 11);
         testComponent.addChild(testRelativeComponent);
@@ -80,6 +80,6 @@ public class Main {
         Component.addComponent(testCharacter);
         Component.addComponent(new TestCard(Vector.build(100, 400)));
         Component.addComponent(Chess.createChess(5, 9, Vector.build((int) (747 * 2.3), (int) (320 * 2.3)), Vector.build(100, 125), Vector.build(300, 88), "/Applications/程序/项目文件/javaProject/project01/src/game/game07/Resources/res/images/bg5.jpg"));
-        Component.addComponent(new CardBar(5));
+        Component.addComponent(new CardBar(5), false);
     }
 }

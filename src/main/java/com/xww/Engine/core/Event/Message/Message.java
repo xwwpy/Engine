@@ -4,7 +4,7 @@ package com.xww.Engine.core.Event.Message;
 
 public class Message {
 
-    public static enum MessageType {
+    public enum MessageType {
         KeyBoard,
         MousePressed,
         MouseReleased,
@@ -12,13 +12,6 @@ public class Message {
         MouseEnter,
         MouseExit,
         MouseMoved,
-    }
-
-    public static enum ColliderType {
-        X,
-        Y,
-        XY,
-        NONE
     }
 
     private final Object message;
