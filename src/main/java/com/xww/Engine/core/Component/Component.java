@@ -524,4 +524,16 @@ public abstract class Component implements Base, Comparable<Component> {
     public boolean whetherCheckCollision(Component other) {
         return !(other.getCollisionRegion() == -1 || this.getCollisionRegion() == -1 || this.getCollisionRegion() == other.getCollisionRegion());
     }
+
+    /**
+     *
+     * @return 是否开启了拖拽功能
+     */
+    public boolean isIs_drag_on() {
+        return is_drag_on;
+    }
+
+    public void setIs_drag_on(boolean is_drag_on) {
+        this.is_drag_on = is_drag_on;
+    }
 }

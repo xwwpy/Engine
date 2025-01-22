@@ -81,6 +81,9 @@ public class MouseMessageHandler extends MessageHandler {
                     if (message.getClickCount() == 2) {
                         object.setWhetherShowDebugInfo(!object.isWhetherShowDebugInfo());
                     } else {
+                        if (!object.isIs_drag_on()){
+                            return;
+                        }
                         object.setWhetherCanDrag(!object.whetherCanDrag);
                     }
                     throw new RuntimeException();
