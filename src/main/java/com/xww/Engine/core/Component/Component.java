@@ -208,17 +208,20 @@ public abstract class Component implements Base, Comparable<Component> {
         ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
         if (collisionInfo.isWhetherCollider()) {
             // 发生碰撞后的回调函数
-            collisionAction(collisionInfo, true);
-            // 只有是自己触发的碰撞才回退移动
-            this.return_move();
+            if (collisionAction(collisionInfo, true)) {
+                // 只有是自己触发的碰撞才回退移动
+                this.return_move();
+            }
         }
     }
 
     /**
      * 碰撞发生后的行为
      * @param flag 自己触发的碰撞 ture 被动接受为 false
+     * @return 是否进行回退移动 true 进行回退 false 不进行回退
+     *
      */
-    protected void collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
+    protected boolean collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
         switch (this.getCollisionType()){
             case stop:
                 // 将速度和加速度清零
@@ -232,27 +235,26 @@ public abstract class Component implements Base, Comparable<Component> {
                 this.setAlive(false);
                 break;
             case nullAction:
-                lastMove = Vector.Zero();
-                break;
+                return false;
             case physics:
                 // 对于此逻辑双方只需执行一次
                 if (!flag){
-                    return;
+                    return true;
                 }
                 // 如果另一方不是物理碰撞 则进行反弹
                 if (collisionInfo.getColliderComponent().getCollisionType() != ActionAfterCollision.ActionAfterCollisionType.physics){
                     // 将另一个不是物理碰撞的当作质量无限大
                     this.reboundVelocity();
-                    return;
+                    return true;
                 }
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
                 if (m1 == -1){
                     collisionInfo.getColliderComponent().reboundVelocity();
-                    return;
+                    return true;
                 } else if (m2 == -1){
                     this.reboundVelocity();
-                    return;
+                    return true;
                 }
                 Vector v1 = this.velocity;
                 Vector v2 = collisionInfo.getOtherCollider().getOwner().getVelocity();
@@ -266,7 +268,9 @@ public abstract class Component implements Base, Comparable<Component> {
                 break;
             default:
                 throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + this.getCollisionType());
+
         }
+        return true;
     }
 
 
