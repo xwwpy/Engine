@@ -18,6 +18,10 @@ public class CircleCollider extends BaseCollider{
         Vector drawPosition = this.owner.getDrawPosition().add(this.relativePosition);
         g.setColor(BaseCollider.boundaryColor);
         g.drawOval(drawPosition.getX(), drawPosition.getY(), (int) (radius * 2), (int) (radius * 2));
+        if (this.lastCollisionDirection != null){
+            g.setColor(BaseCollider.collisionColor);
+            g.drawOval(drawPosition.getX(), drawPosition.getY(), (int) (radius * 2), (int) (radius * 2));
+        }
     }
 
     @Override
@@ -26,7 +30,7 @@ public class CircleCollider extends BaseCollider{
             Vector circle_point_position1 = this.owner.getLeftTopWorldPosition().add(this.relativePosition).add_to_self(Vector.build(this.radius, this.radius));
             Vector circle_point_position2 = otherCircle.owner.getLeftTopWorldPosition().add(otherCircle.relativePosition).add_to_self(Vector.build(otherCircle.radius, otherCircle.radius));
             double distance = circle_point_position1.distance(circle_point_position2);
-            return new ActionAfterCollision.CollisionInfo(distance < (this.radius + otherCircle.radius), ActionAfterCollision.collisionDirection.RectLeft, otherCircle.owner, this, otherCircle);
+            return new ActionAfterCollision.CollisionInfo(distance < (this.radius + otherCircle.radius), ActionAfterCollision.collisionDirection.Circle, otherCircle.owner, this, otherCircle);
         } else if (other instanceof RectCollider otherRect){
             return CollisionHandler.checkCollisionRectWithCircle(otherRect, this);
         } else {

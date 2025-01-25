@@ -3,9 +3,6 @@ package com.xww.Engine.core.Collision;
 import com.xww.Engine.core.Component.Component;
 
 public class ActionAfterCollision {
-//    public static interface CollisionCallBack{
-//        public abstract ActionAfterCollisionType callBack(CollisionInfo collisionInfo);
-//    }
 
     public static enum ActionAfterCollisionType{
         stop, // 停止
@@ -59,13 +56,13 @@ public class ActionAfterCollision {
     }
 
     public static enum collisionDirection{
-        // TODO
-
         // 相对矩形
         RectLeft,
         RectRight,
         RectTop,
-        RectBottom;
+        RectBottom,
+        // 圆形
+        Circle;
 
         public collisionDirection reverse() {
             switch(this){
@@ -80,6 +77,10 @@ public class ActionAfterCollision {
                 }
                 case RectRight -> {
                     return RectLeft;
+                }
+                // TODO
+                case Circle -> {
+                    return Circle;
                 }
                 default -> {
                     throw new RuntimeException("collisionDirection reverse error: 不支持的类型反转");

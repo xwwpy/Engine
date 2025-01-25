@@ -48,7 +48,7 @@ public class CollisionHandler {
         double distanceY = circleCenter.getFullY() - closestY;
 
         // 4. 判断是否发生碰撞
-        return new ActionAfterCollision.CollisionInfo((distanceX * distanceX + distanceY * distanceY) < (selfCircle.getRadius() * selfCircle.getRadius()), ActionAfterCollision.collisionDirection.RectLeft, otherRect.owner, selfCircle, otherRect);
+        return new ActionAfterCollision.CollisionInfo((distanceX * distanceX + distanceY * distanceY) < (selfCircle.getRadius() * selfCircle.getRadius()), ActionAfterCollision.collisionDirection.Circle, otherRect.owner, selfCircle, otherRect);
     }
 
 
