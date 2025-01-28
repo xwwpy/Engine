@@ -124,7 +124,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public void drawWhetherCanDrag(Graphics g) {
-        if (whetherBeRegisteredCanDrag && whetherCanDrag){
+        if (whetherBeRegisteredCanDrag && whetherCanDrag && DebugSetting.IS_DEBUG_ON && this.whetherShowDebugInfo){
             g.setColor(DebugSetting.DebugInfoColor);
             g.drawString("can drag", this.getDrawPosition().getX() - 20, this.getDrawPosition().getY() - 20);
         }

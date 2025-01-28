@@ -56,10 +56,6 @@ public class Main {
         TestComponent testComponent1 = new TestComponent(Vector.build(1100, 600), Vector.build(100, 100), AnchorMode.LeftBottom, Vector.build(100, 20), Vector.Zero(), 0, 10);
 
         Component.addComponent(testComponent1);
-        Component.addComponent(new FpsComponent());
-        Component.addComponent(new TimeComponent());
-        Component.addComponent(new CursorComponent());
-        Component.addComponent(new CameraComponent());
         TestComponent boundaryLeft = new TestComponent(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 100);
         boundaryLeft.addCollider(new RectCollider(Vector.build(0, 0), boundaryLeft, boundaryLeft.getSize()));
         Component.addComponent(boundaryLeft);

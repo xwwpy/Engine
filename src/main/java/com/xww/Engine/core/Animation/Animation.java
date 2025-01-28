@@ -1,8 +1,9 @@
 package com.xww.Engine.core.Animation;
 
-import com.xww.Engine.core.Actor.Character;
+import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.setting.DebugSetting;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,9 +17,9 @@ import java.util.List;
  */
 public class Animation {
 
-    private final Character owner;
+    private final Component owner;
     private Timer timer;
-    boolean is_loop = true;
+    boolean is_loop = false;
     int frame_index = 0;
     private final List<Frame> frames = new ArrayList<>();
     /**
@@ -35,7 +36,7 @@ public class Animation {
      * @param each_frame_time 多长时间切换下一帧
      */
 
-    public Animation(Character owner, int each_frame_time) {
+    public Animation(Component owner, int each_frame_time) {
         if (owner == null){
             throw new RuntimeException("动画的所有者不应为空");
         }
@@ -104,6 +105,10 @@ public class Animation {
     public void on_render(Graphics g) {
         Frame frame = frames.get(frame_index);
         Vector drawPosition = this.owner.getDrawPosition();
+        if (DebugSetting.IS_DEBUG_ON){
+            g.setColor(DebugSetting.DebugInfoColor);
+            g.drawRect(drawPosition.getX(), drawPosition.getY(), frame.image.getWidth(null), frame.image.getHeight(null));
+        }
         g.drawImage(frame.image, drawPosition.getX(), drawPosition.getY(), null);
     }
 
@@ -139,7 +144,7 @@ public class Animation {
         this.on_complete = on_complete;
     }
 
-    public Character getOwner() {
+    public Component getOwner() {
         return owner;
     }
 

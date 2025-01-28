@@ -1,7 +1,7 @@
 package com.xww.Engine.gui;
 
 import com.xww.Engine.core.Component.Component;
-import com.xww.Engine.core.Component.impl.ScreenInfoComponent;
+import com.xww.Engine.core.Component.impl.*;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Event.Message.Message;
@@ -155,6 +155,11 @@ public class GameFrame extends JFrame{
         TimeEventManager.start();
         // 添加更新屏幕位置的组件
         Component.addComponent(new ScreenInfoComponent());
+        // 添加默认的调试组件
+        Component.addComponent(new FpsComponent());
+        Component.addComponent(new TimeComponent());
+        Component.addComponent(new CursorComponent());
+        Component.addComponent(new CameraComponent());
     }
 
     static void on_update(Graphics g) {

@@ -1,8 +1,8 @@
 package com.xww.Engine.core.Animation;
 
-import com.xww.Engine.core.Actor.Character;
+import com.xww.Engine.core.Component.Component;
 
 @FunctionalInterface
 public interface AnimationRunnable {
-    public abstract boolean run(Character owner);
+    public abstract void run(Component owner);
 }
