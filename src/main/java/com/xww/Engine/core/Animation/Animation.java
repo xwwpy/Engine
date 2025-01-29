@@ -1,9 +1,12 @@
 package com.xww.Engine.core.Animation;
 
 import com.xww.Engine.core.Component.Component;
+import com.xww.Engine.core.Component.impl.ScreenInfoComponent;
+import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.setting.DebugSetting;
+import com.xww.Engine.setting.FrameSetting;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -19,7 +22,7 @@ public class Animation {
 
     private final Component owner;
     private Timer timer;
-    boolean is_loop = false;
+    boolean is_loop = true;
     int frame_index = 0;
     private final List<Frame> frames = new ArrayList<>();
     /**
@@ -63,7 +66,7 @@ public class Animation {
     }
 
     /**
-     * TODO
+     * 默认为所有者的大小
      * @param image 图片
      * @param num_h 切割后的图片个数
      */
@@ -72,26 +75,92 @@ public class Animation {
         int height = image.getHeight(null);
         int width_per_frame = width / num_h;
         for (int i = 0; i < num_h; i++) {
-            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), Vector.build(width_per_frame, height))));
+            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), Vector.build(width_per_frame, height)), owner.getSize()));
         }
     }
 
     /**
-     * 根据图集添加帧 默认不缩放
+     * 默认为所有者的大小
+     * @param name 通过名称在资源管理器中查找图片
+     * @param num_h 切割后的图片个数
+     */
+    public void add_frame_by_name(String name, int num_h) {
+        BufferedImage image = ResourceManager.getInstance().findImage(name);
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+        int width_per_frame = width / num_h;
+        for (int i = 0; i < num_h; i++) {
+            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), Vector.build(width_per_frame, height)), owner.getSize()));
+        }
+    }
+
+    /**
+     * 指定缩放后的大小
+     * @param image 图片
+     * @param num_h 分割的个数
+     * @param size 缩放后的大小
+     */
+    public void add_frame(BufferedImage image, int num_h, Vector size) {
+        int width = image.getWidth(null);
+        int width_per_frame = width / num_h;
+        for (int i = 0; i < num_h; i++) {
+            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), size)));
+        }
+    }
+
+    /**
+     * 指定缩放后的大小
+     * @param name 通过名称在资源管理器中查找图片
+     * @param num_h 分割的个数
+     * @param size 缩放后的大小
+     */
+    public void add_frame_by_name(String name, int num_h, Vector size) {
+        BufferedImage image = ResourceManager.getInstance().findImage(name);
+        int width = image.getWidth(null);
+        int width_per_frame = width / num_h;
+        for (int i = 0; i < num_h; i++) {
+            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), size)));
+        }
+    }
+
+    /**
+     * 根据图集添加帧 默认缩放为owner的大小
      * @param atlas 图集
      */
     public void add_frame(Atlas atlas) {
         for (int i = 0; i < atlas.getSize(); i++) {
-            frames.add(new Frame(atlas.getImage(i), new Rect(Vector.build(0, 0), Vector.build(atlas.getImage(i).getWidth(null), atlas.getImage(i).getHeight(null)))));
+            frames.add(new Frame(atlas.getImage(i), new Rect(Vector.build(0, 0), Vector.build(atlas.getImage(i).getWidth(null), atlas.getImage(i).getHeight(null))), owner.getSize()));
         }
     }
 
+    /**
+     * 根据图集添加帧 默认缩放为owner的大小
+     * @param name 通过名称在资源管理器中查找图集
+     */
+    public void add_frame(String name) {
+        Atlas atlas = ResourceManager.getInstance().findAtlas(name);
+        for (int i = 0; i < atlas.getSize(); i++) {
+            frames.add(new Frame(atlas.getImage(i), new Rect(Vector.build(0, 0), Vector.build(atlas.getImage(i).getWidth(null), atlas.getImage(i).getHeight(null))), owner.getSize()));
+        }
+    }
     /**
      *
      * @param atlas 图集
      * @param size 得到的目标大小
      */
     public void add_frame(Atlas atlas, Vector size) {
+        for (int i = 0; i < atlas.getSize(); i++) {
+            frames.add(new Frame(atlas.getImage(i), new Rect(Vector.build(0, 0), Vector.build(atlas.getImage(i).getWidth(null), atlas.getImage(i).getHeight(null))), size));
+        }
+    }
+
+    /**
+     *
+     * @param name 通过名称在资源管理器中查找图集
+     * @param size 得到的目标大小
+     */
+    public void add_frame_by_name(String name, Vector size) {
+        Atlas atlas = ResourceManager.getInstance().findAtlas(name);
         for (int i = 0; i < atlas.getSize(); i++) {
             frames.add(new Frame(atlas.getImage(i), new Rect(Vector.build(0, 0), Vector.build(atlas.getImage(i).getWidth(null), atlas.getImage(i).getHeight(null))), size));
         }
@@ -107,9 +176,11 @@ public class Animation {
         Vector drawPosition = this.owner.getDrawPosition();
         if (DebugSetting.IS_DEBUG_ON){
             g.setColor(DebugSetting.DebugInfoColor);
-            g.drawRect(drawPosition.getX(), drawPosition.getY(), frame.image.getWidth(null), frame.image.getHeight(null));
+            g.drawRect(drawPosition.getX(), drawPosition.getY(), frame.size.getX(), frame.size.getY());
         }
-        g.drawImage(frame.image, drawPosition.getX(), drawPosition.getY(), null);
+        if (FrameSetting.whetherInScreen(drawPosition, frame.size)) {
+            g.drawImage(frame.image, drawPosition.getX(), drawPosition.getY(), null);
+        }
     }
 
 

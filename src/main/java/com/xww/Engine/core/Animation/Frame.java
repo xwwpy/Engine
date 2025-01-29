@@ -8,11 +8,14 @@ import java.awt.image.BufferedImage;
 
 public class Frame {
     public Image image;
+    public Vector size;
     public Frame(Image image, Rect rect_src) {
         BufferedImage image1 = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image1.createGraphics();
         g2d.drawImage(image, 0, 0, null);
         this.image = ImgUtils.GetDrawRectImage(image1, rect_src, rect_src);
+        this.size = Vector.build(image1.getWidth(null), image1.getHeight(null));
+        System.out.println(size);
     }
 
     /**
@@ -27,5 +30,6 @@ public class Frame {
         g2d.drawImage(image, 0, 0, null);
         Rect tar = new Rect(Vector.Zero(), size);
         this.image = ImgUtils.GetDrawRectImage(image1, rect_src, tar);
+        this.size = size;
     }
 }

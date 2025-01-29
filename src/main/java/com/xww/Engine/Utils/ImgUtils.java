@@ -1,6 +1,7 @@
 package com.xww.Engine.Utils;
 
 import com.xww.Engine.core.Animation.Rect;
+import com.xww.Engine.core.ResourceManager.ResourceManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,8 +39,31 @@ public class ImgUtils {
         return res;
     }
 
+    // TODO 不完善
+    public static Image GetDrawRectImage_in_pool(String sourceName, BufferedImage source, Rect origin, Rect target){
+        BufferedImage resImage = ResourceManager.getInstance().findImage(sourceName + origin + target);
+        if (resImage != null){
+            return resImage;
+        } else {
+            Image img = source.getSubimage(origin.getPosition().getX(), origin.getPosition().getY(), origin.getSize().getX(), origin.getSize().getY()).getScaledInstance(target.getSize().getX(), target.getSize().getY(), Image.SCALE_DEFAULT);
+            ResourceManager.getInstance().imagePool.put(sourceName + origin + target, (BufferedImage) img);
+            return img;
+        }
+    }
+
     public static Image GetDrawRectImage(BufferedImage source, Rect origin, Rect target){
         return source.getSubimage(origin.getPosition().getX(), origin.getPosition().getY(), origin.getSize().getX(), origin.getSize().getY()).getScaledInstance(target.getSize().getX(), target.getSize().getY(), Image.SCALE_DEFAULT);
+    }
+    // TODO 不完善
+    public static Image getScaledImage_in_pool(String sourceName, Image image, int width, int height){
+        BufferedImage resImage = ResourceManager.getInstance().findImage(sourceName + width + height);
+        if (resImage != null){
+            return resImage;
+        } else {
+            Image img = image.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+            ResourceManager.getInstance().imagePool.put(sourceName + width + height, (BufferedImage) img);
+            return img;
+        }
     }
 
     public static Image getScaledImage(Image image, int width, int height){
