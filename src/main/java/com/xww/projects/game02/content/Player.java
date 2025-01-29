@@ -34,31 +34,31 @@ public class Player extends FreeComponent {
 
     private void initAnimation() {
         Animation idle = new Animation(this, 100);
-        idle.add_frame(ResourceManager.getInstance().findImage("player_idle"), 5);
+        idle.add_frame_by_name("player_idle", 5);
         this.addAnimation("idle", idle);
 
         Animation dead = new Animation(this, 100);
-        dead.add_frame(ResourceManager.getInstance().findImage("player_dead"), 6);
+        dead.add_frame_by_name("player_dead", 6);
         this.addAnimation("dead", dead);
 
         Animation attack = new Animation(this, 100);
-        attack.add_frame(ResourceManager.getInstance().findImage("player_attack"), 5);
+        attack.add_frame_by_name("player_attack", 5);
         this.addAnimation("attack", attack);
 
         Animation fall = new Animation(this, 100);
-        fall.add_frame(ResourceManager.getInstance().findImage("player_fall"), 5);
+        fall.add_frame_by_name("player_fall", 5);
         this.addAnimation("fall", fall);
 
         Animation jump = new Animation(this, 100);
-        jump.add_frame(ResourceManager.getInstance().findImage("player_jump"), 5);
+        jump.add_frame_by_name("player_jump", 5);
         this.addAnimation("jump", jump);
 
         Animation roll = new Animation(this, 100);
-        roll.add_frame(ResourceManager.getInstance().findImage("player_roll"), 7);
+        roll.add_frame_by_name("player_roll", 7);
         this.addAnimation("roll", roll);
 
         Animation run = new Animation(this, 100);
-        run.add_frame(ResourceManager.getInstance().findImage("player_run"), 10);
+        run.add_frame_by_name("player_run", 10);
         this.addAnimation("run", run);
 
         this.setAnimation("run");
