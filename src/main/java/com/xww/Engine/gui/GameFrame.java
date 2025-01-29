@@ -31,7 +31,6 @@ public class GameFrame extends JFrame{
         public static BufferedImage image = new BufferedImage(FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT, BufferedImage.TYPE_INT_RGB);
         @Override
         public void paint(Graphics g) {
-            super.paint(g);
             Graphics graphics = image.createGraphics();
             if (--currentTimeIndex <= 0){
                 currentTimeIndex = FrameSetting.timeSpeed;
@@ -140,12 +139,10 @@ public class GameFrame extends JFrame{
         // 主循环
         while (true) {
             double start_time = System.nanoTime();
-            gamePanel.repaint();
+            gamePanel.paint(gamePanel.getGraphics());
             double end_time = System.nanoTime();
             double each_frame_time = end_time - start_time;
-            if (each_frame_time < context.each_frame_target_time){
-                LockSupport.parkNanos((long) (context.each_frame_target_time - each_frame_time));
-            }
+            LockSupport.parkNanos((long) (context.each_frame_target_time - each_frame_time));
             double whole_time = System.nanoTime() - start_time;
             context.current_fps = (int) (1_000_000_000 / whole_time);
         }
