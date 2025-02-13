@@ -37,7 +37,7 @@ public class Player extends FreeComponent {
         idle.add_frame_by_name("player_idle", 5);
         this.addAnimation("idle", idle);
 
-        Animation dead = new Animation(this, 100);
+        Animation dead = new Animation(this, 250);
         dead.add_frame_by_name("player_dead", 6);
         this.addAnimation("dead", dead);
 
@@ -47,10 +47,12 @@ public class Player extends FreeComponent {
 
         Animation fall = new Animation(this, 100);
         fall.add_frame_by_name("player_fall", 5);
+        fall.setIs_loop(false);
         this.addAnimation("fall", fall);
 
         Animation jump = new Animation(this, 100);
         jump.add_frame_by_name("player_jump", 5);
+        jump.setIs_loop(false);
         this.addAnimation("jump", jump);
 
         Animation roll = new Animation(this, 100);
@@ -61,7 +63,7 @@ public class Player extends FreeComponent {
         run.add_frame_by_name("player_run", 10);
         this.addAnimation("run", run);
 
-        this.setAnimation("run");
+        this.setAnimation("jump");
         jump.setOn_complete((player)->{
             fall.reset_animation();
             ((Player) player).setAnimation("fall");

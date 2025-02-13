@@ -1,7 +1,6 @@
 package com.xww.Engine.core.Animation;
 
 import com.xww.Engine.core.Component.Component;
-import com.xww.Engine.core.Component.impl.ScreenInfoComponent;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;

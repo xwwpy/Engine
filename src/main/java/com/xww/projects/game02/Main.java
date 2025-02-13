@@ -1,5 +1,6 @@
 package com.xww.projects.game02;
 
+import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 
 import com.xww.Engine.core.ResourceManager.ResourceManager;
@@ -16,8 +17,9 @@ public class Main {
     }
 
     public static void initGame() {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 3; i++) {
             Player player = new Player(Vector.build(100, 200));
+            player.addCollider(new RectCollider(Vector.build(38, 55), player, Vector.build(92, 440 - 366)));
             Component.addComponent(player);
         }
     }
