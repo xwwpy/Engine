@@ -30,7 +30,43 @@ public class StringUtils {
      * @return 获取最后层文件夹名称
      */
     public static String getDictionaryName(Path filePath) {
+        String pathString = filePath.toString();
         String[] split = filePath.toString().split("/");
-        return split[split.length - 2];
+        // 得到文件夹名称
+        if (filePath.toFile().isDirectory() && !pathString.endsWith("/")){
+            // 当是文件夹且不以 / 作为结尾时 返回此结果
+            return split[split.length - 1];
+        } else return split[split.length - 2];
+    }
+
+    public static boolean suitTemplate(String str, String template) {
+        int strIndex = 0;
+        int templateIndex = 0;
+        while (strIndex < str.length() && templateIndex < template.length()) {
+            if (str.charAt(strIndex) == template.charAt(templateIndex)) {
+                strIndex++;
+                templateIndex++;
+            } else {
+                if (template.charAt(templateIndex) == '%'){
+                    templateIndex++;
+                    if (templateIndex < template.length()){
+                        switch (template.charAt(templateIndex)){
+                            // TODO 目前仅支持%d作为占位符
+                            case 'd':
+                                while (strIndex < str.length() && str.charAt(strIndex) >= '0' && str.charAt(strIndex) <= '9'){
+                                    strIndex++;
+                                }
+                                templateIndex++;
+                                break;
+                            default:
+                                return false;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
