@@ -20,7 +20,7 @@ public class ImgUtils {
             throw new RuntimeException(e);
         }
     }
-    private static Image flipImage(Image image){
+    public static Image flipImage(Image image){
         BufferedImage originalImage = (BufferedImage) image;
         BufferedImage flippedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
         for (int i = 0; i < originalImage.getWidth(); i++){
@@ -68,6 +68,18 @@ public class ImgUtils {
 
     public static Image getScaledImage(Image image, int width, int height){
         return image.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+    }
+
+    public static BufferedImage convertToBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        } else {
+            BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = bufferedImage.createGraphics();
+            g2d.drawImage(image, 0, 0, null);
+            g2d.dispose();
+            return bufferedImage;
+        }
     }
 }
 

@@ -30,7 +30,7 @@ public class Atlas {
     public Image getImage(int index) {
         return img_lists.get(index);
     }
-    void addImage(BufferedImage image) {
+    public void addImage(BufferedImage image) {
         img_lists.add(image);
     }
 

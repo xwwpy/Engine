@@ -31,7 +31,13 @@ public class ResourceManager {
 
     static {
         instance.loadAllAtlas("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/enemy", "%d", null, ".png");
+        instance.atlasPool.forEach((name, atlas) -> {
+            instance.flipAtlas(name, "_", "right");
+        });
         instance.loadAll("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/player", true, ".png");
+        instance.imagePool.forEach((name, image) -> {
+            instance.flipImage(name, "_", "left");
+        });
         instance.loadImage("background", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/background.png");
         instance.loadImage("ui_heart", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/ui_heart.png");
     }
@@ -64,7 +70,7 @@ public class ResourceManager {
     }
 
     /**
-     * 遍历指定文件夹的所有资源
+     * 遍历指定文件夹的所有资源 以文件名作为key 存储到imagePool中
      */
     public void loadAll(String path, boolean prefixFlag, String... suffix) {
         try (Stream<Path> stream = Files.walk(new File(path).toPath(), FileVisitOption.FOLLOW_LINKS)) {
@@ -141,4 +147,34 @@ public class ResourceManager {
         }
     }
 
+    /**
+     *
+     * @param name 指定进行翻转的资源名称
+     * @param connectStr 连接符
+     * @param targetNameSuffix 反转后的资源名称的后缀 二者之间使用 connectStr 连接
+     */
+    public void flipImage(String name, String connectStr,String targetNameSuffix) {
+        BufferedImage image = instance.imagePool.get(name);
+        if (image == null){
+            throw new RuntimeException("image " + name + " is null, 不可以进行翻转");
+        }
+        instance.imagePool.put(name + connectStr + targetNameSuffix, ImgUtils.convertToBufferedImage(ImgUtils.flipImage(image)));
+    }
+    /**
+     *
+     * @param name 指定进行翻转的资源名称
+     * @param connectStr 连接符
+     * @param targetNameSuffix 反转后的资源名称的后缀 二者之间使用 connectStr 连接
+     */
+    public void flipAtlas(String name, String connectStr,String targetNameSuffix) {
+        Atlas atlas = instance.atlasPool.get(name);
+        if (atlas == null){
+            throw new RuntimeException("atlas " + name + " is null, 不可以进行翻转");
+        }
+        Atlas flipped = new Atlas();
+        for (int i = 0; i < atlas.getSize(); i++) {
+            flipped.addImage(ImgUtils.convertToBufferedImage(ImgUtils.flipImage(atlas.getImage(i))));
+        }
+        instance.atlasPool.put(name + connectStr + targetNameSuffix, flipped);
+    }
 }
