@@ -84,7 +84,7 @@ public class MouseMessageHandler extends MessageHandler {
                         if (!object.isIs_drag_on()){
                             return;
                         }
-                        object.setWhetherCanDrag(!object.whetherCanDrag);
+                        object.setWhetherCanDrag(!object.isWhetherCanDrag());
                     }
                     throw new RuntimeException();
                 }

@@ -5,8 +5,8 @@ import com.xww.Engine.core.Vector.Vector;
 public class FrameSetting {
     public static final int MIN_FPS = 1;
     public static final int MAX_FPS = 1440;
-    public static int DEFAULT_WIDTH = 1695;
-    public static int DEFAULT_HEIGHT = 725;
+    public static int DEFAULT_WIDTH = 1400;
+    public static int DEFAULT_HEIGHT = 800;
     public static int DEFAULT_FPS = 360;
     public static String DEFAULT_TITLE = "NewEngineByXww";
 

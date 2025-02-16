@@ -1,5 +1,6 @@
 package com.xww.projects.game01.Card;
 
+import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.Utils.ImgUtils;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Component.FreeComponent;
@@ -45,7 +46,7 @@ public abstract class BaseCard extends FreeComponent {
     public void on_update(Graphics g) {
         g.setColor(Color.RED);
         g.drawRect(this.getDrawPosition().getX(), this.getDrawPosition().getY(), this.size.getX(), this.size.getY());
-        g.drawImage(card_image, this.getDrawPosition().getX(), this.getDrawPosition().getY(), card_size.getX(), card_size.getY(), null);
+        DrawUtils.drawImage(card_image, this.getDrawPosition(), card_size, g);
         if (!whetherHaveEnoughSun()){
             g.setColor(new Color(0, 0, 0, 128));
             g.fillRect(this.getDrawPosition().getX(), this.getDrawPosition().getY(), this.size.getX(), this.size.getY());
@@ -57,7 +58,7 @@ public abstract class BaseCard extends FreeComponent {
         }
         // 绘制虚拟卡片
         if (!virtual_card_position.equals(Vector.Zero())) {
-            g.drawImage(card_image, this.getVirtual_card_position().getX(), this.getVirtual_card_position().getY(), card_size.getX(), card_size.getY(), null);
+            DrawUtils.drawImage(card_image, this.getVirtual_card_position(), card_size, g);
         }
         super.on_update(g);
     }

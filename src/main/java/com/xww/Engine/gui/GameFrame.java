@@ -1,5 +1,6 @@
 package com.xww.Engine.gui;
 
+import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.impl.*;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
@@ -39,7 +40,7 @@ public class GameFrame extends JFrame{
                 graphics.clearRect(0, 0, FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
                 GameFrame.on_update(graphics);
             }
-            g.drawImage(image, 0, 0, null);
+            DrawUtils.drawImage(image, Vector.Zero(), g);
         }
 
     }

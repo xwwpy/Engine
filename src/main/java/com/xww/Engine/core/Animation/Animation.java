@@ -1,5 +1,6 @@
 package com.xww.Engine.core.Animation;
 
+import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Timer.Timer;
@@ -186,7 +187,7 @@ public class Animation {
             g.drawRect(drawPosition.getX(), drawPosition.getY(), frame.size.getX(), frame.size.getY());
         }
         if (FrameSetting.whetherInScreen(drawPosition, frame.size)) {
-            g.drawImage(frame.image, drawPosition.getX(), drawPosition.getY(), null);
+            DrawUtils.drawImage(frame.image, drawPosition, g);
         }
     }
 

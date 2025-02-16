@@ -1,10 +1,12 @@
 package com.xww.projects.game02.content;
 
+import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
+import com.xww.Engine.setting.FrameSetting;
 
 import java.awt.*;
 
@@ -18,6 +20,6 @@ public class BackGroundComponent extends FreeComponent {
 
     @Override
     public void on_update(Graphics g) {
-        g.drawImage(background, this.getDrawPosition().getX(), this.getDrawPosition().getY(), null);
+        DrawUtils.drawImage(background, this.getDrawPosition(), Vector.build(FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT), g);
     }
 }
