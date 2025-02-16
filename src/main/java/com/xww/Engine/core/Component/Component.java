@@ -71,15 +71,17 @@ public abstract class Component implements Base, Comparable<Component> {
      */
     protected Vector lastMove = Vector.Zero();
 
+    protected boolean whetherCheckCollision = true; // 是否检测碰撞 当此为false 则不会检测碰撞
+
     protected int CollisionRegion = -1; // -1 代表不检测
 
     protected Vector last_mouse_check_self_position = Vector.Zero();
     protected boolean is_drag_on = false; // 当此属性为false时 一定不会被注册到 can_drag_object中
-    public boolean whetherCanDrag = false; // 当该组件可以被拖动时 该属性如果是true 则可以拖动并注册到拖动组件中
+    protected boolean whetherCanDrag = false; // 当该组件可以被拖动时 该属性如果是true 则可以拖动并注册到拖动组件中
     
     protected boolean whetherBeRegisteredCanDrag = false;
 
-    // 每个组件自定义级别的展示debug信息
+    // 每个组件自定义级别的展示debug信息 有且仅当DebugSetting.IS_DEBUG_ON 为true并且whetherShowDebugInfo为true时才是开启DEBUG模式
     protected boolean whetherShowDebugInfo = DebugSetting.IS_DEBUG_ON;
 
 
@@ -151,7 +153,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     protected void drawCollider(Graphics g) {
-        colliders.forEach(collider -> collider.draw(g));
+        if (DebugSetting.IS_DEBUG_ON && whetherShowDebugInfo) colliders.forEach(collider -> collider.draw(g));
     }
 
     private void update_collider() {
@@ -205,12 +207,14 @@ public abstract class Component implements Base, Comparable<Component> {
         // 预移动
         pre_move();
         // 检查碰撞
-        ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
-        if (collisionInfo.isWhetherCollider()) {
-            // 发生碰撞后的回调函数
-            if (collisionAction(collisionInfo, true)) {
-                // 只有是自己触发的碰撞才回退移动
-                this.return_move();
+        if (whetherCheckCollision) {
+            ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
+            if (collisionInfo.isWhetherCollider()) {
+                // 发生碰撞后的回调函数
+                if (collisionAction(collisionInfo, true)) {
+                    // 只有是自己触发的碰撞才回退移动
+                    this.return_move();
+                }
             }
         }
     }
@@ -563,4 +567,21 @@ public abstract class Component implements Base, Comparable<Component> {
     public void setIs_drag_on(boolean is_drag_on) {
         this.is_drag_on = is_drag_on;
     }
+
+    public boolean isWhetherCheckCollision() {
+        return whetherCheckCollision;
+    }
+
+    public void setWhetherCheckCollision(boolean whetherCheckCollision) {
+        this.whetherCheckCollision = whetherCheckCollision;
+    }
+
+    public void setCollisionRegion(int collisionRegion) {
+        CollisionRegion = collisionRegion;
+    }
+
+    public boolean isWhetherCanDrag() {
+        return whetherCanDrag;
+    }
+
 }

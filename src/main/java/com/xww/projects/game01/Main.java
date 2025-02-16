@@ -20,8 +20,7 @@ import com.xww.projects.game01.Test.TestCard;
 
 public class Main {
     public static void main(String[] args) {
-        GameFrame.init();
-        initGame();
+        GameFrame.init(Main::initGame);
         GameFrame.start();
     }
 

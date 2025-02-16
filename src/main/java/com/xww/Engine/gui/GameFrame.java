@@ -1,5 +1,6 @@
 package com.xww.Engine.gui;
 
+import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.impl.*;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
@@ -39,7 +40,7 @@ public class GameFrame extends JFrame{
                 graphics.clearRect(0, 0, FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
                 GameFrame.on_update(graphics);
             }
-            g.drawImage(image, 0, 0, null);
+            DrawUtils.drawImage(image, Vector.Zero(), g);
         }
 
     }
@@ -71,7 +72,7 @@ public class GameFrame extends JFrame{
     /**
      * 调用开始之前必须线初始化
      */
-    public static void init() {
+    public static void init(Runnable initRunnable) {
         context = new GameFrame(FrameSetting.DEFAULT_TITLE);
         gamePanel = new GamePanel();
         context.setSize(FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
@@ -82,6 +83,9 @@ public class GameFrame extends JFrame{
         initEventHandler();
         game_on_start();
         initFlag = true;
+        // 初始化
+        context.setVisible(true);
+        if (initRunnable != null) initRunnable.run();
     }
 
     // 初始化事件处理器
@@ -135,8 +139,6 @@ public class GameFrame extends JFrame{
         if (!initFlag){
             System.out.println("游戏主循环开始之前必须调用初始化逻辑");
         }
-        // 初始化
-        context.setVisible(true);
         // 主循环
         while (true) {
             double start_time = System.nanoTime();
