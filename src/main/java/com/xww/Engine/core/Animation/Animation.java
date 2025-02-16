@@ -83,13 +83,21 @@ public class Animation {
      * @param name 通过名称在资源管理器中查找图片
      * @param num_h 切割后的图片个数
      */
-    public void add_frame_by_name(String name, int num_h) {
+    public void add_frame_by_name(String name, int num_h, boolean whetherInverse) {
         BufferedImage image = ResourceManager.getInstance().findImage(name);
         int width = image.getWidth(null);
         int height = image.getHeight(null);
         int width_per_frame = width / num_h;
         for (int i = 0; i < num_h; i++) {
             frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), Vector.build(width_per_frame, height)), owner.getSize()));
+        }
+        if (whetherInverse) {
+            // 翻转图片的播放顺序
+            for (int i = 0; i < frames.size() / 2; i++) {
+                Frame temp = frames.get(i);
+                frames.set(i, frames.get(frames.size() - i - 1));
+                frames.set(frames.size() - i - 1, temp);
+            }
         }
     }
 

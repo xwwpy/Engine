@@ -2,6 +2,7 @@ package com.xww.Engine.core.Component.impl;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Component.FreeComponent;
+import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;

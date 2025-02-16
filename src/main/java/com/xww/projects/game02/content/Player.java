@@ -34,36 +34,40 @@ public class Player extends FreeComponent {
 
     private void initAnimation() {
         Animation idle = new Animation(this, 100);
-        idle.add_frame_by_name("player_idle", 5);
+        idle.add_frame_by_name("player_idle", 5, false);
         this.addAnimation("idle", idle);
 
         Animation dead = new Animation(this, 250);
-        dead.add_frame_by_name("player_dead", 6);
+        dead.add_frame_by_name("player_dead", 6, false);
         this.addAnimation("dead", dead);
 
         Animation attack = new Animation(this, 100);
-        attack.add_frame_by_name("player_attack", 5);
+        attack.add_frame_by_name("player_attack", 5, false);
         this.addAnimation("attack", attack);
 
         Animation fall = new Animation(this, 100);
-        fall.add_frame_by_name("player_fall", 5);
+        fall.add_frame_by_name("player_fall", 5, false);
         fall.setIs_loop(false);
         this.addAnimation("fall", fall);
 
         Animation jump = new Animation(this, 100);
-        jump.add_frame_by_name("player_jump", 5);
+        jump.add_frame_by_name("player_jump", 5, false);
         jump.setIs_loop(false);
         this.addAnimation("jump", jump);
 
         Animation roll = new Animation(this, 100);
-        roll.add_frame_by_name("player_roll", 7);
+        roll.add_frame_by_name("player_roll", 7, false);
         this.addAnimation("roll", roll);
 
+        Animation roll_left = new Animation(this, 100);
+        roll_left.add_frame_by_name("player_roll_left", 7, true);
+        this.addAnimation("roll_left", roll_left);
+
         Animation run = new Animation(this, 100);
-        run.add_frame_by_name("player_run", 10);
+        run.add_frame_by_name("player_run", 10, false);
         this.addAnimation("run", run);
 
-        this.setAnimation("jump");
+        this.setAnimation("roll_left");
         jump.setOn_complete((player)->{
             fall.reset_animation();
             ((Player) player).setAnimation("fall");

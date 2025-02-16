@@ -11,6 +11,11 @@ import java.awt.event.MouseEvent;
 
 public class GameScene implements BaseScene{
 
+    // 用于指定 重置场景的回调函数
+    public static Runnable resetRunnable;
+    // 用于指定 退出场景的回调函数
+    public static Runnable exitRunnable;
+
     @Override
     public void on_enter() {
         this.reset();
@@ -40,12 +45,16 @@ public class GameScene implements BaseScene{
 
     @Override
     public void reset() {
-
+        if (resetRunnable != null) {
+            resetRunnable.run();
+        }
     }
 
     @Override
     public void on_exit() {
-
+        if (exitRunnable != null) {
+            exitRunnable.run();
+        }
     }
 
     private static void updateComponent(Graphics g) {

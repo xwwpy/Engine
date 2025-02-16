@@ -41,4 +41,13 @@ public class Atlas {
     public void loadSingle(String path, int width, int height) {
         img_lists.add(ImgUtils.getScaledImage(ImgUtils.loadImage(path), width, height));
     }
+
+    public void inverse() {
+        // 反转图集中图片的顺序
+        for (int i = 0; i < img_lists.size() / 2; i++) {
+            Image temp = img_lists.get(i);
+            img_lists.set(i, img_lists.get(img_lists.size() - i - 1));
+            img_lists.set(img_lists.size() - i - 1, temp);
+        }
+    }
 }
