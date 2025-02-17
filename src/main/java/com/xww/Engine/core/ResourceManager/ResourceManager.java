@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class ResourceManager {
@@ -98,14 +97,20 @@ public class ResourceManager {
         } else {
             pathTemplate.append("/").append(template);
         }
-        try(DirectoryStream<Path> stream =  Files.newDirectoryStream(file.toPath())){
+        // 处理该文件夹中的所有文件
+        try(DirectoryStream<Path> stream =  Files.newDirectoryStream(file.toPath())) {
             stream.forEach((filePath) -> {
                 if (filePath.toFile().isDirectory()){
+                    // 递归处理文件夹
                     loadAllAtlas(filePath.toString(), template, atlasName, suffix);
                 } else {
+                    // 处理文件
                     Arrays.stream(suffix).forEach((suf)->{
+                        // 判断文件是否符合指定包含的后缀
                         if (filePath.toString().endsWith(suf)){
+                            // 判断文件是否符合模版
                             if (StringUtils.suitTemplate(filePath.toString(), pathTemplate + suf)){
+                                // 符合图集的模版时则加载该文件到图集中
                                 atlas.loadSingle(filePath.toString());
                             }
                         }
@@ -120,12 +125,24 @@ public class ResourceManager {
         }
     }
 
+    /**
+     * 处理带有指定后缀的文件
+     * @param filePath 文件的路径
+     * @param fileSuffix 文件的后缀
+     * @param prefixFlag 是否需要添加前缀 用于getResourceName函数的参数
+     */
     private void processFileWithSuffix(java.nio.file.Path filePath, String fileSuffix, boolean prefixFlag) {
         if (fileSuffix.equals(".png")) {
             loadImage(getResourceName(filePath, fileSuffix, prefixFlag), filePath.toString());
         }
     }
 
+    /**
+     * 根据文件的路径和后缀名 得到资源名称
+     * @param filePath 文件的路径
+     * @param fileSuffix 文件的后缀
+     * @param prefixFlag 当为false 时 返回文件名 为true时 返回 文件夹名称 + _ + 文件名
+     */
     private static String getResourceName(Path filePath, String fileSuffix, boolean prefixFlag) {
         if (!prefixFlag) {
             return StringUtils.removeSuffix(filePath.getFileName().toString(), fileSuffix);
