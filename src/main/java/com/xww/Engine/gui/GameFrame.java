@@ -32,7 +32,6 @@ public class GameFrame extends JFrame{
         public static BufferedImage image = new BufferedImage(FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT, BufferedImage.TYPE_INT_RGB);
         @Override
         public void paint(Graphics g) {
-            super.paint(g);
             Graphics graphics = image.createGraphics();
             if (--currentTimeIndex <= 0){
                 currentTimeIndex = FrameSetting.timeSpeed;
@@ -136,22 +135,49 @@ public class GameFrame extends JFrame{
 
 
     public static void start() {
-        if (!initFlag){
-            System.out.println("游戏主循环开始之前必须调用初始化逻辑");
-        }
-        // 主循环
-        while (true) {
-            double start_time = System.nanoTime();
-            gamePanel.repaint();
-            double end_time = System.nanoTime();
-            double each_frame_time = end_time - start_time;
-            if (each_frame_time < context.each_frame_target_time){
-                LockSupport.parkNanos((long) (context.each_frame_target_time - each_frame_time));
+    if (!initFlag) {
+        System.out.println("游戏主循环开始之前必须调用初始化逻辑");
+        throw new IllegalStateException("初始化未完成，无法启动游戏主循环");
+    }
+
+    final int AVERAGE_FRAME_COUNT = 10; // 平均帧数计算窗口大小
+    long[] frameTimes = new long[AVERAGE_FRAME_COUNT];
+    int frameIndex = 0;
+
+    while (true) {
+        try {
+            long startTime = System.nanoTime();
+            gamePanel.paint(gamePanel.getGraphics());
+            long endTime = System.nanoTime();
+            long frameTime = endTime - startTime;
+
+            if (frameTime < context.each_frame_target_time) {
+                LockSupport.parkNanos(context.each_frame_target_time - frameTime);
             }
-            double whole_time = System.nanoTime() - start_time;
-            context.current_fps = (int) (1_000_000_000 / whole_time);
+
+            long wholeTime = System.nanoTime() - startTime;
+            // 避免除零异常
+            if (wholeTime > 0) {
+                frameTimes[frameIndex % AVERAGE_FRAME_COUNT] = wholeTime;
+                frameIndex++;
+
+                long sum = 0;
+                for (long time : frameTimes) {
+                    sum += time;
+                }
+                double averageFrameTime = sum / Math.min(frameIndex, AVERAGE_FRAME_COUNT);
+                context.current_fps = (int) (1_000_000_000L / averageFrameTime);
+            } else {
+                context.current_fps = Integer.MAX_VALUE; // 或者设置一个合理的默认值
+            }
+        } catch (Exception e) {
+            System.err.println("主循环中发生异常: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+}
+
+
 
     private static void game_on_start() {
         TimeEventManager.start();

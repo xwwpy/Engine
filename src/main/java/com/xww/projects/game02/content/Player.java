@@ -2,6 +2,7 @@ package com.xww.projects.game02.content;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Vector.Vector;
