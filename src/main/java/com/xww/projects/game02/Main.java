@@ -5,6 +5,7 @@ import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 
 import com.xww.Engine.core.ResourceManager.ResourceManager;
+import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.projects.game02.content.BackGroundComponent;
@@ -20,9 +21,12 @@ public class Main {
         // 加载资源
         GameFrame.init(()->{
             loadResources();
+            MP3Player.getInstance().setBGMPath("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/audio/bgm.mp3");
+            MP3Player.getInstance().startBGM();
             initGame();
         });
         GameFrame.start();
+        MP3Player.getInstance().shutdown();
     }
 
     private static void loadResources(){
