@@ -24,6 +24,8 @@ public class ResourceManager {
     public final Map<String, Atlas> atlasPool = new HashMap<>();
     public final Map<String, BufferedImage> imagePool = new HashMap<>();
 
+    public final Map<String, String> audioPathPool = new HashMap<>();
+
     public static ResourceManager getInstance() {
         return instance;
     }
@@ -182,5 +184,41 @@ public class ResourceManager {
         }
         if (atlasPool == null) instance.atlasPool.put(name + connectStr + targetNameSuffix, flipped);
         else atlasPool.put(name + connectStr + targetNameSuffix, flipped);
+    }
+
+    /**
+     * 加载音频资源
+     * @param dictionaryPath 音频文件夹的路径
+     */
+    public void loadAllAudio(String dictionaryPath, String... suffix) {
+        File file = new File(dictionaryPath);
+        try(DirectoryStream<Path> stream =  Files.newDirectoryStream(file.toPath())) {
+            stream.forEach((filePath) -> {
+                if (filePath.toFile().isDirectory()){
+                    // 递归处理文件夹
+                    loadAllAudio(filePath.toString());
+                } else {
+                    // 处理文件
+                    Arrays.stream(suffix).forEach((suf)->{
+                        // 判断文件是否符合指定包含的后缀
+                        if (filePath.toString().endsWith(suf)){
+                            // 加载音频
+                            audioPathPool.put(StringUtils.removeSuffix(String.valueOf(filePath.getFileName()), suf), filePath.toString());
+                        }
+                    });
+                }
+            });
+        } catch (IOException e){
+            throw new RuntimeException("解析文件夹的音频失败");
+        }
+    }
+
+    public String findAudioPath(String bgm) {
+        if (audioPathPool.containsKey(bgm)){
+            return audioPathPool.get(bgm);
+        } else{
+            System.out.println("找不到音频：" + bgm);
+        }
+        return null;
     }
 }

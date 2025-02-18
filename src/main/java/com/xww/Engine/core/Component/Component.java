@@ -253,6 +253,12 @@ public abstract class Component implements Base, Comparable<Component> {
                 }
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
+                // 如果两个质量都为-1 则进行反弹
+                if (m1 == -1 && m2 == -1){
+                    collisionInfo.getColliderComponent().reboundVelocity();
+                    this.reboundVelocity();
+                    return true;
+                }
                 if (m1 == -1){
                     collisionInfo.getColliderComponent().reboundVelocity();
                     return true;

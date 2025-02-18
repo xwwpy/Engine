@@ -18,7 +18,7 @@ public class MP3Player {
     private String bgmPath;
 
     private MP3Player() {
-        executorService = Executors.newFixedThreadPool(2); // 一个线程用于播放背景音乐，另一个用于播放其他音频
+        executorService = Executors.newFixedThreadPool(10); // 一个线程用于播放背景音乐，另一个用于播放其他音频
         audioQueue = new LinkedBlockingQueue<>();
     }
 
