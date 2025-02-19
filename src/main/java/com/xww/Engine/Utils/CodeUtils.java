@@ -35,4 +35,8 @@ public class CodeUtils {
         }
         return totalLines;
     }
+
+    public static void main(String[] args) {
+        System.out.println(getTotalLines("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com"));
+    }
 }
