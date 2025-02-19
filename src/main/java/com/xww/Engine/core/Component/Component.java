@@ -77,9 +77,10 @@ public abstract class Component implements Base, Comparable<Component> {
     protected boolean whetherCheckCollision = true; // 是否检测碰撞 在自身的碰撞体启用的前提下 当此为false 则不会检测碰撞
 
 
-    // 例如检测伤害的受击碰撞体 只需另activeCollisionZone设置为0 hitCollision设置为指定的值
+    // 主动检测碰撞的层级 例如检测伤害的受击碰撞体 只需另activeCollisionZone设置为0 hitCollision设置为指定的值
     protected int activeCollisionZone = CollisionDefaultConstValue.noCollisionChecking; // 主动碰撞区域 0 代表 不会主动检测碰撞
 
+    // 被动接受碰撞的层级
     protected int hitCollisionZone = CollisionDefaultConstValue.noCollisionChecking; // 被动接受的碰撞区域 0 代表 不会被其他组件主动检测碰撞
 
     protected Vector last_mouse_check_self_position = Vector.Zero();
