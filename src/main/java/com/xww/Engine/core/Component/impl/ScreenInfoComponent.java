@@ -1,6 +1,7 @@
 package com.xww.Engine.core.Component.impl;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Timer.Timer;
@@ -13,7 +14,7 @@ import java.awt.*;
 public class ScreenInfoComponent extends FreeComponent {
     public static Vector screen_position = Vector.Zero();
     public ScreenInfoComponent() {
-        super(Vector.build(30, 40), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, -1, Integer.MAX_VALUE, true, false);
+        super(Vector.build(30, 40), GameFrame.PositionType.Screen, Vector.Zero(), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking, Integer.MAX_VALUE, true, false);
         Timer timer = new Timer(0, (obj) ->{
             // 更新屏幕坐标
             Point screen_position = GameFrame.context.getLocationOnScreen();

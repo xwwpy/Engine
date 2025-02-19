@@ -167,8 +167,6 @@ public class GameFrame extends JFrame{
                 }
                 double averageFrameTime = sum / Math.min(frameIndex, AVERAGE_FRAME_COUNT);
                 context.current_fps = (int) (1_000_000_000L / averageFrameTime);
-            } else {
-                context.current_fps = Integer.MAX_VALUE; // 或者设置一个合理的默认值
             }
         } catch (Exception e) {
             System.err.println("主循环中发生异常: " + e.getMessage());

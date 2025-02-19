@@ -2,6 +2,7 @@ package com.xww.projects.game01.Chess;
 
 import com.xww.Engine.Utils.ImgUtils;
 import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
@@ -29,7 +30,7 @@ public class Chess extends FreeComponent {
     private final Vector latticeSize; // 格子大小
 
     private Chess(int row, int col, Vector size, Vector start_position, Vector latticeSize, String path){
-        super(Vector.Zero(), GameFrame.PositionType.World, size, AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), -2, -1, -1, true, false);
+        super(Vector.Zero(), GameFrame.PositionType.World, size, AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), -2, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking, -1, true, false);
         this.row = row;
         this.col = col;
         this.start_position = start_position;

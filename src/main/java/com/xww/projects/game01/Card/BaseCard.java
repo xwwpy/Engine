@@ -3,6 +3,7 @@ package com.xww.projects.game01.Card;
 import com.xww.Engine.Utils.DrawUtils;
 import com.xww.Engine.Utils.ImgUtils;
 import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
@@ -33,7 +34,7 @@ public abstract class BaseCard extends FreeComponent {
     public int card_cost;
     public boolean is_cool_down;
     public BaseCard(Vector worldPosition, String card_img_path, int coolDownTime, int card_cost, boolean whetherInitCoolDown) {
-        super(worldPosition, GameFrame.PositionType.Screen, card_size, AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 10, -1, -1, true, true);
+        super(worldPosition, GameFrame.PositionType.Screen, card_size, AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 10, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking,-1, true, true);
         card_image = ImgUtils.getScaledImage(ImgUtils.loadImage(card_img_path), card_size.getX(), card_size.getY());
         this.coolDownTime = coolDownTime;
         this.card_cost = card_cost;

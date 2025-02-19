@@ -15,7 +15,6 @@ public class TestCard extends BaseCard {
     public boolean generateCharacter(Vector position) {
         TestCard card = new TestCard(position);
         card.addCollider(new RectCollider(Vector.Zero(), this, card.size));
-        card.CollisionRegion = ++TestCircle.collisionRegion;
         Component.addComponent(card);
         return true;
     }

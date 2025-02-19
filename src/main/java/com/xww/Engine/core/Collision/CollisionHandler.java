@@ -12,7 +12,13 @@ public class CollisionHandler {
     public static ActionAfterCollision.CollisionInfo checkCollision(Component component) {
         Set<BaseCollider> colliderSet = component.getColliders();
             for (BaseCollider collider: colliderSet) {
+                if (!(collider.isEnable() && collider.isAlive())){
+                    continue;
+                }
                 for (BaseCollider other: colliders) {
+                    if (!(other.isEnable() && other.isAlive())){
+                        continue;
+                    }
                     if (component.whetherCheckCollision(other.owner)) {
                         ActionAfterCollision.CollisionInfo collisionInfo = collider.checkCollision(other);
                         collider.setLastCollisionDirection(collisionInfo.getCollisionDirection());

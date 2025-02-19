@@ -5,6 +5,7 @@ import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.BaseCollider;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Collision.CollisionHandler;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Vector.Vector;
@@ -62,7 +63,9 @@ public abstract class Component implements Base, Comparable<Component> {
 
     protected int order = 0; // 绘制顺序 越大图层越靠前
 
-    protected int mass = 1; // 质量 -1 代表固定 质量无限大
+    public static final int infiniteMass = -1;
+
+    protected int mass = infiniteMass; // 质量 infiniteMass 代表固定 质量无限大
 
     protected boolean isAlive = true;
 
@@ -71,9 +74,13 @@ public abstract class Component implements Base, Comparable<Component> {
      */
     protected Vector lastMove = Vector.Zero();
 
-    protected boolean whetherCheckCollision = true; // 是否检测碰撞 当此为false 则不会检测碰撞
+    protected boolean whetherCheckCollision = true; // 是否检测碰撞 在自身的碰撞体启用的前提下 当此为false 则不会检测碰撞
 
-    protected int CollisionRegion = -1; // -1 代表不检测
+
+    // 例如检测伤害的受击碰撞体 只需另activeCollisionZone设置为0 hitCollision设置为指定的值
+    protected int activeCollisionZone = CollisionDefaultConstValue.noCollisionChecking; // 主动碰撞区域 0 代表 不会主动检测碰撞
+
+    protected int hitCollisionZone = CollisionDefaultConstValue.noCollisionChecking; // 被动接受的碰撞区域 0 代表 不会被其他组件主动检测碰撞
 
     protected Vector last_mouse_check_self_position = Vector.Zero();
     protected boolean is_drag_on = false; // 当此属性为false时 一定不会被注册到 can_drag_object中
@@ -207,12 +214,12 @@ public abstract class Component implements Base, Comparable<Component> {
         // 预移动
         pre_move();
         // 检查碰撞
-        if (whetherCheckCollision) {
+        // 当组件需要检测碰撞时才进行检测 并且需要主动碰撞
+        if (whetherCheckCollision && activeCollisionZone != CollisionDefaultConstValue.noCollisionChecking) {
             ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
             if (collisionInfo.isWhetherCollider()) {
                 // 发生碰撞后的回调函数
                 if (collisionAction(collisionInfo, true)) {
-                    // 只有是自己触发的碰撞才回退移动
                     this.return_move();
                 }
             }
@@ -253,16 +260,16 @@ public abstract class Component implements Base, Comparable<Component> {
                 }
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
-                // 如果两个质量都为-1 则进行反弹
-                if (m1 == -1 && m2 == -1){
+                // 如果两个质量都为 infiniteMass 则进行反弹
+                if (m1 == infiniteMass && m2 == infiniteMass){
                     collisionInfo.getColliderComponent().reboundVelocity();
                     this.reboundVelocity();
                     return true;
                 }
-                if (m1 == -1){
+                if (m1 == infiniteMass){
                     collisionInfo.getColliderComponent().reboundVelocity();
                     return true;
-                } else if (m2 == -1){
+                } else if (m2 == infiniteMass){
                     this.reboundVelocity();
                     return true;
                 }
@@ -466,10 +473,6 @@ public abstract class Component implements Base, Comparable<Component> {
         return colliders;
     }
 
-    public int getCollisionRegion() {
-        return CollisionRegion;
-    }
-
     public void processMouseEvent(MouseEvent e){
         // TODO
     }
@@ -558,8 +561,9 @@ public abstract class Component implements Base, Comparable<Component> {
      * @param other 其它组件
      * @return true 检测碰撞 false 不检测碰撞
      */
-    public boolean whetherCheckCollision(Component other) {
-        return !(other.getCollisionRegion() == -1 || this.getCollisionRegion() == -1 || this.getCollisionRegion() == other.getCollisionRegion());
+    public final boolean whetherCheckCollision(Component other) {
+        // this.activeCollisionZone 与 other.hitCollisionZone 有交集
+        return (this.activeCollisionZone & other.hitCollisionZone) != 0;
     }
 
     /**
@@ -582,12 +586,29 @@ public abstract class Component implements Base, Comparable<Component> {
         this.whetherCheckCollision = whetherCheckCollision;
     }
 
-    public void setCollisionRegion(int collisionRegion) {
-        CollisionRegion = collisionRegion;
-    }
 
     public boolean isWhetherCanDrag() {
         return whetherCanDrag;
+    }
+
+    public int getActiveCollisionZone() {
+        return activeCollisionZone;
+    }
+
+    public void registerActiveCollisionZone(int activeCollisionZone) {
+        if (activeCollisionZone == CollisionDefaultConstValue.noCollisionChecking) return;
+        if (this.activeCollisionZone == CollisionDefaultConstValue.noCollisionChecking) this.activeCollisionZone = activeCollisionZone;
+        else this.activeCollisionZone |= activeCollisionZone;
+    }
+
+    public int getHitCollisionZone() {
+        return hitCollisionZone;
+    }
+
+    public void registerHitCollisionZone(int hitCollisionZone) {
+        if (hitCollisionZone == CollisionDefaultConstValue.noCollisionChecking) return;
+        if (this.hitCollisionZone == CollisionDefaultConstValue.noCollisionChecking) this.hitCollisionZone = hitCollisionZone;
+        else this.hitCollisionZone |= hitCollisionZone;
     }
 
 }

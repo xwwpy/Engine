@@ -186,6 +186,7 @@ public class Animation {
             g.setColor(DebugSetting.DebugInfoColor);
             g.drawRect(drawPosition.getX(), drawPosition.getY(), frame.size.getX(), frame.size.getY());
         }
+        // 仅当该动画主体在屏幕内时才绘制图片
         if (FrameSetting.whetherInScreen(drawPosition, frame.size)) {
             DrawUtils.drawImage(frame.image, drawPosition, g);
         }

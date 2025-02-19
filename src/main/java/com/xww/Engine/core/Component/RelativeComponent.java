@@ -1,9 +1,11 @@
 package com.xww.Engine.core.Component;
 
+import com.xww.Engine.Utils.StringUtils;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Collision.BaseCollider;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
+import com.xww.Engine.setting.DebugSetting;
 
 import java.awt.*;
 
@@ -32,7 +34,8 @@ public abstract class RelativeComponent extends Component {
                              Vector relative_position,
                              boolean WhetherPinned,
                              int order,
-                             int CollisionRegion,
+                             int activeCollisionZone,
+                             int hitCollisionZone,
                              int mass,
                              boolean whetherShowDebugInfo,
                              boolean is_drag_on){
@@ -49,7 +52,8 @@ public abstract class RelativeComponent extends Component {
         this.mass = mass;
         this.whetherShowDebugInfo = whetherShowDebugInfo;
         this.is_drag_on = is_drag_on;
-        this.CollisionRegion = CollisionRegion;
+        this.activeCollisionZone = activeCollisionZone;
+        this.hitCollisionZone = hitCollisionZone;
         this.worldPosition = parent.getLeftTopWorldPosition().add(relative_position);
         // 将相对位置更新为真正的相对父类左上角的相对距离
         // 需要此操作的原因是父节点不同锚点的类型 会有不同的结果
@@ -104,10 +108,14 @@ public abstract class RelativeComponent extends Component {
             g.drawString("velocity: " + this.getVelocity().toString(), drawPosition.getX(), drawPosition.getY() + 30);
             g.drawString("acceleration: " + this.getAcceleration().toString(), drawPosition.getX(), drawPosition.getY() + 40);
             g.drawString("order: " + this.getOrder(), drawPosition.getX(), drawPosition.getY() + 50);
-            g.drawString("collisionRegion: " + this.getCollisionRegion(), drawPosition.getX(), drawPosition.getY() + 60);
-            g.drawString("alive: " + this.isAlive(), drawPosition.getX(), drawPosition.getY() + 70);
-            g.drawString("relative_position: " + this.relative_position.toString(), drawPosition.getX(), drawPosition.getY() + 80);
-            g.drawString("WhetherPinned: " + this.WhetherPinned, drawPosition.getX(), drawPosition.getY() + 90);
+            g.drawString("whetherCheckCollision: " + this.isWhetherCheckCollision(), drawPosition.getX(), drawPosition.getY() + 60);
+            g.drawString("activeCollisionZone: " + DebugSetting.getCollisionStr(this.getActiveCollisionZone()), drawPosition.getX(), drawPosition.getY() + 70);
+            g.drawString("hitCollisionZone: " + DebugSetting.getCollisionStr(this.getHitCollisionZone()), drawPosition.getX(), drawPosition.getY() + 80);
+            g.drawString("collisionShape num: " + this.getColliders().size(), drawPosition.getX(), drawPosition.getY() + 90);
+            g.drawString("alive: " + this.isAlive(), drawPosition.getX(), drawPosition.getY() + 100);
+            g.drawString("mass: " + this.getMass(), drawPosition.getX(), drawPosition.getY() + 110);
+            g.drawString("relative_position: " + this.relative_position.toString(), drawPosition.getX(), drawPosition.getY() + 120);
+            g.drawString("WhetherPinned: " + this.WhetherPinned, drawPosition.getX(), drawPosition.getY() + 130);
         }
     }
 }

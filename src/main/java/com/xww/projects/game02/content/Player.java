@@ -3,6 +3,7 @@ package com.xww.projects.game02.content;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Vector.Vector;
@@ -18,7 +19,7 @@ public class Player extends FreeComponent {
     protected Animation currentAnimation;
 
     public Player(Vector worldPosition) {
-        super(worldPosition, GameFrame.PositionType.World, Vector.build(180, 135), AnchorMode.CenterBottom, Vector.Zero(), Vector.Zero(), 0, -1, -1, true, true);
+        super(worldPosition, GameFrame.PositionType.World, Vector.build(180, 135), AnchorMode.CenterBottom, Vector.Zero(), Vector.Zero(), 0, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking, -1, true, true);
         initAnimation();
     }
 

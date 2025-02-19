@@ -1,6 +1,7 @@
 package com.xww.projects.game01.Card;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
@@ -18,7 +19,7 @@ public class CardBar extends FreeComponent {
 
 
     public CardBar(int currentCanAccommodateCardsNum) {
-        super(Vector.build(100, 10), GameFrame.PositionType.Screen, getCardBarSize(currentCanAccommodateCardsNum), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 11, -1, -1, true, false);
+        super(Vector.build(100, 10), GameFrame.PositionType.Screen, getCardBarSize(currentCanAccommodateCardsNum), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), Integer.MAX_VALUE - 11, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking, -1, true, false);
         this.currentCanAccommodateCardsNum = currentCanAccommodateCardsNum;
         this.realAccommodateCardsNum = 0;
         cards = new BaseCard[this.currentCanAccommodateCardsNum];

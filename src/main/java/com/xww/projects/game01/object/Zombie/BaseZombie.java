@@ -12,18 +12,14 @@ public abstract class BaseZombie extends BaseObject {
                       Vector velocity,
                       Vector acceleration,
                       int order,
-                      int CollisionRegion,
+                      int activeCollisionZone,
+                      int hitCollisionZone,
                       int mass,
                       boolean whetherShowDebugInfo,
                       boolean is_drag_on,
                       int life,
                       int atk,
                       int atk_interval) {
-        super(worldPosition, size, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo, is_drag_on, life, atk, atk_interval, ObjectType.ZOMBIE);
-    }
-
-    @Override
-    public boolean whetherCheckCollision(Component other) {
-        return super.whetherCheckCollision(other);
+        super(worldPosition, size, velocity, acceleration, order, activeCollisionZone, hitCollisionZone, mass, whetherShowDebugInfo, is_drag_on, life, atk, atk_interval, ObjectType.ZOMBIE);
     }
 }

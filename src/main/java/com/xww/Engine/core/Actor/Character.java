@@ -25,14 +25,15 @@ public abstract class Character extends FreeComponent {
                      Vector velocity,
                      Vector acceleration,
                      int order,
-                     int CollisionRegion,
+                     int activeCollisionZone,
+                     int hitCollisionZone,
                      int mass,
                      boolean whetherShowDebugInfo,
                      boolean is_drag_on,
                      int life,
                      int atk,
                      int atk_interval) {
-        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, CollisionRegion, mass, whetherShowDebugInfo, is_drag_on);
+        super(worldPosition, GameFrame.PositionType.World, size, AnchorMode.LeftTop, velocity, acceleration, order, activeCollisionZone, hitCollisionZone, mass, whetherShowDebugInfo, is_drag_on);
         this.life = life;
         this.currentLife = life;
         this.atk = atk;
@@ -48,7 +49,6 @@ public abstract class Character extends FreeComponent {
     }
     @Override
     public void on_update(Graphics g) {
-        super.on_update(g);
         // 选择动画
         selectCurrentAnimation();
         if (currentAnimation != null) {
@@ -56,6 +56,7 @@ public abstract class Character extends FreeComponent {
         } else {
             System.out.println("currentAnimation is null");
         }
+        super.on_update(g);
     }
 
     /**

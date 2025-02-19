@@ -14,7 +14,8 @@ public abstract class FreeComponent extends Component{
                          Vector velocity,
                          Vector acceleration,
                          int order,
-                         int CollisionRegion,
+                         int activeCollisionZone,
+                         int hitCollisionZone,
                          int mass,
                          boolean whetherShowDebugInfo,
                          boolean is_drag_on){
@@ -26,7 +27,8 @@ public abstract class FreeComponent extends Component{
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.order = order;
-        this.CollisionRegion = CollisionRegion;
+        this.activeCollisionZone = activeCollisionZone;
+        this.hitCollisionZone = hitCollisionZone;
         this.mass = mass;
         this.whetherShowDebugInfo = whetherShowDebugInfo;
         this.is_drag_on = is_drag_on;

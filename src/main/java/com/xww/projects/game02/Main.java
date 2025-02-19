@@ -57,9 +57,9 @@ public class Main {
 
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 120; i++) {
             Player player = new Player(Vector.build(100, 200));
-            player.setCollisionRegion(i + 10);
+
             if (i % 2 == 0) {
                 player.setAnimation("roll_left");
                 player.setVelocity(Vector.build(-20, 0));

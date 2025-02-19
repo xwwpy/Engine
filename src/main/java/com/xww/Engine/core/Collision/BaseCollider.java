@@ -12,6 +12,7 @@ public abstract class BaseCollider {
 
     protected Component owner;
 
+    protected boolean enable = true;
     protected boolean isAlive = true;
     /**
      * 上次发生碰撞的方向
@@ -69,4 +70,13 @@ public abstract class BaseCollider {
     public void setLastCollisionDirection(ActionAfterCollision.collisionDirection lastCollisionDirection) {
         this.lastCollisionDirection = lastCollisionDirection;
     }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
 }

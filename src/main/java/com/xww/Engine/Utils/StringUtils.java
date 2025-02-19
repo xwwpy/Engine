@@ -69,4 +69,8 @@ public class StringUtils {
         }
         return true;
     }
+
+    public static String convertToBinary(int src) {
+        return Integer.toBinaryString(src);
+    }
 }

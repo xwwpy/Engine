@@ -8,8 +8,8 @@ import com.xww.Engine.core.Vector.Vector;
 import java.awt.*;
 
 public class TestRelativeComponent extends RelativeComponent {
-    public TestRelativeComponent(Component parent, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, Vector relative_position, boolean WhetherPinned, int order, int CollisionRegion) {
-        super(parent, size, anchorMode, velocity, acceleration, relative_position, WhetherPinned, order, CollisionRegion, 10, true, true);
+    public TestRelativeComponent(Component parent, Vector size, AnchorMode anchorMode, Vector velocity, Vector acceleration, Vector relative_position, boolean WhetherPinned, int order, int activeCollisionZone, int hitCollisionZone) {
+        super(parent, size, anchorMode, velocity, acceleration, relative_position, WhetherPinned, order, activeCollisionZone, hitCollisionZone, 10, true, true);
     }
 
     @Override
