@@ -259,6 +259,7 @@ public abstract class Component implements Base, Comparable<Component> {
     protected boolean[] collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
         switch (this.getCollisionType()){
             case stop:
+                // TODO 需要判断在哪个方向进行回退运动
                 this.clearVeAc();
                 return x_y_return;
             case rebound:
