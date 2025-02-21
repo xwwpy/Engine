@@ -1,26 +1,29 @@
 package com.xww.projects.game01.object;
 
-import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.core.Actor.Character;
 
 public abstract class BaseObject extends Character {
 
     protected ObjectType objectType; // 对象所属的类型
     public BaseObject(Vector worldPosition,
                       Vector size,
-                      Vector velocity,
-                      Vector acceleration,
-                      int order,
-                      int activeCollisionZone,
-                      int hitCollisionZone,
                       int mass,
-                      boolean whetherShowDebugInfo,
-                      boolean is_drag_on,
                       int life,
-                      int atk,
                       int atk_interval,
                       ObjectType objectType) {
-        super(worldPosition, size, velocity, acceleration, order, activeCollisionZone, hitCollisionZone, mass, whetherShowDebugInfo, is_drag_on, life, atk, atk_interval);
+        super(worldPosition,
+                size,
+                mass,
+                life,
+                atk_interval,
+                100,
+                false,
+                2,
+                500,
+                200,
+                CharacterType.Player,
+                true);
         this.objectType = objectType;
     }
 

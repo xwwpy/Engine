@@ -1,5 +1,6 @@
 package com.xww.projects.game02.content;
 
+import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
@@ -10,16 +11,26 @@ import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Player extends FreeComponent {
+public class Player extends Character {
 
-    protected Map<String, Animation> animations = new HashMap<>();
-    protected Animation currentAnimation;
 
     public Player(Vector worldPosition) {
-        super(worldPosition, GameFrame.PositionType.World, Vector.build(180, 135), AnchorMode.CenterBottom, Vector.Zero(), Vector.Zero(), 0, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking, -1, true, true);
+        super(worldPosition,
+                Vector.build(180, 135),
+                10,
+                100,
+                200,
+                1000,
+                false,
+                40,
+                500,
+                200,
+                CharacterType.Player,
+                true);
         initAnimation();
     }
 
@@ -107,26 +118,18 @@ public class Player extends FreeComponent {
 
     }
 
-    public void addAnimation(String name, Animation animation) {
-        animations.put(name, animation);
+    @Override
+    protected boolean tryAtk() {
+        return false;
     }
 
-    public void setAnimation(String name) {
-        Animation animation = animations.get(name);
-        if (animation == null){
-            System.out.println("animation: " + name + " is null");
-            return;
-        }
-        currentAnimation = animation;
-    }
     @Override
-    public void on_update(Graphics g) {
-        super.on_update(g);
-        // 选择动画
-        if (currentAnimation != null) {
-            currentAnimation.on_update(g);
-        } else {
-            System.out.println("currentAnimation is null");
-        }
+    protected void onInvulnerableHit() {
+
+    }
+
+    @Override
+    protected void onHit() {
+
     }
 }

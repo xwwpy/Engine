@@ -29,6 +29,8 @@ public class Timer {
 
     private int recovery_times = run_times;
 
+    private boolean whether_start = true;
+
     /**
      *
      * @param wait_time 单位 毫秒
@@ -42,6 +44,7 @@ public class Timer {
     }
 
     public void tick() {
+        if (!whether_start) return;
         if (isOver) return;
         if (TimeEventManager.currentTime - start_time >= this.wait_time){
             if (callback != null) callback.run(owner);
@@ -88,8 +91,20 @@ public class Timer {
     }
     public void restart() {
         isOver = false;
+        whether_start = true;
         this.run_times = this.recovery_times;
         start_time = TimeEventManager.currentTime;
     }
 
+    public boolean isWhether_start() {
+        return whether_start;
+    }
+
+    public void stopStart(){
+        whether_start = false;
+    }
+
+    public void start(){
+        restart();
+    }
 }

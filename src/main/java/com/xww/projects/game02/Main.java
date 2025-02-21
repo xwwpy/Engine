@@ -1,13 +1,18 @@
 package com.xww.projects.game02;
 
+import com.xww.Engine.Test.TestComponent;
+import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Atlas;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 
+import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
+import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.BackGroundComponent;
 import com.xww.projects.game02.content.Player;
 
@@ -57,15 +62,25 @@ public class Main {
 
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
-        for (int i = 0; i < 120; i++) {
+        for (int i = 1; i < 2; i++) {
             Player player = new Player(Vector.build(100, 200));
-
+            player.setEnableGravity(true);
             if (i % 2 == 0) {
                 player.setAnimation("roll_left");
                 player.setVelocity(Vector.build(-20, 0));
             }
             player.addCollider(new RectCollider(Vector.build(38, 55), player, Vector.build(92, 440 - 366)));
             Component.addComponent(player);
+            KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(player);
         }
+
+        TestComponent bottom = new TestComponent(Vector.build(0, FrameSetting.DEFAULT_HEIGHT - 50), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking);
+        bottom.addCollider(new RectCollider(Vector.build(0, 0), bottom, bottom.getSize()));
+        Component.addComponent(bottom);
+
+
+        TestComponent bottom1 = new TestComponent(Vector.build(200, FrameSetting.DEFAULT_HEIGHT - 150), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, CollisionDefaultConstValue.noCollisionChecking, CollisionDefaultConstValue.noCollisionChecking);
+        bottom1.addCollider(new RectCollider(Vector.build(0, 0), bottom, bottom.getSize()));
+        Component.addComponent(bottom1);
     }
 }

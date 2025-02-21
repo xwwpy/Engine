@@ -56,19 +56,19 @@ public class Main {
         TestComponent testComponent1 = new TestComponent(Vector.build(1100, 600), Vector.build(100, 100), AnchorMode.LeftBottom, Vector.build(100, 20), Vector.Zero(), 0, 0b0001, 0b000);
 
         Component.addComponent(testComponent1);
-        TestComponent boundaryLeft = new TestComponent(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.boundary);
+        TestComponent boundaryLeft = new TestComponent(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.noCollisionChecking);
         boundaryLeft.addCollider(new RectCollider(Vector.build(0, 0), boundaryLeft, boundaryLeft.getSize()));
         Component.addComponent(boundaryLeft);
         boundaryLeft.setMass(-1);
-        TestComponent boundaryRight = new TestComponent(Vector.build(FrameSetting.DEFAULT_WIDTH + 10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0,0, CollisionDefaultConstValue.boundary);
+        TestComponent boundaryRight = new TestComponent(Vector.build(FrameSetting.DEFAULT_WIDTH + 10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0,0, CollisionDefaultConstValue.noCollisionChecking);
         boundaryRight.addCollider(new RectCollider(Vector.build(0, 0), boundaryRight, boundaryRight.getSize()));
         Component.addComponent(boundaryRight);
         boundaryRight.setMass(-1);
-        TestComponent boundaryTop = new TestComponent(Vector.build(0, -10), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.boundary);
+        TestComponent boundaryTop = new TestComponent(Vector.build(0, -10), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.noCollisionChecking);
         boundaryTop.addCollider(new RectCollider(Vector.build(0, 0), boundaryTop, boundaryTop.getSize()));
         Component.addComponent(boundaryTop);
         boundaryTop.setMass(-1);
-        TestComponent boundaryBottom = new TestComponent(Vector.build(0, FrameSetting.DEFAULT_HEIGHT + 10), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.boundary);
+        TestComponent boundaryBottom = new TestComponent(Vector.build(0, FrameSetting.DEFAULT_HEIGHT + 10), Vector.build(FrameSetting.DEFAULT_WIDTH, 10), AnchorMode.LeftTop, Vector.Zero(), Vector.Zero(), 0, 0, CollisionDefaultConstValue.noCollisionChecking);
         boundaryBottom.addCollider(new RectCollider(Vector.build(0, 0), boundaryBottom, boundaryBottom.getSize()));
         Component.addComponent(boundaryBottom);
         boundaryBottom.setMass(-1);

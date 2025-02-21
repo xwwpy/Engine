@@ -7,20 +7,14 @@ import com.xww.projects.game01.object.ObjectType;
 
 public abstract class BasePlant extends BaseObject {
 
+
     public BasePlant(Vector worldPosition,
                      Vector size,
-                     Vector velocity,
-                     Vector acceleration,
-                     int order,
-                     int activeCollisionZone,
-                     int hitCollisionZone,
                      int mass,
-                     boolean whetherShowDebugInfo,
-                     boolean is_drag_on,
                      int life,
-                     int atk,
-                     int atk_interval) {
-        super(worldPosition, size, velocity, acceleration, order, activeCollisionZone, hitCollisionZone, mass, whetherShowDebugInfo, is_drag_on, life, atk, atk_interval, ObjectType.PLANT);
+                     int atk_interval,
+                     ObjectType objectType) {
+        super(worldPosition, size, mass, life, atk_interval, objectType);
     }
 
     /**

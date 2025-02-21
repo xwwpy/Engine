@@ -3,10 +3,7 @@ package com.xww.Engine.core.Component;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Base;
-import com.xww.Engine.core.Collision.ActionAfterCollision;
-import com.xww.Engine.core.Collision.BaseCollider;
-import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
-import com.xww.Engine.core.Collision.CollisionHandler;
+import com.xww.Engine.core.Collision.*;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.Camera;
@@ -21,13 +18,22 @@ import java.util.*;
 
 @SuppressWarnings("all")
 public abstract class Component implements Base, Comparable<Component> {
+    public static final boolean[] x_y_return = new boolean[]{true, true};
+    public static final boolean[] x_y_no_return = new boolean[]{false, false};
+
+    public static final boolean[] x_return = new boolean[]{true, false};
+    public static final boolean[] y_return = new boolean[]{false, true};
+
+    public static final int GRAVITY = 98 * 8;
+
+    public static final Vector gravity = Vector.build(0, GRAVITY);
 
     public static Set<Component> can_drag_object_to_add = new HashSet<>();
     public static Set<Component> can_drag_object = new HashSet<>();
 
     public static Set<Component> can_drag_object_to_remove = new HashSet<>();
 
-    public static final ActionAfterCollision.ActionAfterCollisionType ComponentDefaultCollisionType = ActionAfterCollision.ActionAfterCollisionType.physics;
+    public static final ActionAfterCollision.ActionAfterCollisionType ComponentDefaultCollisionType = ActionAfterCollision.ActionAfterCollisionType.stop;
 
     protected ActionAfterCollision.ActionAfterCollisionType callBack = ComponentDefaultCollisionType;
 
@@ -92,11 +98,22 @@ public abstract class Component implements Base, Comparable<Component> {
     // 每个组件自定义级别的展示debug信息 有且仅当DebugSetting.IS_DEBUG_ON 为true并且whetherShowDebugInfo为true时才是开启DEBUG模式
     protected boolean whetherShowDebugInfo = DebugSetting.IS_DEBUG_ON;
 
+    protected boolean enableGravity = false; // 是否启用重力模拟
+
+    /**
+     * 默认会注册到 MouseMessageHandler.mouseMessageHandlerInstance中 进行处理鼠标事件
+     * @param component 添加组件
+     */
 
     public static void addComponent(Component component) {
         addComponent(component, true);
     }
 
+    /**
+     *
+     * @param component 添加组件
+     * @param registerMouseFlag 是否注册到MouseMessageHandler.mouseMessageHandlerInstance中
+     */
     public static void addComponent(Component component, boolean registerMouseFlag) {
         components_to_add.add(component);
         if (registerMouseFlag) {
@@ -121,6 +138,7 @@ public abstract class Component implements Base, Comparable<Component> {
         }
         // 检查拖动属性
         checkDrag();
+        checkGravity();
         checkMove();
         // 更新子组件
         update_children(g);
@@ -131,6 +149,12 @@ public abstract class Component implements Base, Comparable<Component> {
         drawCollider(g);
         drawWhetherCanDrag(g);
         if (whetherShowDebugInfo && DebugSetting.IS_DEBUG_ON) showDebugInfo(g);
+    }
+
+    protected void checkGravity() {
+        if (enableGravity){
+            this.velocity.add_to_self(GameFrame.getFrameVelocity(gravity));
+        }
     }
 
     public void drawWhetherCanDrag(Graphics g) {
@@ -211,18 +235,17 @@ public abstract class Component implements Base, Comparable<Component> {
      * 检测组件是否需要移动
      */
     protected void checkMove() {
-        this.velocity = this.velocity.add(GameFrame.getFrameVelocity(this.acceleration));
+        this.velocity = this.velocity.add_to_self(GameFrame.getFrameVelocity(this.acceleration));
         // 预移动
         pre_move();
         // 检查碰撞
         // 当组件需要检测碰撞时才进行检测 并且需要主动碰撞
         if (whetherCheckCollision && activeCollisionZone != CollisionDefaultConstValue.noCollisionChecking) {
             ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
+            // 如果发生碰撞执行下面的逻辑
             if (collisionInfo.isWhetherCollider()) {
                 // 发生碰撞后的回调函数
-                if (collisionAction(collisionInfo, true)) {
-                    this.return_move();
-                }
+                this.return_move(collisionAction(collisionInfo, true));
             }
         }
     }
@@ -233,12 +256,11 @@ public abstract class Component implements Base, Comparable<Component> {
      * @return 是否进行回退移动 true 进行回退 false 不进行回退
      *
      */
-    protected boolean collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
+    protected boolean[] collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
         switch (this.getCollisionType()){
             case stop:
-                // 将速度和加速度清零
                 this.clearVeAc();
-                break;
+                return x_y_return;
             case rebound:
                 // 将速度进行反转
                 this.reboundVelocity();
@@ -247,17 +269,17 @@ public abstract class Component implements Base, Comparable<Component> {
                 this.setAlive(false);
                 break;
             case nullAction:
-                return false;
+                return x_y_no_return;
             case physics:
                 // 对于此逻辑双方只需执行一次
                 if (!flag){
-                    return true;
+                    return x_y_return;
                 }
                 // 如果另一方不是物理碰撞 则进行反弹
                 if (collisionInfo.getColliderComponent().getCollisionType() != ActionAfterCollision.ActionAfterCollisionType.physics){
                     // 将另一个不是物理碰撞的当作质量无限大
                     this.reboundVelocity();
-                    return true;
+                    return x_y_return;
                 }
                 double m1 = this.mass;
                 double m2 = collisionInfo.getOtherCollider().getOwner().mass;
@@ -265,14 +287,14 @@ public abstract class Component implements Base, Comparable<Component> {
                 if (m1 == infiniteMass && m2 == infiniteMass){
                     collisionInfo.getColliderComponent().reboundVelocity();
                     this.reboundVelocity();
-                    return true;
+                    return x_y_return;
                 }
                 if (m1 == infiniteMass){
                     collisionInfo.getColliderComponent().reboundVelocity();
-                    return true;
+                    return x_y_return;
                 } else if (m2 == infiniteMass){
                     this.reboundVelocity();
-                    return true;
+                    return x_y_return;
                 }
                 Vector v1 = this.velocity;
                 Vector v2 = collisionInfo.getOtherCollider().getOwner().getVelocity();
@@ -282,15 +304,14 @@ public abstract class Component implements Base, Comparable<Component> {
                 // 设置新的速度
                 this.setVelocity(v1Prime);
                 collisionInfo.getColliderComponent().setVelocity(v2Prime);
-                collisionInfo.getColliderComponent().return_move();
+                collisionInfo.getColliderComponent().return_move(x_y_return);
                 break;
             default:
                 throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + this.getCollisionType());
 
         }
-        return true;
+        return x_y_return;
     }
-
 
     protected void reboundVelocity() {
         this.velocity.divide_self(-1);
@@ -325,14 +346,19 @@ public abstract class Component implements Base, Comparable<Component> {
      */
     protected void pre_move() {
         lastMove = GameFrame.getFrameVelocity(this.velocity);
-        this.worldPosition = this.worldPosition.add_to_self(lastMove);
+        this.worldPosition.add_to_self(lastMove);
     }
 
     /**
      * 回退运动
      */
-    protected void return_move() {
-        this.worldPosition = this.worldPosition.sub_to_self(lastMove);
+    protected void return_move(boolean[] x_y) {
+        if (x_y[0]){
+            this.worldPosition.sub_to_self(Vector.build(lastMove.getFullX(), 0));
+        }
+        if (x_y[1]){
+            this.worldPosition.sub_to_self(Vector.build(0, lastMove.getFullY()));
+        }
         lastMove = Vector.Zero();
     }
     /**
@@ -612,4 +638,11 @@ public abstract class Component implements Base, Comparable<Component> {
         else this.hitCollisionZone |= hitCollisionZone;
     }
 
+    public boolean isEnableGravity() {
+        return enableGravity;
+    }
+
+    public void setEnableGravity(boolean enableGravity) {
+        this.enableGravity = enableGravity;
+    }
 }
