@@ -14,6 +14,8 @@ public abstract class BaseObject extends Character {
                       ObjectType objectType) {
         super(worldPosition,
                 size,
+                size,
+                Vector.Zero(),
                 mass,
                 life,
                 atk_interval,
@@ -22,8 +24,7 @@ public abstract class BaseObject extends Character {
                 2,
                 500,
                 200,
-                CharacterType.Player,
-                true);
+                CharacterType.Player);
         this.objectType = objectType;
     }
 

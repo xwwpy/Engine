@@ -1,19 +1,10 @@
 package com.xww.projects.game02.content;
 
 import com.xww.Engine.core.Actor.Character;
-import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
-import com.xww.Engine.core.Collision.ActionAfterCollision;
-import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
-import com.xww.Engine.core.Component.FreeComponent;
-import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Vector.Vector;
-import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Player extends Character {
 
@@ -21,6 +12,8 @@ public class Player extends Character {
     public Player(Vector worldPosition) {
         super(worldPosition,
                 Vector.build(180, 135),
+                Vector.build(232 - 137, 333 - 257),
+                Vector.build(38, 57),
                 10,
                 100,
                 200,
@@ -29,8 +22,7 @@ public class Player extends Character {
                 40,
                 500,
                 200,
-                CharacterType.Player,
-                true);
+                CharacterType.Player);
         initAnimation();
     }
 
@@ -116,6 +108,23 @@ public class Player extends Character {
         });
 
 
+    }
+
+    @Override
+    public void on_update(Graphics g) {
+        String animationName;
+        if (this.velocity.getX() != 0){
+            animationName = "run_";
+        } else {
+            animationName = "idle_";
+        }
+        if (this.velocity.getX() > 0){
+            this.whetherFacingLeft = false;
+        } else if (this.velocity.getX() < 0){
+            this.whetherFacingLeft = true;
+        }
+        this.setAnimation(animationName + (this.whetherFacingLeft ? "left": "right"));
+        super.on_update(g);
     }
 
     @Override

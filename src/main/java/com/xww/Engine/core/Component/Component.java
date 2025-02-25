@@ -259,9 +259,7 @@ public abstract class Component implements Base, Comparable<Component> {
     protected boolean[] collisionAction(ActionAfterCollision.CollisionInfo collisionInfo, boolean flag) {
         switch (this.getCollisionType()){
             case stop:
-                // TODO 需要判断在哪个方向进行回退运动
-                this.clearVeAc();
-                return x_y_return;
+                return processStopCollision(collisionInfo);
             case rebound:
                 // 将速度进行反转
                 this.reboundVelocity();
@@ -311,6 +309,13 @@ public abstract class Component implements Base, Comparable<Component> {
                 throw new RuntimeException("Component 组件目前不支持 碰撞发生后的指定的此行为: " + this.getCollisionType());
 
         }
+        return x_y_return;
+    }
+
+    private boolean[] processStopCollision(ActionAfterCollision.CollisionInfo collisionInfo) {
+        // TODO 需要判断在哪个方向进行回退运动
+        // 判断是在哪个方向
+        this.clearVeAc();
         return x_y_return;
     }
 

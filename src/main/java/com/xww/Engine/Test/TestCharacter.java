@@ -2,7 +2,6 @@ package com.xww.Engine.Test;
 
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Animation.Atlas;
-import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.core.Actor.Character;
@@ -11,6 +10,8 @@ public class TestCharacter extends Character{
     public TestCharacter(Vector worldPosition, Vector size) {
         super(worldPosition,
                 size,
+                size,
+                Vector.Zero(),
                 10,
                 100,
                 100,
@@ -19,8 +20,7 @@ public class TestCharacter extends Character{
                 1,
                 500,
                 100,
-                CharacterType.Player,
-                true);
+                CharacterType.Player);
         initIdleAnimation();
         this.addCollider(new RectCollider(Vector.Zero(), this, size));
     }

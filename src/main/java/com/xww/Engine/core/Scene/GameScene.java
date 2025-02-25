@@ -1,5 +1,6 @@
 package com.xww.Engine.core.Scene;
 
+import com.xww.Engine.core.Barrier.BaseBarrier;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
@@ -79,5 +80,7 @@ public class GameScene implements BaseScene{
         com.xww.Engine.core.Component.Component.allComponents_to_remove.clear();
         // 更新拖拽组件
         Component.updateDragComponents();
+        // 更新障碍物
+        BaseBarrier.updateBarriers(g);
     }
 }
