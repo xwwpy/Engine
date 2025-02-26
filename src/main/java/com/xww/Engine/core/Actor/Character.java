@@ -2,7 +2,7 @@ package com.xww.Engine.core.Actor;
 
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
-import com.xww.Engine.core.Barrier.BaseBarrier;
+import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.Component;
@@ -57,8 +57,8 @@ public abstract class Character extends FreeComponent {
 
     protected boolean whetherOnGround = false;
 
-    protected BaseBarrier lastOnGround = null;
-    protected BaseBarrier cantOnThisGround = null;
+    protected BaseGround lastOnGround = null;
+    protected BaseGround cantOnThisGround = null;
     protected boolean whetherDownGround = false;
 
     protected boolean whetherRunLeft = false;
@@ -171,7 +171,7 @@ public abstract class Character extends FreeComponent {
         Vector position = this.getLogicPosition();
         pre_move();
         Vector position1 = this.getLogicPosition();
-        BaseBarrier.whetherOnGround(position, position1, this);
+        BaseGround.whetherOnGround(position, position1, this);
         // 检查碰撞
         // 当组件需要检测碰撞时才进行检测 并且需要主动碰撞
         if (whetherCheckCollision && activeCollisionZone != CollisionDefaultConstValue.noCollisionChecking) {
@@ -227,7 +227,7 @@ public abstract class Character extends FreeComponent {
                     }
                     break;
                 case KeyEvent.VK_S:
-                    if (this.whetherOnGround){
+                    if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()){
                         this.whetherDownGround = true;
                         this.whetherOnGround = false;
                         cantOnThisGround = this.getLastOnGround();
@@ -290,7 +290,7 @@ public abstract class Character extends FreeComponent {
      */
     protected abstract void onHit();
 
-    public void on_ground(BaseBarrier barrier) {
+    public void on_ground(BaseGround barrier) {
         if (this.whetherDownGround){
             if (barrier == cantOnThisGround){
                 return;
@@ -339,11 +339,11 @@ public abstract class Character extends FreeComponent {
         return this.getLeftTopWorldPosition().add(this.relativePosition);
     }
 
-    public BaseBarrier getLastOnGround() {
+    public BaseGround getLastOnGround() {
         return lastOnGround;
     }
 
-    public void setLastOnGround(BaseBarrier lastOnGround) {
+    public void setLastOnGround(BaseGround lastOnGround) {
         this.lastOnGround = lastOnGround;
     }
 }

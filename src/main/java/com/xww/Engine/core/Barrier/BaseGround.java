@@ -9,12 +9,12 @@ import com.xww.Engine.setting.DebugSetting;
 import java.awt.*;
 import java.util.Set;
 
-public abstract class BaseBarrier {
+public abstract class BaseGround {
 
     public static boolean enableDebug = true;
-    public static final Set<BaseBarrier> barriers = new java.util.HashSet<>();
-    public static final Set<BaseBarrier> barriers_to_add = new java.util.HashSet<>();
-    public static final Set<BaseBarrier> barriers_to_remove = new java.util.HashSet<>();
+    public static final Set<BaseGround> barriers = new java.util.HashSet<>();
+    public static final Set<BaseGround> barriers_to_add = new java.util.HashSet<>();
+    public static final Set<BaseGround> barriers_to_remove = new java.util.HashSet<>();
     protected static Color DebugColor = Color.WHITE;
     protected GameFrame.PositionType positionType = GameFrame.PositionType.World;
 
@@ -24,7 +24,9 @@ public abstract class BaseBarrier {
     protected boolean whether_enable = true;
     protected boolean whether_alive = true;
 
-    public BaseBarrier(Vector worldPosition, Vector size){
+    protected boolean whetherCanDown = true; // 当角色在该平台上时, 使用可以通过下落键的方式掉下去
+
+    public BaseGround(Vector worldPosition, Vector size){
         this.worldPosition = worldPosition;
         this.size = size;
     }
@@ -34,7 +36,7 @@ public abstract class BaseBarrier {
      */
     public static void whetherOnGround(Vector lastPosition, Vector nowPosition, Character character) {
         Vector size = character.getLogicSize();
-        for (BaseBarrier barrier : barriers) {
+        for (BaseGround barrier : barriers) {
             if (barrier.whether_enable && barrier.whether_alive) {
                 Vector barrierPos = barrier.getWorldPosition();
                 Vector barrierSize = barrier.getSize();
@@ -70,7 +72,7 @@ public abstract class BaseBarrier {
         barriers_to_add.clear();
         barriers_to_remove.clear();
     }
-    public static void registerBarrier(BaseBarrier barrier) {
+    public static void registerBarrier(BaseGround barrier) {
         barriers_to_add.add(barrier);
     }
 
@@ -128,5 +130,11 @@ public abstract class BaseBarrier {
 
     public void setWhether_alive(boolean whether_alive) {
         this.whether_alive = whether_alive;
+    }
+    public boolean isWhetherCanDown() {
+        return whetherCanDown;
+    }
+    public void setWhetherCanDown(boolean whetherCanDown) {
+        this.whetherCanDown = whetherCanDown;
     }
 }

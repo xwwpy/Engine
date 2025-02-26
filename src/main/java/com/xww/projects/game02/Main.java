@@ -1,10 +1,7 @@
 package com.xww.projects.game02;
 
-import com.xww.Engine.Test.TestComponent;
-import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Atlas;
-import com.xww.Engine.core.Barrier.BaseBarrier;
-import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
+import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 
@@ -13,7 +10,6 @@ import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
-import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.BackGroundComponent;
 import com.xww.projects.game02.content.Player;
 import com.xww.projects.game02.content.barrier.Ground;
@@ -75,9 +71,10 @@ public class Main {
             KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(player);
         }
 
-        BaseBarrier.registerBarrier(new Ground(Vector.build(100, 600)));
-        BaseBarrier.registerBarrier(new Ground(Vector.build(300, 500)));
-
-        BaseBarrier.registerBarrier(new Ground(Vector.build(0, 680)));
+        BaseGround.registerBarrier(new Ground(Vector.build(100, 600)));
+        BaseGround.registerBarrier(new Ground(Vector.build(300, 500)));
+        Ground ground = new Ground(Vector.build(0, 680));
+        ground.setWhetherCanDown(false);
+        BaseGround.registerBarrier(ground);
     }
 }
