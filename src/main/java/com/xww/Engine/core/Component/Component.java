@@ -24,7 +24,7 @@ public abstract class Component implements Base, Comparable<Component> {
     public static final boolean[] x_return = new boolean[]{true, false};
     public static final boolean[] y_return = new boolean[]{false, true};
 
-    public static final int GRAVITY = 98 * 8;
+    public static final int GRAVITY = 98 * 9;
 
     public static final Vector gravity = Vector.build(0, GRAVITY);
 

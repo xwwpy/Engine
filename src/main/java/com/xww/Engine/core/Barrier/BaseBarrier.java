@@ -15,6 +15,7 @@ public abstract class BaseBarrier {
     public static final Set<BaseBarrier> barriers = new java.util.HashSet<>();
     public static final Set<BaseBarrier> barriers_to_add = new java.util.HashSet<>();
     public static final Set<BaseBarrier> barriers_to_remove = new java.util.HashSet<>();
+    protected static Color DebugColor = Color.WHITE;
     protected GameFrame.PositionType positionType = GameFrame.PositionType.World;
 
     protected Vector worldPosition; // 障碍物位置

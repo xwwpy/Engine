@@ -64,7 +64,7 @@ public class Main {
 
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
-        for (int i = 1; i < 2; i++) {
+        for (int i = 1; i < 4; i++) {
             Player player = new Player(Vector.build(100, 200));
             if (i % 2 == 0) {
                 player.setAnimation("roll_left");

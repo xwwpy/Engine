@@ -58,6 +58,8 @@ public abstract class Character extends FreeComponent {
     protected boolean whetherOnGround = false;
 
     protected BaseBarrier lastOnGround = null;
+    protected BaseBarrier cantOnThisGround = null;
+    protected boolean whetherDownGround = false;
 
     protected boolean whetherRunLeft = false;
     protected boolean whetherRunRight = false;
@@ -211,6 +213,8 @@ public abstract class Character extends FreeComponent {
                         this.velocity.y = -jumpSpeed;
                         this.whetherJumping = true;
                         this.whetherOnGround = false;
+                        this.whetherDownGround = false;
+                        this.cantOnThisGround = null;
                         this.jumpCount++;
                     }
                     break;
@@ -220,6 +224,13 @@ public abstract class Character extends FreeComponent {
                             this.whetherCanAtk = false;
                             this.atk_intervalTimer.restart();
                         }
+                    }
+                    break;
+                case KeyEvent.VK_S:
+                    if (this.whetherOnGround){
+                        this.whetherDownGround = true;
+                        this.whetherOnGround = false;
+                        cantOnThisGround = this.getLastOnGround();
                     }
                     break;
                 default:
@@ -280,6 +291,14 @@ public abstract class Character extends FreeComponent {
     protected abstract void onHit();
 
     public void on_ground(BaseBarrier barrier) {
+        if (this.whetherDownGround){
+            if (barrier == cantOnThisGround){
+                return;
+            } else {
+                this.whetherDownGround = false;
+                this.cantOnThisGround = null;
+            }
+        }
         this.whetherOnGround = true;
         lastOnGround = barrier;
         resetJumpState();

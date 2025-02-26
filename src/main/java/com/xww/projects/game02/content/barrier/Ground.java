@@ -14,6 +14,7 @@ public class Ground extends BaseBarrier {
 
     @Override
     protected void onRender(Graphics g) {
+        g.setColor(BaseBarrier.DebugColor);
         Vector drawPosition = this.getDrawPosition();
         g.drawLine(drawPosition.getX(), drawPosition.getY(), drawPosition.getX() + this.getSize().getX(), drawPosition.getY());
     }
