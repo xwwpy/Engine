@@ -1,5 +1,7 @@
 package com.xww.Engine.Utils;
 
+import org.github.jamm.MemoryMeter;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -34,6 +36,17 @@ public class CodeUtils {
             throw new RuntimeException(e);
         }
         return totalLines;
+    }
+
+    @Deprecated
+    public static long getObjSize(Object obj){
+        try {
+            MemoryMeter meter = new MemoryMeter();
+            return meter.measureDeep(obj);
+        } catch (RuntimeException e) {
+            System.out.println("对象无法测量：" + e.getMessage());
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

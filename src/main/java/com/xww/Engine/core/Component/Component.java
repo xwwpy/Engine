@@ -5,6 +5,7 @@ import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Collision.*;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
+import com.xww.Engine.core.Timer.TimerManager;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.Camera;
 import com.xww.Engine.gui.GameFrame;
@@ -54,10 +55,6 @@ public abstract class Component implements Base, Comparable<Component> {
     protected Set<BaseCollider> colliders = new HashSet<>(); // 组件碰撞器
     protected Set<BaseCollider> colliders_to_add = new HashSet<>();
     protected Set<BaseCollider> colliders_to_remove = new HashSet<>();
-
-    protected Set<Timer> timer = new HashSet<>(); // 定时器组件
-    protected Set<Timer> timer_to_add = new HashSet<>();
-    protected Set<Timer> timer_to_remove = new HashSet<>();
     protected Vector worldPosition; // 组件世界坐标
     protected GameFrame.PositionType positionType = GameFrame.PositionType.World; // 默认为世界坐标
 
@@ -142,8 +139,6 @@ public abstract class Component implements Base, Comparable<Component> {
         checkMove();
         // 更新子组件
         update_children(g);
-        // 更新定时器
-        update_timer();
         // 更新碰撞器组件
         update_collider();
         drawCollider(g);
@@ -197,19 +192,6 @@ public abstract class Component implements Base, Comparable<Component> {
         colliders.forEach((collider)->{
             if (!collider.isAlive()){
                 colliders_to_remove.add(collider);
-            }
-        });
-    }
-
-    private void update_timer() {
-        timer.removeAll(timer_to_remove);
-        timer_to_remove.clear();
-        timer.addAll(timer_to_add);
-        timer_to_add.clear();
-        timer.forEach((timer)->{
-            timer.tick();
-            if (timer.isOver()){
-                timer_to_remove.add(timer);
             }
         });
     }
@@ -494,7 +476,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public void addTimer(Timer timer) {
-        this.timer_to_add.add(timer);
+        TimerManager.instance.registerTimer(timer);
     }
     public void addCollider(BaseCollider collider){
         collider.setOwner(this);

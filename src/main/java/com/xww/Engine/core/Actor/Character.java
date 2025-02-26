@@ -291,6 +291,7 @@ public abstract class Character extends FreeComponent {
     protected abstract void onHit();
 
     public void on_ground(BaseGround barrier) {
+        if (whetherOnGround) return;
         if (this.whetherDownGround){
             if (barrier == cantOnThisGround){
                 return;
@@ -305,8 +306,9 @@ public abstract class Character extends FreeComponent {
         if (this.velocity.getFullY() > 0){
             this.velocity.setY(0);
         }
-//        double dis = barrier.getWorldPosition().getFullY() - this.getLogicSize().getFullY() + this.getLogicPosition().getFullY();
-//        this.worldPosition.add_to_self(Vector.build(0, dis));
+        // 修正位置
+        double dis = barrier.getWorldPosition().getFullY() - (this.getLogicSize().getFullY() + this.getLogicPosition().getFullY());
+        this.worldPosition.add_to_self(Vector.build(0, dis));
         // 防止某些极端情况
         lastMove.setY(0);
     }
