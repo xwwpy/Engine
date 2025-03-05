@@ -12,7 +12,7 @@ public class Frame {
     public Frame(Image image, Rect rect_src) {
         BufferedImage image1 = ImgUtils.convertToBufferedImage(image);
         this.image = ImgUtils.GetDrawRectImage(image1, rect_src, rect_src);
-        this.size = Vector.build(image1.getWidth(null), image1.getHeight(null));
+        this.size = Vector.build(this.image.getWidth(null), this.image.getHeight(null));
     }
 
     /**

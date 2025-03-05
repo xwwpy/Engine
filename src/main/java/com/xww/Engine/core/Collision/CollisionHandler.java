@@ -8,8 +8,18 @@ import java.util.Set;
 
 public class CollisionHandler {
     public static Set<BaseCollider> colliders = new HashSet<>();
+    public static Set<BaseCollider> colliders_to_add = new HashSet<>();
+    public static Set<BaseCollider> colliders_to_remove = new HashSet<>();
+
+    public static void update() {
+        colliders.addAll(colliders_to_add);
+        colliders_to_add.clear();
+        colliders.removeAll(colliders_to_remove);
+        CollisionHandler.colliders.removeAll(colliders_to_remove);
+    }
 
     public static ActionAfterCollision.CollisionInfo checkCollision(Component component) {
+        update();
         Set<BaseCollider> colliderSet = component.getColliders();
             for (BaseCollider collider: colliderSet) {
                 if (!(collider.isEnable() && collider.isAlive())){

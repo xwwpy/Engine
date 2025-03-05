@@ -60,14 +60,11 @@ public class GameScene implements BaseScene{
 
     private static void updateComponent(Graphics g) {
         com.xww.Engine.core.Component.Component.components.addAll(com.xww.Engine.core.Component.Component.components_to_add);
-        com.xww.Engine.core.Component.Component.allComponents_to_add.addAll(com.xww.Engine.core.Component.Component.components_to_add);
 
         com.xww.Engine.core.Component.Component.components_to_add.clear();
 
-        com.xww.Engine.core.Component.Component.allComponents_to_remove.addAll(com.xww.Engine.core.Component.Component.components_to_remove);
 
         com.xww.Engine.core.Component.Component.components_to_remove.forEach(component -> {
-            component.on_destroy();
             com.xww.Engine.core.Component.Component.components.remove(component);
         });
         com.xww.Engine.core.Component.Component.components_to_remove.clear();
@@ -76,7 +73,10 @@ public class GameScene implements BaseScene{
         });
         com.xww.Engine.core.Component.Component.allComponents.addAll(com.xww.Engine.core.Component.Component.allComponents_to_add);
         com.xww.Engine.core.Component.Component.allComponents_to_add.clear();
-        com.xww.Engine.core.Component.Component.allComponents.removeAll(com.xww.Engine.core.Component.Component.allComponents_to_remove);
+        Component.allComponents_to_remove.forEach(component -> {
+            component.on_destroy();
+            com.xww.Engine.core.Component.Component.allComponents.remove(component);
+        });
         com.xww.Engine.core.Component.Component.allComponents_to_remove.clear();
         // 更新拖拽组件
         Component.updateDragComponents();

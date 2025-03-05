@@ -127,7 +127,7 @@ public class Animation {
         int width = image.getWidth(null);
         int width_per_frame = width / num_h;
         for (int i = 0; i < num_h; i++) {
-            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), size)));
+            frames.add(new Frame(image, new Rect(Vector.build(i * width_per_frame, 0), Vector.build(width_per_frame, image.getHeight(null))), size));
         }
     }
 
@@ -231,5 +231,13 @@ public class Animation {
 
     public int getEach_frame_time() {
         return each_frame_time;
+    }
+
+    /**
+     * 当动画为循环播放时，达到动画的最后帧时，返回true
+     * @return 是否到达动画的最后帧
+     */
+    public boolean isOver() {
+        return (frame_index >= frames.size() - 1);
     }
 }

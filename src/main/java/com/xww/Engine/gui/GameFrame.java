@@ -1,6 +1,7 @@
 package com.xww.Engine.gui;
 
 import com.xww.Engine.Utils.DrawUtils;
+import com.xww.Engine.core.Collision.CollisionHandler;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.impl.*;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
@@ -186,6 +187,7 @@ public class GameFrame extends JFrame{
         Component.addComponent(new TimeComponent());
         Component.addComponent(new CursorComponent());
         Component.addComponent(new CameraComponent());
+        Component.addComponent(new AllComponentInfo());
     }
 
     static void on_update(Graphics g) {

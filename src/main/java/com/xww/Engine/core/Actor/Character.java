@@ -8,6 +8,8 @@ import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
+import com.xww.Engine.core.Event.TimeEventManager;
+import com.xww.Engine.core.StateManager.StateMachine;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
@@ -67,6 +69,12 @@ public abstract class Character extends FreeComponent {
     protected Map<String, Animation> animations = new HashMap<>();
     protected Animation currentAnimation; // 当前的动画
 
+    protected StateMachine stateMachine = new StateMachine(); // 状态机
+
+    protected Bullet lastBeAttackedBullet = null;
+
+    protected long lastBeAttackedTime = 0; // 单位纳秒
+
     public Character(Vector worldPosition,
                      Vector size,
                      Vector logicSize, // 角色实际大小
@@ -112,18 +120,21 @@ public abstract class Character extends FreeComponent {
         }, this);
         atk_intervalTimer.setRun_times(1);
         atk_intervalTimer.stopStart();
+        atk_intervalTimer.neverOver();
         // 无敌闪烁
         blinkTimer = new Timer((double) invulnerableTime / blinkCount, (obj) -> {
             this.whetherRender = !this.whetherRender;
         }, this);
         blinkTimer.setRun_times(blinkCount * 2);
         blinkTimer.stopStart();
+        blinkTimer.neverOver();
         // 切换无敌状态
         invulnerableStateTimer = new Timer(invulnerableTime, (obj) -> {
             this.whetherInvulnerable = false;
         }, this);
         invulnerableStateTimer.setRun_times(1);
         invulnerableStateTimer.stopStart();
+        invulnerableStateTimer.neverOver();
         this.addTimer(atk_intervalTimer);
         this.addTimer(blinkTimer);
         this.addTimer(invulnerableStateTimer);
@@ -143,7 +154,10 @@ public abstract class Character extends FreeComponent {
             System.out.println("animation: " + name + " is null");
             return;
         }
-        currentAnimation = animation;
+        if (currentAnimation != animation) {
+            currentAnimation = animation;
+            animation.reset_animation();
+        }
     }
     @Override
     public void on_update(Graphics g) {
@@ -196,60 +210,6 @@ public abstract class Character extends FreeComponent {
         }
     }
 
-    @Override
-    public void processKeyEvent(KeyEvent e) {
-        if (e.getID() == KeyEvent.KEY_PRESSED) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A:
-                    this.whetherRunLeft = true;
-                    this.whetherFacingLeft = true;
-                    break;
-                case KeyEvent.VK_D:
-                    this.whetherRunRight = true;
-                    this.whetherFacingLeft = false;
-                    break;
-                case KeyEvent.VK_W:
-                    if (this.jumpCount < this.jumpMaxCount) {
-                        this.velocity.y = -jumpSpeed;
-                        this.whetherJumping = true;
-                        this.whetherOnGround = false;
-                        this.whetherDownGround = false;
-                        this.cantOnThisGround = null;
-                        this.jumpCount++;
-                    }
-                    break;
-                case KeyEvent.VK_J:
-                    if (this.whetherCanAtk) {
-                        if (this.tryAtk()) {
-                            this.whetherCanAtk = false;
-                            this.atk_intervalTimer.restart();
-                        }
-                    }
-                    break;
-                case KeyEvent.VK_S:
-                    if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()){
-                        this.whetherDownGround = true;
-                        this.whetherOnGround = false;
-                        cantOnThisGround = this.getLastOnGround();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A:
-                    this.whetherRunLeft = false;
-                    break;
-                case KeyEvent.VK_D:
-                    this.whetherRunRight = false;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     /**
      *  尝试攻击
      * @return 攻击成功返回true，否则返回false
@@ -264,20 +224,29 @@ public abstract class Character extends FreeComponent {
 
     @Override
     public void receiveCollision(ActionAfterCollision.CollisionInfo collisionInfo) {
-        Component otherComponent =  collisionInfo.getOtherCollider().getOwner();
-        if (otherComponent instanceof Bullet bullet) {
-            if (!whetherInvulnerable) {
-                this.currentHp -= bullet.getDamage();
-                this.whetherInvulnerable = true;
-                invulnerableStateTimer.restart();
-                blinkTimer.restart();
-                this.onHit();
-            } else {
-                onInvulnerableHit();
-            }
+
+    }
+
+    public void attackByBullet(Bullet bullet){
+        if (!whetherInvulnerable) {
+            lastBeAttackedBullet = bullet;
+            lastBeAttackedTime = TimeEventManager.currentTime;
+            this.currentHp -= bullet.getDamage();
+            this.whetherInvulnerable = true;
+            invulnerableStateTimer.restart();
+            blinkTimer.restart();
+            this.onHit();
         } else {
-            System.out.println("Component: " + this.getClass().getName() + " receiveCollision: " + otherComponent.getClass().getName() + " is not supported");
+            onInvulnerableHit();
         }
+    }
+
+    /**
+     * 单位纳秒
+     * @return 得到上次被攻击后到现在的时间
+     */
+    public long getLastBeAttackedTime() {
+        return (TimeEventManager.currentTime - lastBeAttackedTime) / 1000_1000;
     }
 
     /**
@@ -291,7 +260,7 @@ public abstract class Character extends FreeComponent {
     protected abstract void onHit();
 
     public void on_ground(BaseGround barrier) {
-        if (whetherOnGround) return;
+        if (whetherOnGround && barrier == lastOnGround) return;
         if (this.whetherDownGround){
             if (barrier == cantOnThisGround){
                 return;
@@ -347,5 +316,22 @@ public abstract class Character extends FreeComponent {
 
     public void setLastOnGround(BaseGround lastOnGround) {
         this.lastOnGround = lastOnGround;
+    }
+
+    public void switch_to_state(String state) {
+        this.stateMachine.switch_to(state);
+    }
+
+    @Override
+    public void on_destroy() {
+        this.atk_intervalTimer.canOver();
+        this.atk_intervalTimer.stop();
+
+        this.blinkTimer.canOver();
+        this.blinkTimer.stop();
+
+        this.invulnerableStateTimer.canOver();
+        this.invulnerableStateTimer.stop();
+        super.on_destroy();
     }
 }

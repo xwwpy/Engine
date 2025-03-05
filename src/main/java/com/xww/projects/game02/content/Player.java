@@ -2,12 +2,37 @@ package com.xww.projects.game02.content;
 
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Collision.RectCollider;
+import com.xww.Engine.core.Component.Component;
+import com.xww.Engine.core.ResourceManager.ResourceManager;
+import com.xww.Engine.core.Sound.MP3Player;
+import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Player extends Character {
+    public static final int atkZone = 0b1000;
+    public static final int beHitZone = 0b10000;
 
+    private Timer rollCdTimer;
+
+    private boolean whetherCanRoll = true;
+
+    public enum AttackDirection {
+        Left(Vector.build(-80, -20)),
+        Right(Vector.build(60, -20)),
+        Up(Vector.build(20, -40)),
+        Down(Vector.build(20, 40));
+        private final Vector relativePos;
+        AttackDirection(Vector relativePos){
+            this.relativePos = relativePos;
+        }
+        public Vector getRelativePos() {
+            return relativePos;
+        }
+    }
 
     public Player(Vector worldPosition) {
         super(worldPosition,
@@ -16,14 +41,18 @@ public class Player extends Character {
                 Vector.build(38, 57),
                 10,
                 100,
-                200,
+                10,
                 1000,
                 false,
-                40,
+                2,
                 500,
                 200,
                 CharacterType.Player);
         initAnimation();
+        this.registerActiveCollisionZone(atkZone);
+        this.registerHitCollisionZone(beHitZone);
+        this.addCollider(new RectCollider(Vector.build(38, 55), this, Vector.build(92, 440 - 366)));
+        Component.addComponent(this);
     }
 
     private void initAnimation() {
@@ -43,11 +72,11 @@ public class Player extends Character {
         dead_left.add_frame_by_name("player_dead_left", 6, true);
         this.addAnimation("dead_left", dead_left);
 
-        Animation attack = new Animation(this, 100);
+        Animation attack = new Animation(this, 150);
         attack.add_frame_by_name("player_attack", 5, false);
         this.addAnimation("attack_right", attack);
 
-        Animation attack_left = new Animation(this, 100);
+        Animation attack_left = new Animation(this, 150);
         attack_left.add_frame_by_name("player_attack_left", 5, true);
         this.addAnimation("attack_left", attack_left);
 
@@ -89,6 +118,7 @@ public class Player extends Character {
         this.addAnimation("run_left", run_left);
 
         this.setAnimation("run_left");
+
         jump.setOn_complete((player)->{
             fall.reset_animation();
             ((Player) player).setAnimation("fall_right");
@@ -112,24 +142,29 @@ public class Player extends Character {
 
     @Override
     public void on_update(Graphics g) {
-        String animationName;
-        if (this.velocity.getX() != 0){
-            animationName = "run_";
-        } else {
-            animationName = "idle_";
-        }
-        if (this.velocity.getX() > 0){
-            this.whetherFacingLeft = false;
-        } else if (this.velocity.getX() < 0){
-            this.whetherFacingLeft = true;
-        }
-        this.setAnimation(animationName + (this.whetherFacingLeft ? "left": "right"));
+//        String animationName;
+//        if (this.velocity.getX() != 0){
+//            animationName = "run_";
+//        } else {
+//            animationName = "idle_";
+//        }
+//        if (this.velocity.getX() > 0){
+//            this.whetherFacingLeft = false;
+//        } else if (this.velocity.getX() < 0){
+//            this.whetherFacingLeft = true;
+//        }
+//        this.setAnimation(animationName + (this.whetherFacingLeft ? "left": "right"));
+
+        this.setAnimation(whetherFacingLeft ? "attack_left": "attack_right");
         super.on_update(g);
     }
 
     @Override
     protected boolean tryAtk() {
-        return false;
+        if (!this.whetherCanAtk) return false;
+        // 攻击
+        Component.addComponent(new PlayerBullet(this, (!whetherFacingLeft) ? AttackDirection.Right: AttackDirection.Left));
+        return true;
     }
 
     @Override
@@ -139,6 +174,62 @@ public class Player extends Character {
 
     @Override
     protected void onHit() {
+        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_hurt"));
+    }
 
+    @Override
+    public void processKeyEvent(KeyEvent e) {
+        if (e.getID() == KeyEvent.KEY_PRESSED) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_A:
+                    this.whetherRunLeft = true;
+                    this.whetherFacingLeft = true;
+                    break;
+                case KeyEvent.VK_D:
+                    this.whetherRunRight = true;
+                    this.whetherFacingLeft = false;
+                    break;
+                case KeyEvent.VK_W:
+                    if (this.jumpCount < this.jumpMaxCount) {
+                        this.velocity.y = -jumpSpeed;
+                        this.whetherJumping = true;
+                        this.whetherOnGround = false;
+                        this.whetherDownGround = false;
+                        this.cantOnThisGround = null;
+                        this.jumpCount++;
+                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
+                    }
+                    break;
+                case KeyEvent.VK_J:
+                    if (this.tryAtk()) {
+                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_1"));
+                        this.whetherCanAtk = false;
+                        this.atk_intervalTimer.restart();
+                    }
+                    break;
+                case KeyEvent.VK_S:
+                    if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()){
+                        this.whetherDownGround = true;
+                        this.whetherOnGround = false;
+                        cantOnThisGround = this.getLastOnGround();
+                    }
+                    break;
+                case KeyEvent.VK_SHIFT:
+                    break;
+                default:
+                    break;
+            }
+        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_A:
+                    this.whetherRunLeft = false;
+                    break;
+                case KeyEvent.VK_D:
+                    this.whetherRunRight = false;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

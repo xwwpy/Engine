@@ -120,18 +120,20 @@ public abstract class Component implements Base, Comparable<Component> {
 
     @Override
     public void on_create() {
-
+        allComponents_to_add.add(this);
     }
 
     @Override
     public void on_destroy() {
-
+        CollisionHandler.colliders_to_remove.addAll(this.colliders);
     }
 
     @Override
     public void on_update(Graphics g) {
         if (!this.isAlive()){
-            Component.components_to_remove.add(this);
+            Component.allComponents_to_remove.add(this);
+            if (this.parent == null) Component.components_to_remove.add(this);
+            return;
         }
         // 检查拖动属性
         checkDrag();
@@ -187,10 +189,10 @@ public abstract class Component implements Base, Comparable<Component> {
         colliders.addAll(colliders_to_add);
         colliders_to_add.clear();
         colliders.removeAll(colliders_to_remove);
-        CollisionHandler.colliders.removeAll(colliders_to_remove);
+        CollisionHandler.colliders_to_remove.addAll(colliders_to_remove);
         colliders_to_remove.clear();
         colliders.forEach((collider)->{
-            if (!collider.isAlive()){
+            if (!collider.isAlive() || !this.isAlive){
                 colliders_to_remove.add(collider);
             }
         });
@@ -198,7 +200,7 @@ public abstract class Component implements Base, Comparable<Component> {
 
     private void update_children(Graphics g) {
         children_to_remove.forEach(child -> {
-            child.on_destroy();
+            allComponents_to_remove.add(child);
             children.remove(child);
         });
         children_to_remove.clear();
@@ -373,7 +375,6 @@ public abstract class Component implements Base, Comparable<Component> {
     public void addChild(Component child, boolean registerMouseFlag) {
         child.parent = this;
         this.children_to_add.add(child);
-        allComponents_to_add.add(child);
         if (registerMouseFlag) {
             MouseMessageHandler.mouseMessageHandlerInstance.registerComponent(child);
         }
@@ -481,7 +482,7 @@ public abstract class Component implements Base, Comparable<Component> {
     public void addCollider(BaseCollider collider){
         collider.setOwner(this);
         this.colliders_to_add.add(collider);
-        CollisionHandler.colliders.add(collider);
+        CollisionHandler.colliders_to_add.add(collider);
     }
 
     public Set<BaseCollider> getColliders() {

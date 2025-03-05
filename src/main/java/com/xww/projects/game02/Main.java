@@ -26,8 +26,6 @@ public class Main {
         // 加载资源
         GameFrame.init(()->{
             loadResources();
-            MP3Player.getInstance().setBGMPath(ResourceManager.getInstance().findAudioPath("bgm"));
-            MP3Player.getInstance().startBGM();
             initGame();
         });
         GameFrame.start();
@@ -56,20 +54,20 @@ public class Main {
         instance.loadImage("background", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/background.png");
         instance.loadImage("ui_heart", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/ui_heart.png");
         instance.loadAllAudio("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/audio", ".mp3");
+        MP3Player.getInstance().setBGMPath(ResourceManager.getInstance().findAudioPath("bgm"));
+        MP3Player.getInstance().startBGM();
         long end = System.currentTimeMillis();
         System.out.println("加载资源耗时：" + (end - start) + "ms");
     }
 
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < 2; i++) {
             Player player = new Player(Vector.build(100, 200));
             if (i % 2 == 0) {
                 player.setAnimation("roll_left");
                 player.setVelocity(Vector.build(-20, 0));
             }
-            player.addCollider(new RectCollider(Vector.build(38, 55), player, Vector.build(92, 440 - 366)));
-            Component.addComponent(player);
             KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(player);
         }
 

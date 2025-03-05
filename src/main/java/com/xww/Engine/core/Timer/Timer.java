@@ -4,6 +4,7 @@ import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Event.TimeEventManager;
 
 public class Timer {
+
     public static interface TimerCallBack {
         public abstract void run(Base obj);
     }
@@ -31,6 +32,8 @@ public class Timer {
 
     private boolean whether_start = true;
 
+    private boolean neverOver = false;
+
     /**
      *
      * @param wait_time 单位 毫秒
@@ -45,7 +48,7 @@ public class Timer {
 
     public void tick() {
         if (!whether_start) return;
-        if (isOver) return;
+        if (isOver || run_times == 0) return;
         if (TimeEventManager.currentTime - start_time >= this.wait_time){
             if (callback != null) callback.run(owner);
             if (run_times == Timer.INFINITE_TIMES){
@@ -54,7 +57,7 @@ public class Timer {
                 run_times--;
                 restart0();
                 if (run_times == 0){
-                    isOver = true;
+                    if (!neverOver) isOver = true;
                 }
             }
         }
@@ -106,5 +109,13 @@ public class Timer {
 
     public void start(){
         restart();
+    }
+
+    public void neverOver(){
+        neverOver = true;
+    }
+
+    public void canOver() {
+        neverOver = false;
     }
 }
