@@ -183,11 +183,12 @@ public class GameFrame extends JFrame{
         // 添加更新屏幕位置的组件
         Component.addComponent(new ScreenInfoComponent());
         // 添加默认的调试组件
-        Component.addComponent(new FpsComponent());
-        Component.addComponent(new TimeComponent());
-        Component.addComponent(new CursorComponent());
-        Component.addComponent(new CameraComponent());
-        Component.addComponent(new AllComponentInfo());
+        Component.addComponent(new FpsComponent(), false);
+        Component.addComponent(new TimeComponent(), false);
+        Component.addComponent(new CursorComponent(), false);
+        Component.addComponent(new CameraComponent(), false);
+        Component.addComponent(new AllComponentInfo(), false);
+        Component.addComponent(new MusicComponent(), false);
     }
 
     static void on_update(Graphics g) {

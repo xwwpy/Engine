@@ -3,6 +3,7 @@ package com.xww.Engine.core.Event.Message.Impl;
 
 import com.xww.Engine.core.Event.Message.Message;
 import com.xww.Engine.core.Event.Message.MessageHandler;
+import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.Camera;
 import com.xww.Engine.gui.GameFrame;
@@ -55,6 +56,7 @@ public class KeyBoardMessageHandler extends MessageHandler {
                 Camera.camera_position = Vector.Zero();
                 break;
             case KeyEvent.VK_M:
+                MP3Player.getInstance().setWhetherCloseMusic(!MP3Player.getInstance().isWhetherCloseMusic());
                 break;
         }
     }
