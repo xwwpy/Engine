@@ -11,14 +11,20 @@ public class StateMachine {
 
     private boolean needInit = true;
 
-    public void update(Graphics g) {
+    public void update(Graphics g, Component owner) {
+        selectState(owner);
         if (currentState == null) return;
         if (needInit) {
             currentState.on_enter();
             needInit = false;
         }
-        currentState.on_update(g);
+        currentState.on_update(g, owner);
     }
+
+    protected void selectState(Component owner) {
+
+    }
+
     public void set_entry(String id){
         currentState = statePool.get(id);
     }

@@ -19,7 +19,6 @@ public class CollisionHandler {
     }
 
     public static ActionAfterCollision.CollisionInfo checkCollision(Component component) {
-        update();
         Set<BaseCollider> colliderSet = component.getColliders();
             for (BaseCollider collider: colliderSet) {
                 if (!(collider.isEnable() && collider.isAlive())){

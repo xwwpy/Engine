@@ -9,7 +9,7 @@ import java.awt.*;
 public class Ground extends BaseGround {
 
     public Ground(Vector worldPosition) {
-        super(worldPosition, Vector.build(FrameSetting.DEFAULT_WIDTH, 0));
+        super(worldPosition, Vector.build(FrameSetting.DEFAULT_WIDTH, 0), true);
     }
 
     @Override

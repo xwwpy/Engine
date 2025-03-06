@@ -26,9 +26,12 @@ public abstract class BaseGround {
 
     protected boolean whetherCanDown = true; // 当角色在该平台上时, 使用可以通过下落键的方式掉下去
 
-    public BaseGround(Vector worldPosition, Vector size){
+    protected boolean whetherRenderOnlyForDebug;
+
+    public BaseGround(Vector worldPosition, Vector size, boolean whetherRenderOnlyForDebug){
         this.worldPosition = worldPosition;
         this.size = size;
+        this.whetherRenderOnlyForDebug = whetherRenderOnlyForDebug;
     }
 
     /*
@@ -65,7 +68,11 @@ public abstract class BaseGround {
                 barrier.whether_enable = false;
                 barriers_to_remove.add(barrier);
             } else if(barrier.whether_enable){
-                if (enableDebug && DebugSetting.IS_DEBUG_ON) barrier.onRender(g);
+                // 如果只是在debug模式下进行渲染
+                if (barrier.whetherRenderOnlyForDebug) {
+                    if (enableDebug && DebugSetting.IS_DEBUG_ON) barrier.onRender(g);
+                }
+                else barrier.onRender(g);
             }
         });
         barriers.removeAll(barriers_to_remove);

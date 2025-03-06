@@ -21,7 +21,6 @@ import java.util.Map;
 
 public abstract class Character extends FreeComponent {
 
-
     public enum CharacterType {
         Player,
         Enemy
@@ -44,7 +43,7 @@ public abstract class Character extends FreeComponent {
 
     protected boolean whetherRender = true; // 是否进行渲染 配合闪烁定时器实现闪烁效果
     protected Timer blinkTimer; // 无敌闪烁定时器
-    protected int blinkCount = 100; // 闪烁次数
+    protected int blinkCount = 30; // 闪烁次数
     protected Timer invulnerableStateTimer; // 切换无敌状态定时器
 
     protected boolean whetherFacingLeft; // 是否朝向左
@@ -75,6 +74,20 @@ public abstract class Character extends FreeComponent {
 
     protected long lastBeAttackedTime = 0; // 单位纳秒
 
+    protected final Timer rollCdTimer;
+
+    protected boolean isRolling = false;
+
+    protected final Timer rollWholeTimeTimer;
+
+    protected int rollCd;
+
+    protected int rollWholeTime; // 翻滚的持续时间 默认与无敌时间一致
+
+    protected double rollSpeed;
+
+    protected boolean whetherCanRoll = true;
+
     public Character(Vector worldPosition,
                      Vector size,
                      Vector logicSize, // 角色实际大小
@@ -83,6 +96,8 @@ public abstract class Character extends FreeComponent {
                      int hp,
                      int atk_interval,
                      int invulnerableTime,
+                     int rollCd,
+                     double rollSpeed,
                      boolean whetherFacingLeft,
                      int jumpMaxCount,
                      int jumpSpeed,
@@ -106,6 +121,9 @@ public abstract class Character extends FreeComponent {
         this.currentHp = hp;
         this.atk_interval = atk_interval;
         this.invulnerableTime = invulnerableTime;
+        this.rollCd = rollCd;
+        this.rollWholeTime = this.rollCd;
+        this.rollSpeed = rollSpeed;
         this.whetherFacingLeft = whetherFacingLeft;
         this.jumpMaxCount = jumpMaxCount;
         this.jumpCount = 0;
@@ -125,7 +143,7 @@ public abstract class Character extends FreeComponent {
         blinkTimer = new Timer((double) invulnerableTime / blinkCount, (obj) -> {
             this.whetherRender = !this.whetherRender;
         }, this);
-        blinkTimer.setRun_times(blinkCount * 2);
+        blinkTimer.setRun_times(blinkCount);
         blinkTimer.stopStart();
         blinkTimer.neverOver();
         // 切换无敌状态
@@ -135,9 +153,26 @@ public abstract class Character extends FreeComponent {
         invulnerableStateTimer.setRun_times(1);
         invulnerableStateTimer.stopStart();
         invulnerableStateTimer.neverOver();
+        // 翻滚Cd
+        rollCdTimer = new Timer(rollCd, (obj) -> {
+            this.whetherCanRoll = true;
+        }, this);
+        rollCdTimer.setRun_times(1);
+        rollCdTimer.stopStart();
+        rollCdTimer.neverOver();
+
+        rollWholeTimeTimer = new Timer(this.invulnerableTime, (obj) -> {
+            this.isRolling = false;
+        }, this);
+        rollWholeTimeTimer.setRun_times(1);
+        rollWholeTimeTimer.stopStart();
+        rollWholeTimeTimer.neverOver();
+
         this.addTimer(atk_intervalTimer);
         this.addTimer(blinkTimer);
         this.addTimer(invulnerableStateTimer);
+        this.addTimer(rollCdTimer);
+        this.addTimer(rollWholeTimeTimer);
         if (characterType == CharacterType.Player){
             // 监听键盘事件
             KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(this);
@@ -179,8 +214,12 @@ public abstract class Character extends FreeComponent {
         if (this.whetherRunRight) {
             tempVelocity += runSpeed;
         }
-        this.velocity.x = tempVelocity;
-        this.velocity = this.velocity.add_to_self(GameFrame.getFrameVelocity(this.acceleration));
+        update_direction();
+        // 翻滚时禁止移动
+        if (!this.isRolling) {
+            this.velocity.x = tempVelocity;
+            this.velocity = this.velocity.add_to_self(GameFrame.getFrameVelocity(this.acceleration));
+        }
         // 预移动
         Vector position = this.getLogicPosition();
         pre_move();
@@ -254,6 +293,11 @@ public abstract class Character extends FreeComponent {
      */
     protected abstract void onInvulnerableHit();
 
+    protected void beInvulnerable(){
+        this.whetherInvulnerable = true;
+        invulnerableStateTimer.restart();
+    }
+
     /**
      * 受到攻击
      */
@@ -322,6 +366,9 @@ public abstract class Character extends FreeComponent {
         this.stateMachine.switch_to(state);
     }
 
+    protected void onRoll() {
+
+    }
     @Override
     public void on_destroy() {
         this.atk_intervalTimer.canOver();
@@ -333,5 +380,13 @@ public abstract class Character extends FreeComponent {
         this.invulnerableStateTimer.canOver();
         this.invulnerableStateTimer.stop();
         super.on_destroy();
+    }
+
+    protected void update_direction() {
+        if (this.velocity.getFullX() > 0) {
+            this.whetherFacingLeft = false;
+        } else if (this.velocity.getFullX() < 0) {
+            this.whetherFacingLeft = true;
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.setting.DebugSetting;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -15,10 +16,6 @@ import java.awt.event.KeyEvent;
 public class Player extends Character {
     public static final int atkZone = 0b1000;
     public static final int beHitZone = 0b10000;
-
-    private Timer rollCdTimer;
-
-    private boolean whetherCanRoll = true;
 
     public enum AttackDirection {
         Left(Vector.build(-80, -20)),
@@ -41,15 +38,17 @@ public class Player extends Character {
                 Vector.build(38, 57),
                 10,
                 100,
-                10,
+                300,
+                500,
                 1000,
+                500,
                 false,
                 2,
                 500,
                 200,
                 CharacterType.Player);
         initAnimation();
-        this.registerActiveCollisionZone(atkZone);
+//        this.registerActiveCollisionZone(atkZone);
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(Vector.build(38, 55), this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
@@ -142,19 +141,6 @@ public class Player extends Character {
 
     @Override
     public void on_update(Graphics g) {
-//        String animationName;
-//        if (this.velocity.getX() != 0){
-//            animationName = "run_";
-//        } else {
-//            animationName = "idle_";
-//        }
-//        if (this.velocity.getX() > 0){
-//            this.whetherFacingLeft = false;
-//        } else if (this.velocity.getX() < 0){
-//            this.whetherFacingLeft = true;
-//        }
-//        this.setAnimation(animationName + (this.whetherFacingLeft ? "left": "right"));
-
         this.setAnimation(whetherFacingLeft ? "attack_left": "attack_right");
         super.on_update(g);
     }
@@ -183,11 +169,9 @@ public class Player extends Character {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_A:
                     this.whetherRunLeft = true;
-                    this.whetherFacingLeft = true;
                     break;
                 case KeyEvent.VK_D:
                     this.whetherRunRight = true;
-                    this.whetherFacingLeft = false;
                     break;
                 case KeyEvent.VK_W:
                     if (this.jumpCount < this.jumpMaxCount) {
@@ -215,6 +199,10 @@ public class Player extends Character {
                     }
                     break;
                 case KeyEvent.VK_SHIFT:
+                    if (this.whetherCanRoll && !this.isRolling) {
+                        // 进行翻滚操作
+                        this.onRoll();
+                    }
                     break;
                 default:
                     break;
@@ -231,5 +219,27 @@ public class Player extends Character {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onRoll() {
+        this.isRolling = true;
+        this.whetherCanRoll = false;
+        this.rollWholeTimeTimer.restart();
+        this.rollCdTimer.restart();
+        this.velocity.x = this.whetherFacingLeft ? -this.rollSpeed: this.rollSpeed;
+        this.beInvulnerable();
+        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_roll"));
+    }
+
+    @Override
+    protected void showDebugInfo(Graphics g) {
+        g.setColor(DebugSetting.DebugInfoColor);
+        g.drawString("是否无敌: " + (this.whetherInvulnerable ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY());
+        g.drawString("是否正在翻滚: " + (this.isRolling ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
+        g.drawString("是否可以攻击: " + (this.whetherCanAtk ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
+        g.drawString("连跳次数: " + this.jumpMaxCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
+        g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
+        g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);
     }
 }

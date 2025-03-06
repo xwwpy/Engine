@@ -1,6 +1,5 @@
 package com.xww.projects.game01.object.Plant;
 
-import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.projects.game01.object.BaseObject;
 import com.xww.projects.game01.object.ObjectType;

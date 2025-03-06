@@ -16,6 +16,8 @@ public class TestCharacter extends Character{
                 100,
                 100,
                 1000,
+                0,
+                0,
                 false,
                 1,
                 500,

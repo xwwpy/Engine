@@ -111,6 +111,9 @@ public class Timer {
         restart();
     }
 
+    /**
+     * 即永远不会被销毁
+     */
     public void neverOver(){
         neverOver = true;
     }

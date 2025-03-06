@@ -20,6 +20,8 @@ public abstract class BaseObject extends Character {
                 life,
                 atk_interval,
                 100,
+                0,
+                0,
                 false,
                 2,
                 500,

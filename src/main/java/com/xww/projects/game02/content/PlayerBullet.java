@@ -42,6 +42,7 @@ public class PlayerBullet extends Bullet {
                 break;
             case Right:
                 animation = new Animation(this, each_frame_time);
+                this.addCollider(new RectCollider(Vector.build(20, 541 - 451), this, Vector.build(468 - 296, 498 - 446)));
                 animation.add_frame_by_name("player_vfx_attack_right", 5, bSize);
                 break;
             default:
