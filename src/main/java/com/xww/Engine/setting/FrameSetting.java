@@ -12,7 +12,7 @@ public class FrameSetting {
 
 
     // TODO
-    public static int timeSpeed = 1; // 当前的时间倍速 2代表 0.5倍速
+    public static int timeSpeed = 2; // 当前的时间倍速 2代表 0.5倍速
 
     public static boolean whetherInScreen(Vector drawPosition, Vector size) {
         return drawPosition.getX() + size.getX() > 0 && drawPosition.getX() < FrameSetting.DEFAULT_WIDTH &&

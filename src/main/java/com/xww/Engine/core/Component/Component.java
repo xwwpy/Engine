@@ -557,6 +557,7 @@ public abstract class Component implements Base, Comparable<Component> {
     }
 
     public void registerDrag() {
+        this.is_drag_on = true;
         this.whetherCanDrag = true;
     }
 

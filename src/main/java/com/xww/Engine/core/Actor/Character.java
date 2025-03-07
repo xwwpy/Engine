@@ -237,6 +237,13 @@ public abstract class Character extends FreeComponent {
         }
     }
 
+    @Override
+    public void process_mouse_choose_self(int x, int y) {
+        double last_mouse_check_self_positionFullY = this.last_mouse_check_self_position.getFullY();
+        if (y - last_mouse_check_self_positionFullY < 0) this.whetherOnGround = false;
+        super.process_mouse_choose_self(x, y);
+    }
+
     /**
      * 执行渲染逻辑
      */
@@ -256,7 +263,7 @@ public abstract class Character extends FreeComponent {
     protected abstract boolean tryAtk();
 
 
-    private void resetJumpState() {
+    protected void resetJumpState() {
         this.whetherJumping = false;
         this.jumpCount = 0;
     }
@@ -317,6 +324,7 @@ public abstract class Character extends FreeComponent {
         lastOnGround = barrier;
         resetJumpState();
         if (this.velocity.getFullY() > 0){
+            this.processFall(this.velocity.getFullY());
             this.velocity.setY(0);
         }
         // 修正位置
@@ -325,6 +333,15 @@ public abstract class Character extends FreeComponent {
         // 防止某些极端情况
         lastMove.setY(0);
     }
+
+    /**
+     * 处理坠落时的逻辑
+     * @param fullY 坠落时的速度
+     */
+    protected void processFall(double fullY) {
+
+    }
+
 
     public boolean isWhetherOnGround() {
         return whetherOnGround;

@@ -75,6 +75,16 @@ public class KeyBoardMessageHandler extends MessageHandler {
                     FrameSetting.DEFAULT_FPS = 1;
                 } else GameFrame.context.changeFps(FrameSetting.DEFAULT_FPS / 2);
                 break;
+            case KeyEvent.VK_1:
+                FrameSetting.timeSpeed -= 1;
+                if (FrameSetting.timeSpeed < 1) FrameSetting.timeSpeed = 1;
+                break;
+            case KeyEvent.VK_2:
+                FrameSetting.timeSpeed += 1;
+                break;
+            case KeyEvent.VK_3:
+                FrameSetting.timeSpeed = 1;
+                break;
         }
     }
 }

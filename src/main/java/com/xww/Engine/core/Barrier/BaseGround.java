@@ -59,6 +59,7 @@ public abstract class BaseGround {
             }
         }
         character.setWhetherOnGround(false);
+        character.setLastOnGround(null);
     }
 
     public static void updateBarriers(Graphics g) {

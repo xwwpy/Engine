@@ -2,6 +2,7 @@ package com.xww.Engine.core.Timer;
 
 import com.xww.Engine.core.Base;
 import com.xww.Engine.core.Event.TimeEventManager;
+import com.xww.Engine.setting.FrameSetting;
 
 public class Timer {
 
@@ -49,7 +50,7 @@ public class Timer {
     public void tick() {
         if (!whether_start) return;
         if (isOver || run_times == 0) return;
-        if (TimeEventManager.currentTime - start_time >= this.wait_time){
+        if (whetherOnTheEnd()){
             if (callback != null) callback.run(owner);
             if (run_times == Timer.INFINITE_TIMES){
                 restart0();
@@ -61,6 +62,10 @@ public class Timer {
                 }
             }
         }
+    }
+
+    private boolean whetherOnTheEnd() {
+        return TimeEventManager.currentTime - start_time >= this.wait_time * FrameSetting.timeSpeed;
     }
 
     public void setWaitTime(long wait_time) {

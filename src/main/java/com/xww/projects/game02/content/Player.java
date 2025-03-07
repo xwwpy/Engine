@@ -2,8 +2,10 @@ package com.xww.projects.game02.content;
 
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
+import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Timer.Timer;
@@ -43,15 +45,15 @@ public class Player extends Character {
                 1000,
                 500,
                 false,
-                2,
+                5,
                 500,
                 200,
                 CharacterType.Player);
         initAnimation();
-//        this.registerActiveCollisionZone(atkZone);
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(Vector.build(38, 55), this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
+        this.registerDrag();
     }
 
     private void initAnimation() {
@@ -218,6 +220,14 @@ public class Player extends Character {
                 default:
                     break;
             }
+        }
+    }
+
+    @Override
+    protected void processFall(double fullY) {
+        if (fullY > 500){
+            MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_land"));
+            this.currentHp -= (int) (fullY / 100);
         }
     }
 
