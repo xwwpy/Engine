@@ -53,7 +53,6 @@ public class Player extends Character {
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(Vector.build(38, 55), this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
-        this.registerDrag();
     }
 
     private void initAnimation() {
@@ -227,7 +226,7 @@ public class Player extends Character {
     protected void processFall(double fullY) {
         if (fullY > 500){
             MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_land"));
-            this.currentHp -= (int) (fullY / 100);
+            this.currentHp -= (int) ((fullY / 1000) * this.getMass());
         }
     }
 
@@ -245,6 +244,7 @@ public class Player extends Character {
     @Override
     protected void showDebugInfo(Graphics g) {
         g.setColor(DebugSetting.DebugInfoColor);
+        g.drawString("速度: " + this.velocity, this.getDrawPosition().getX(), this.getDrawPosition().getY() - 20);
         g.drawString("是否无敌: " + (this.whetherInvulnerable ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY());
         g.drawString("是否正在翻滚: " + (this.isRolling ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
         g.drawString("是否可以攻击: " + (this.whetherCanAtk ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);

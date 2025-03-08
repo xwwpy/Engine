@@ -3,6 +3,7 @@ package com.xww.Engine.core.Actor;
 import com.xww.Engine.core.Anchor.AnchorMode;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Barrier.BaseGround;
+import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Component.Component;
@@ -225,6 +226,7 @@ public abstract class Character extends FreeComponent {
         pre_move();
         Vector position1 = this.getLogicPosition();
         BaseGround.whetherOnGround(position, position1, this);
+        BaseWall.whetherCrossWall(position, position1, this);
         // 检查碰撞
         // 当组件需要检测碰撞时才进行检测 并且需要主动碰撞
         if (whetherCheckCollision && activeCollisionZone != CollisionDefaultConstValue.noCollisionChecking) {

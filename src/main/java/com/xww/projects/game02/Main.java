@@ -1,25 +1,22 @@
 package com.xww.projects.game02;
 
-import com.xww.Engine.Utils.CodeUtils;
 import com.xww.Engine.core.Animation.Atlas;
 import com.xww.Engine.core.Barrier.BaseGround;
-import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 
-import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.projects.game02.content.BackGroundComponent;
 import com.xww.projects.game02.content.Player;
-import com.xww.projects.game02.content.barrier.Ground;
+import com.xww.Engine.core.Barrier.impl.Ground;
+import com.xww.Engine.core.Barrier.impl.Wall;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) {
@@ -63,12 +60,7 @@ public class Main {
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
         for (int i = 1; i < 2; i++) {
-            Player player = new Player(Vector.build(100, 200));
-            if (i % 2 == 0) {
-                player.setAnimation("roll_left");
-                player.setVelocity(Vector.build(-20, 0));
-            }
-            KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(player);
+            new Player(Vector.build(100, 200));
         }
 
         BaseGround.registerBarrier(new Ground(Vector.build(100, 600)));
@@ -76,5 +68,6 @@ public class Main {
         Ground ground = new Ground(Vector.build(0, 680));
         ground.setWhetherCanDown(false);
         BaseGround.registerBarrier(ground);
+        new Wall(Vector.build(300, 300));
     }
 }
