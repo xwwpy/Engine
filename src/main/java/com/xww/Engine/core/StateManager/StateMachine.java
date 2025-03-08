@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO
 public class StateMachine {
 
     private final Map<String, StateNode> statePool;
@@ -18,6 +19,15 @@ public class StateMachine {
             needInit = false;
         }
         currentState.on_update(g, owner);
+        if (currentState.whetherEnding()) {
+            currentState.on_exit();
+            currentState = currentState.selectNextState();
+            if (currentState == null) {
+                throw new RuntimeException("StateMachine: currentState is null");
+            } else {
+                currentState.on_enter();
+            }
+        }
     }
 
 

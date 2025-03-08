@@ -66,7 +66,7 @@ public abstract class Character extends FreeComponent {
     protected boolean whetherRunLeft = false;
     protected boolean whetherRunRight = false;
 
-    protected Map<String, Animation> animations = new HashMap<>();
+    protected Map<String, Animation> animations = new HashMap<>(); // TODO 将其整合到 StateMachine的StateNode中
     protected Animation currentAnimation; // 当前的动画
 
     protected StateMachine stateMachine = new StateMachine(); // 状态机

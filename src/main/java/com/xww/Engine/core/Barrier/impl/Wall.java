@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class Wall extends BaseWall {
     public Wall(Vector worldPosition) {
-        super(worldPosition, Vector.build(20, 1000), true);
+        super(worldPosition, Vector.build(20, 10), true);
         BaseWall.registerWall(this);
         Ground ground = new Ground(this.worldPosition, Vector.build(this.size.getFullX(), 0));
         ground.setWhetherCanDown(false);
