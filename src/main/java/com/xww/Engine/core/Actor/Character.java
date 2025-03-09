@@ -6,7 +6,6 @@ import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
-import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.TimeEventManager;
@@ -16,10 +15,10 @@ import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("all")
 public abstract class Character extends FreeComponent {
 
     public enum CharacterType {
@@ -66,10 +65,11 @@ public abstract class Character extends FreeComponent {
     protected boolean whetherRunLeft = false;
     protected boolean whetherRunRight = false;
 
-    protected Map<String, Animation> animations = new HashMap<>(); // TODO 将其整合到 StateMachine的StateNode中
-    protected Animation currentAnimation; // 当前的动画
+    protected Map<String, Animation> animations = new HashMap<>();
 
-    protected StateMachine stateMachine = new StateMachine(); // 状态机
+    protected Animation currentAnimation;
+
+    protected StateMachine stateMachine = new StateMachine(null); // 状态机
 
     protected Bullet lastBeAttackedBullet = null;
 
@@ -89,6 +89,11 @@ public abstract class Character extends FreeComponent {
 
     protected boolean whetherCanRoll = true;
 
+    protected boolean whetherAtking = false;
+
+    protected Timer atkBackSwingTimer;
+    protected int atkBackSwingTime;
+
     public Character(Vector worldPosition,
                      Vector size,
                      Vector logicSize, // 角色实际大小
@@ -103,6 +108,7 @@ public abstract class Character extends FreeComponent {
                      int jumpMaxCount,
                      int jumpSpeed,
                      int runSpeed,
+                     int atkBackSwingTime,
                      CharacterType characterType) {
         super(worldPosition,
                 GameFrame.PositionType.World,
@@ -133,6 +139,7 @@ public abstract class Character extends FreeComponent {
         this.characterType = characterType;
         this.logicSize = logicSize;
         this.relativePosition = relativePosition;
+        this.atkBackSwingTime = atkBackSwingTime;
         // 攻击间隔定时器
         atk_intervalTimer = new Timer(atk_interval, (obj) -> {
             this.whetherCanAtk = true;
@@ -169,11 +176,19 @@ public abstract class Character extends FreeComponent {
         rollWholeTimeTimer.stopStart();
         rollWholeTimeTimer.neverOver();
 
+        atkBackSwingTimer = new Timer(atkBackSwingTime, (obj) -> {
+            this.whetherAtking = false;
+        }, this);
+        atkBackSwingTimer.setRun_times(1);
+        atkBackSwingTimer.stopStart();
+        atkBackSwingTimer.neverOver();
+
         this.addTimer(atk_intervalTimer);
         this.addTimer(blinkTimer);
         this.addTimer(invulnerableStateTimer);
         this.addTimer(rollCdTimer);
         this.addTimer(rollWholeTimeTimer);
+        this.addTimer(atkBackSwingTimer);
         if (characterType == CharacterType.Player){
             // 监听键盘事件
             KeyBoardMessageHandler.keyBoardMessageHandlerInstance.registerComponent(this);
@@ -184,17 +199,6 @@ public abstract class Character extends FreeComponent {
         animations.put(name, animation);
     }
 
-    public void setAnimation(String name) {
-        Animation animation = animations.get(name);
-        if (animation == null){
-            System.out.println("animation: " + name + " is null");
-            return;
-        }
-        if (currentAnimation != animation) {
-            currentAnimation = animation;
-            animation.reset_animation();
-        }
-    }
     @Override
     public void on_update(Graphics g) {
         on_render(g);
@@ -250,12 +254,7 @@ public abstract class Character extends FreeComponent {
      * 执行渲染逻辑
      */
     protected void on_render(Graphics g) {
-        // 选择动画
-        if (currentAnimation != null) {
-            if (whetherRender) currentAnimation.on_update(g);
-        } else {
-            System.out.println("currentAnimation is null");
-        }
+        this.stateMachine.update(g);
     }
 
     /**
@@ -381,9 +380,6 @@ public abstract class Character extends FreeComponent {
         this.lastOnGround = lastOnGround;
     }
 
-    public void switch_to_state(String state) {
-        this.stateMachine.switch_to(state);
-    }
 
     protected void onRoll() {
 
@@ -407,5 +403,190 @@ public abstract class Character extends FreeComponent {
         } else if (this.velocity.getFullX() < 0) {
             this.whetherFacingLeft = true;
         }
+    }
+
+    public CharacterType getCharacterType() {
+        return characterType;
+    }
+
+    public void setCharacterType(CharacterType characterType) {
+        this.characterType = characterType;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getCurrentHp() {
+        return currentHp;
+    }
+
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
+    public float getAtk_interval() {
+        return atk_interval;
+    }
+
+    public void setAtk_interval(float atk_interval) {
+        this.atk_interval = atk_interval;
+    }
+
+    public boolean isWhetherCanAtk() {
+        return whetherCanAtk;
+    }
+
+    public void setWhetherCanAtk(boolean whetherCanAtk) {
+        this.whetherCanAtk = whetherCanAtk;
+    }
+
+    public boolean isWhetherInvulnerable() {
+        return whetherInvulnerable;
+    }
+
+    public void setWhetherInvulnerable(boolean whetherInvulnerable) {
+        this.whetherInvulnerable = whetherInvulnerable;
+    }
+
+    public boolean isWhetherRender() {
+        return whetherRender;
+    }
+
+    public void setWhetherRender(boolean whetherRender) {
+        this.whetherRender = whetherRender;
+    }
+
+    public boolean isWhetherFacingLeft() {
+        return whetherFacingLeft;
+    }
+
+    public void setWhetherFacingLeft(boolean whetherFacingLeft) {
+        this.whetherFacingLeft = whetherFacingLeft;
+    }
+
+    public int getJumpSpeed() {
+        return jumpSpeed;
+    }
+
+    public void setJumpSpeed(int jumpSpeed) {
+        this.jumpSpeed = jumpSpeed;
+    }
+
+    public int getRunSpeed() {
+        return runSpeed;
+    }
+
+    public void setRunSpeed(int runSpeed) {
+        this.runSpeed = runSpeed;
+    }
+
+    public boolean isWhetherJumping() {
+        return whetherJumping;
+    }
+
+    public void setWhetherJumping(boolean whetherJumping) {
+        this.whetherJumping = whetherJumping;
+    }
+
+    public int getJumpMaxCount() {
+        return jumpMaxCount;
+    }
+
+    public void setJumpMaxCount(int jumpMaxCount) {
+        this.jumpMaxCount = jumpMaxCount;
+    }
+
+    public int getJumpCount() {
+        return jumpCount;
+    }
+
+    public void setJumpCount(int jumpCount) {
+        this.jumpCount = jumpCount;
+    }
+
+    public BaseGround getCantOnThisGround() {
+        return cantOnThisGround;
+    }
+
+    public void setCantOnThisGround(BaseGround cantOnThisGround) {
+        this.cantOnThisGround = cantOnThisGround;
+    }
+
+    public boolean isWhetherDownGround() {
+        return whetherDownGround;
+    }
+
+    public void setWhetherDownGround(boolean whetherDownGround) {
+        this.whetherDownGround = whetherDownGround;
+    }
+
+    public boolean isWhetherRunLeft() {
+        return whetherRunLeft;
+    }
+
+    public void setWhetherRunLeft(boolean whetherRunLeft) {
+        this.whetherRunLeft = whetherRunLeft;
+    }
+
+    public boolean isWhetherRunRight() {
+        return whetherRunRight;
+    }
+
+    public void setWhetherRunRight(boolean whetherRunRight) {
+        this.whetherRunRight = whetherRunRight;
+    }
+
+
+    public boolean isRolling() {
+        return isRolling;
+    }
+
+    public void setRolling(boolean rolling) {
+        isRolling = rolling;
+    }
+
+    public int getRollWholeTime() {
+        return rollWholeTime;
+    }
+
+    public void setRollWholeTime(int rollWholeTime) {
+        this.rollWholeTime = rollWholeTime;
+    }
+
+    public double getRollSpeed() {
+        return rollSpeed;
+    }
+
+    public void setRollSpeed(double rollSpeed) {
+        this.rollSpeed = rollSpeed;
+    }
+
+    public boolean isWhetherCanRoll() {
+        return whetherCanRoll;
+    }
+
+    public void setWhetherCanRoll(boolean whetherCanRoll) {
+        this.whetherCanRoll = whetherCanRoll;
+    }
+
+    public int getAtkBackSwingTime() {
+        return atkBackSwingTime;
+    }
+
+    public void setAtkBackSwingTime(int atkBackSwingTime) {
+        this.atkBackSwingTime = atkBackSwingTime;
+    }
+
+    public boolean isWhetherAtking() {
+        return whetherAtking;
+    }
+
+    public void setWhetherAtking(boolean whetherAtking) {
+        this.whetherAtking = whetherAtking;
     }
 }

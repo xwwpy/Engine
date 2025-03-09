@@ -9,7 +9,7 @@ import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.projects.game02.content.BackGroundComponent;
-import com.xww.projects.game02.content.Player;
+import com.xww.projects.game02.content.Player.Player;
 import com.xww.Engine.core.Barrier.impl.Ground;
 import com.xww.Engine.core.Barrier.impl.Wall;
 

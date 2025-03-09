@@ -1,54 +1,54 @@
 package com.xww.Engine.core.StateManager;
 
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO
 public class StateMachine {
 
-    private final Map<String, StateNode> statePool;
+    protected Map<String, StateNode> stateNodePool;
     private StateNode currentState;
 
     private boolean needInit = true;
 
-    public void update(Graphics g, Component owner) {
+    public StateMachine(StateNode entryState) {
+        this.currentState = entryState;
+        this.stateNodePool = new HashMap<>();
+    }
+
+    public void register(String id, StateNode stateNode) {
+        this.stateNodePool.put(id, stateNode);
+    }
+
+    public void forceSwitch(String id) {
+        if (this.stateNodePool.containsKey(id)) {
+            this.currentState = this.stateNodePool.get(id);
+            needInit = true;
+        }
+    }
+    public void update(Graphics g) {
         if (currentState == null) return;
         if (needInit) {
             currentState.on_enter();
             needInit = false;
         }
-        currentState.on_update(g, owner);
+        currentState.on_update(g);
         if (currentState.whetherEnding()) {
-            currentState.on_exit();
-            currentState = currentState.selectNextState();
-            if (currentState == null) {
-                throw new RuntimeException("StateMachine: currentState is null");
-            } else {
+            StateNode tempNode = currentState.selectNextState();
+            if (tempNode != currentState) {
+                currentState.on_exit();
+                currentState = tempNode;
                 currentState.on_enter();
             }
         }
     }
 
-
-    public void set_entry(String id){
-        currentState = statePool.get(id);
+    public StateNode getCurrentState() {
+        return currentState;
     }
 
-    public void switch_to(String id){
-        if (currentState != null) {
-            currentState.on_exit();
-        }
-        currentState = statePool.get(id);
-        if (currentState != null) currentState.on_enter();
+    public void setCurrentState(StateNode currentState) {
+        this.currentState = currentState;
     }
-
-    public StateMachine() {
-        this.statePool = new HashMap<>();
-    }
-
-    public void registerState(String id, StateNode state) {
-        statePool.put(id, state);
-    }
-
 }

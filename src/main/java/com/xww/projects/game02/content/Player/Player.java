@@ -1,21 +1,24 @@
-package com.xww.projects.game02.content;
+package com.xww.projects.game02.content.Player;
 
+import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
-import com.xww.Engine.core.Barrier.BaseGround;
+import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
-import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
+import com.xww.Engine.core.Event.TimeEventManager;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
-import com.xww.Engine.core.Timer.Timer;
+import com.xww.Engine.core.StateManager.StateNode;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.setting.DebugSetting;
+import com.xww.projects.game02.content.Player.states.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player extends Character {
+
     public static final int atkZone = 0b1000;
     public static final int beHitZone = 0b10000;
 
@@ -48,6 +51,7 @@ public class Player extends Character {
                 5,
                 500,
                 200,
+                400,
                 CharacterType.Player);
         initAnimation();
         this.registerHitCollisionZone(beHitZone);
@@ -64,31 +68,20 @@ public class Player extends Character {
         idle_left.add_frame_by_name("player_idle_left", 5, true);
         this.addAnimation("idle_left", idle_left);
 
-        Animation dead = new Animation(this, 250);
-        dead.add_frame_by_name("player_dead", 6, false);
-        this.addAnimation("dead_right", dead);
+        PlayerIdleState idleState = new PlayerIdleState(this, idle_left, idle);
+        this.stateMachine.register("idle_state", idleState);
+        this.stateMachine.setCurrentState(idleState);
 
-        Animation dead_left = new Animation(this, 250);
-        dead_left.add_frame_by_name("player_dead_left", 6, true);
-        this.addAnimation("dead_left", dead_left);
+        Animation run = new Animation(this, 100);
+        run.add_frame_by_name("player_run", 10, false);
+        this.addAnimation("run_right", run);
 
-        Animation attack = new Animation(this, 150);
-        attack.add_frame_by_name("player_attack", 5, false);
-        this.addAnimation("attack_right", attack);
+        Animation run_left = new Animation(this, 100);
+        run_left.add_frame_by_name("player_run_left", 10, true);
+        this.addAnimation("run_left", run_left);
 
-        Animation attack_left = new Animation(this, 150);
-        attack_left.add_frame_by_name("player_attack_left", 5, true);
-        this.addAnimation("attack_left", attack_left);
-
-        Animation fall = new Animation(this, 100);
-        fall.add_frame_by_name("player_fall", 5, false);
-        fall.setIs_loop(false);
-        this.addAnimation("fall_right", fall);
-
-        Animation fall_left = new Animation(this, 100);
-        fall_left.add_frame_by_name("player_fall_left", 5, true);
-        fall_left.setIs_loop(false);
-        this.addAnimation("fall_left", fall_left);
+        PlayerRunState runState = new PlayerRunState(this, run_left, run);
+        this.stateMachine.register("run_state", runState);
 
         Animation jump = new Animation(this, 100);
         jump.add_frame_by_name("player_jump", 5, false);
@@ -100,49 +93,70 @@ public class Player extends Character {
         jump_left.setIs_loop(false);
         this.addAnimation("jump_left", jump_left);
 
+        PlayerJumpState jumpState = new PlayerJumpState(this, jump_left, jump);
+        this.stateMachine.register("jump_state", jumpState);
+
+        Animation fall = new Animation(this, 100);
+        fall.add_frame_by_name("player_fall", 5, false);
+        fall.setIs_loop(false);
+        this.addAnimation("fall_right", fall);
+
+        Animation fall_left = new Animation(this, 100);
+        fall_left.add_frame_by_name("player_fall_left", 5, true);
+        fall_left.setIs_loop(false);
+        this.addAnimation("fall_left", fall_left);
+
+        PlayerFallState fallState = new PlayerFallState(this, fall_left, fall);
+        this.stateMachine.register("fall_state", fallState);
+
         Animation roll = new Animation(this, 100);
         roll.add_frame_by_name("player_roll", 7, false);
+        roll.setIs_loop(false);
         this.addAnimation("roll_right", roll);
 
 
         Animation roll_left = new Animation(this, 100);
         roll_left.add_frame_by_name("player_roll_left", 7, true);
+        roll_left.setIs_loop(false);
         this.addAnimation("roll_left", roll_left);
 
-        Animation run = new Animation(this, 100);
-        run.add_frame_by_name("player_run", 10, false);
-        this.addAnimation("run_right", run);
+        PlayerRollState rollState = new PlayerRollState(this, roll_left, roll);
+        this.stateMachine.register("roll_state", rollState);
 
-        Animation run_left = new Animation(this, 100);
-        run_left.add_frame_by_name("player_run_left", 10, true);
-        this.addAnimation("run_left", run_left);
+        Animation attack = new Animation(this, 150);
+        attack.add_frame_by_name("player_attack", 5, false);
+        this.addAnimation("attack_right", attack);
 
-        this.setAnimation("run_left");
+        Animation attack_left = new Animation(this, 150);
+        attack_left.add_frame_by_name("player_attack_left", 5, true);
+        this.addAnimation("attack_left", attack_left);
 
-        jump.setOn_complete((player)->{
-            fall.reset_animation();
-            ((Player) player).setAnimation("fall_right");
-        });
-        fall.setOn_complete((player)->{
-            jump.reset_animation();
-            ((Player) player).setAnimation("jump_right");
-        });
+        PlayerAttackState attackState = new PlayerAttackState(this, attack_left, attack);
+        this.stateMachine.register("attack_state", attackState);
 
-        jump_left.setOn_complete((player)->{
-            fall_left.reset_animation();
-            ((Player) player).setAnimation("fall_left");
-        });
-        fall_left.setOn_complete((player)->{
-            jump_left.reset_animation();
-            ((Player) player).setAnimation("jump_left");
-        });
+        Animation dead = new Animation(this, 250);
+        dead.add_frame_by_name("player_dead", 6, false);
+        dead.setIs_loop(false);
+        this.addAnimation("dead_right", dead);
 
+        Animation dead_left = new Animation(this, 250);
+        dead_left.add_frame_by_name("player_dead_left", 6, true);
+        dead_left.setIs_loop(false);
+        this.addAnimation("dead_left", dead_left);
 
+        PlayerDeadState deadState = new PlayerDeadState(this, dead_left, dead);
+        this.stateMachine.register("dead_state", deadState);
+        deadState.setNextStates(new StateNode[]{idleState, runState, jumpState, fallState, rollState, attackState});
+        attackState.setNextStates(new StateNode[]{idleState, runState, jumpState, fallState, rollState, deadState});
+        rollState.setNextStates(new StateNode[]{idleState, runState, jumpState, fallState, attackState, deadState});
+        idleState.setNextStates(new StateNode[]{runState, jumpState, fallState, rollState, attackState, deadState});
+        runState.setNextStates(new StateNode[]{idleState, jumpState, fallState, rollState, attackState, deadState});
+        jumpState.setNextStates(new StateNode[]{idleState, runState, fallState, rollState, attackState, deadState});
+        fallState.setNextStates(new StateNode[]{idleState, runState, jumpState, rollState, attackState, deadState});
     }
 
     @Override
     public void on_update(Graphics g) {
-        this.setAnimation(whetherFacingLeft ? "attack_left": "attack_right");
         super.on_update(g);
     }
 
@@ -165,6 +179,24 @@ public class Player extends Character {
     }
 
     @Override
+    public void attackByBullet(Bullet bullet){
+        if (!whetherInvulnerable) {
+            lastBeAttackedBullet = bullet;
+            lastBeAttackedTime = TimeEventManager.currentTime;
+            this.currentHp -= bullet.getDamage();
+            this.whetherInvulnerable = true;
+            invulnerableStateTimer.restart();
+            blinkTimer.restart();
+            this.onHit();
+            if (this.currentHp <= 0) {
+                this.stateMachine.forceSwitch("dead_state");
+            }
+        } else {
+            onInvulnerableHit();
+        }
+    }
+
+    @Override
     public void processKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             switch (e.getKeyCode()) {
@@ -182,6 +214,7 @@ public class Player extends Character {
                         this.whetherDownGround = false;
                         this.cantOnThisGround = null;
                         this.jumpCount++;
+                        this.stateMachine.forceSwitch("jump_state");
                         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
                     }
                     break;
@@ -189,6 +222,9 @@ public class Player extends Character {
                     if (this.tryAtk()) {
                         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_1"));
                         this.whetherCanAtk = false;
+                        this.stateMachine.forceSwitch("attack_state");
+                        this.whetherAtking = true;
+                        this.atkBackSwingTimer.restart();
                         this.atk_intervalTimer.restart();
                     }
                     break;

@@ -1,10 +1,11 @@
-package com.xww.projects.game02.content;
+package com.xww.projects.game02.content.Player;
 
 import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.projects.game02.content.Player.Player;
 
 import java.awt.*;
 
