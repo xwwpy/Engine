@@ -1,5 +1,6 @@
 package com.xww.Engine.core.Sound;
 
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 import java.io.FileInputStream;
@@ -100,12 +101,34 @@ public class MP3Player {
         });
     }
 
+    public void addPlayer(Player player) {
+        executorService.submit(() -> {
+            try {
+                if (whetherCloseMusic) {
+                    return;
+                }
+                player.play();
+            } catch (JavaLayerException e) {
+                System.err.println(e);
+            }
+        });
+
+    }
+
     public void shutdown() {
         executorService.shutdown();
     }
 
     public int getAudioQueueSize() {
         return audioQueue.size();
+    }
+
+    public Player getPlayer(String path) {
+        try {
+            return new Player(new FileInputStream(path));
+        } catch (JavaLayerException | FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

@@ -9,13 +9,15 @@ public class Timer {
     public static interface TimerCallBack {
         public abstract void run(Base obj);
     }
-    public static final int INFINITE_TIMES = -1;
+    public static final int INFINITE_TIMES = -2;
     /**
      * 单位纳秒
      */
     private double wait_time;
 
     private TimerCallBack callback;
+
+    private TimerCallBack finalCallback;
 
     private boolean isOver = false;
 
@@ -58,13 +60,14 @@ public class Timer {
                 run_times--;
                 restart0();
                 if (run_times == 0){
+                    if (finalCallback != null) finalCallback.run(owner);
                     if (!neverOver) isOver = true;
                 }
             }
         }
     }
 
-    private boolean whetherOnTheEnd() {
+    public boolean whetherOnTheEnd() {
         return TimeEventManager.currentTime - start_time >= this.wait_time * FrameSetting.timeSpeed;
     }
 
@@ -125,5 +128,13 @@ public class Timer {
 
     public void canOver() {
         neverOver = false;
+    }
+
+    public TimerCallBack getFinalCallback() {
+        return finalCallback;
+    }
+
+    public void setFinalCallback(TimerCallBack finalCallback) {
+        this.finalCallback = finalCallback;
     }
 }

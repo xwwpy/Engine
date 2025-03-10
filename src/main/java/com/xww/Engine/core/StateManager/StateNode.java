@@ -62,7 +62,7 @@ public abstract class StateNode {
     protected abstract Animation selectCurrentAnimation();
 
     public void on_render(Graphics g) {
-        if (currentAnimation != null) currentAnimation.on_update(g);
+        if (currentAnimation != null && owner.isWhetherRender()) currentAnimation.on_update(g);
     }
 
     public abstract void on_exit();

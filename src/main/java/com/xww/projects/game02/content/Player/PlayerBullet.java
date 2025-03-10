@@ -23,7 +23,7 @@ public class PlayerBullet extends Bullet {
                 Vector.Zero(),
                 Vector.Zero(),
                 500,
-                false,
+                true,
                 Player.atkZone,
                 20);
         this.relativePosition = attackDirection.getRelativePos();
@@ -31,10 +31,16 @@ public class PlayerBullet extends Bullet {
             case Up:
                 animation = new Animation(this, each_frame_time);
                 animation.add_frame_by_name("player_vfx_attack_up", 5, bSize);
+                this.addCollider(new RectCollider(Vector.build(68, 541 - 451 - 80), this, Vector.build(498 - 446, 468 - 296)));
+                this.addCollider(new RectCollider(Vector.build(0, 550 - 471), this, Vector.build(321 - 250, 30)));
+                this.addCollider(new RectCollider(Vector.build(256 - 135, 550 - 471), this, Vector.build(321 - 250, 30)));
                 break;
             case Down:
                 animation = new Animation(this, each_frame_time);
                 animation.add_frame_by_name("player_vfx_attack_down", 5, bSize);
+                this.addCollider(new RectCollider(Vector.build(68, 541 - 451 - 80), this, Vector.build(498 - 446, 468 - 296)));
+                this.addCollider(new RectCollider(Vector.build(0, 550 - 471), this, Vector.build(321 - 250, 30)));
+                this.addCollider(new RectCollider(Vector.build(256 - 135, 550 - 471), this, Vector.build(321 - 250, 30)));
                 break;
             case Left:
                 animation = new Animation(this, each_frame_time);

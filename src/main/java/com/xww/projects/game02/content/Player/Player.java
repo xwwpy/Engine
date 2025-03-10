@@ -2,6 +2,7 @@ package com.xww.projects.game02.content.Player;
 
 import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Actor.Character;
+import com.xww.Engine.core.Actor.DefaultBullet;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.RectCollider;
@@ -12,6 +13,7 @@ import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.StateManager.StateNode;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.setting.DebugSetting;
+import com.xww.projects.game02.content.Boss.Boss;
 import com.xww.projects.game02.content.Player.states.*;
 
 import java.awt.*;
@@ -23,10 +25,10 @@ public class Player extends Character {
     public static final int beHitZone = 0b10000;
 
     public enum AttackDirection {
-        Left(Vector.build(-80, -20)),
-        Right(Vector.build(60, -20)),
-        Up(Vector.build(20, -40)),
-        Down(Vector.build(20, 40));
+        Left(Vector.build(-20, -20)),
+        Right(Vector.build(-20, -20)),
+        Up(Vector.build(0, 0)),
+        Down(Vector.build(0, 0));
         private final Vector relativePos;
         AttackDirection(Vector relativePos){
             this.relativePos = relativePos;
@@ -40,7 +42,7 @@ public class Player extends Character {
         super(worldPosition,
                 Vector.build(180, 135),
                 Vector.build(232 - 137, 333 - 257),
-                Vector.build(38, 57),
+                Vector.build(38, 55),
                 10,
                 100,
                 300,
@@ -55,7 +57,7 @@ public class Player extends Character {
                 CharacterType.Player);
         initAnimation();
         this.registerHitCollisionZone(beHitZone);
-        this.addCollider(new RectCollider(Vector.build(38, 55), this, Vector.build(92, 440 - 366)));
+        this.addCollider(new RectCollider(this.relativePosition, this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
     }
 
@@ -164,7 +166,15 @@ public class Player extends Character {
     protected boolean tryAtk() {
         if (!this.whetherCanAtk) return false;
         // 攻击
-        Component.addComponent(new PlayerBullet(this, (!whetherFacingLeft) ? AttackDirection.Right: AttackDirection.Left));
+        if (whetherOnGround){
+            Component.addComponent(new PlayerBullet(this, (!whetherFacingLeft) ? AttackDirection.Right: AttackDirection.Left));
+        } else {
+            if (whetherJumping) {
+                Component.addComponent(new PlayerBullet(this, AttackDirection.Up));
+            } else {
+                Component.addComponent(new PlayerBullet(this, AttackDirection.Down));
+            }
+        }
         return true;
     }
 
@@ -196,6 +206,7 @@ public class Player extends Character {
         }
     }
 
+
     @Override
     public void processKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -208,6 +219,11 @@ public class Player extends Character {
                     break;
                 case KeyEvent.VK_W:
                     if (this.jumpCount < this.jumpMaxCount) {
+                        if (this.whetherOnGround) {
+                            Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
+                            PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
+                            Component.addComponent(jumpComponent);
+                        }
                         this.velocity.y = -jumpSpeed;
                         this.whetherJumping = true;
                         this.whetherOnGround = false;
@@ -216,11 +232,13 @@ public class Player extends Character {
                         this.jumpCount++;
                         this.stateMachine.forceSwitch("jump_state");
                         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
+
                     }
                     break;
                 case KeyEvent.VK_J:
                     if (this.tryAtk()) {
-                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_1"));
+                        int random = (int) (Math.random() * 3) + 1;
+                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_" + random));
                         this.whetherCanAtk = false;
                         this.stateMachine.forceSwitch("attack_state");
                         this.whetherAtking = true;
@@ -263,6 +281,9 @@ public class Player extends Character {
         if (fullY > 500){
             MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_land"));
             this.currentHp -= (int) ((fullY / 1000) * this.getMass());
+            Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 3, size.getFullY() / 1.2));
+            PlayerLandComponent LandComponent = new PlayerLandComponent(pos);
+            Component.addComponent(LandComponent);
         }
     }
 
@@ -275,6 +296,13 @@ public class Player extends Character {
         this.velocity.x = this.whetherFacingLeft ? -this.rollSpeed: this.rollSpeed;
         this.beInvulnerable();
         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_roll"));
+    }
+
+    @Override
+    public void receiveCollision(ActionAfterCollision.CollisionInfo collisionInfo) {
+        if (collisionInfo.getOtherCollider().getOwner() instanceof Boss boss){
+            this.attackByBullet(new DefaultBullet(boss, 5));
+        }
     }
 
     @Override

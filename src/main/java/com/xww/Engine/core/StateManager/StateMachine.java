@@ -23,6 +23,9 @@ public class StateMachine {
 
     public void forceSwitch(String id) {
         if (this.stateNodePool.containsKey(id)) {
+            if (this.currentState != null) {
+                this.currentState.on_exit();
+            }
             this.currentState = this.stateNodePool.get(id);
             needInit = true;
         }

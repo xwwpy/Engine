@@ -6,6 +6,7 @@ import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
+import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.TimeEventManager;
@@ -66,8 +67,6 @@ public abstract class Character extends FreeComponent {
     protected boolean whetherRunRight = false;
 
     protected Map<String, Animation> animations = new HashMap<>();
-
-    protected Animation currentAnimation;
 
     protected StateMachine stateMachine = new StateMachine(null); // 状态机
 
@@ -149,14 +148,18 @@ public abstract class Character extends FreeComponent {
         atk_intervalTimer.neverOver();
         // 无敌闪烁
         blinkTimer = new Timer((double) invulnerableTime / blinkCount, (obj) -> {
-            this.whetherRender = !this.whetherRender;
+            ((Character) obj).whetherRender = !((Character) obj).whetherRender;
         }, this);
+        blinkTimer.setFinalCallback((owner)->{
+            ((Character) owner).whetherRender = true;
+        });
         blinkTimer.setRun_times(blinkCount);
         blinkTimer.stopStart();
         blinkTimer.neverOver();
         // 切换无敌状态
         invulnerableStateTimer = new Timer(invulnerableTime, (obj) -> {
             this.whetherInvulnerable = false;
+            this.whetherRender = true;
         }, this);
         invulnerableStateTimer.setRun_times(1);
         invulnerableStateTimer.stopStart();
@@ -279,9 +282,10 @@ public abstract class Character extends FreeComponent {
             lastBeAttackedBullet = bullet;
             lastBeAttackedTime = TimeEventManager.currentTime;
             this.currentHp -= bullet.getDamage();
-            this.whetherInvulnerable = true;
             invulnerableStateTimer.restart();
-            blinkTimer.restart();
+            if (blinkTimer.whetherOnTheEnd()){
+                blinkTimer.restart();
+            }
             this.onHit();
         } else {
             onInvulnerableHit();

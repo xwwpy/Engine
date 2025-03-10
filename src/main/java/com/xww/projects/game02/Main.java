@@ -9,6 +9,7 @@ import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.projects.game02.content.BackGroundComponent;
+import com.xww.projects.game02.content.Boss.Boss;
 import com.xww.projects.game02.content.Player.Player;
 import com.xww.Engine.core.Barrier.impl.Ground;
 import com.xww.Engine.core.Barrier.impl.Wall;
@@ -69,5 +70,9 @@ public class Main {
         ground.setWhetherCanDown(false);
         BaseGround.registerBarrier(ground);
         new Wall(Vector.build(300, 300));
+        new Wall(Vector.build(400, 500), Vector.build(100, 100));
+        new Wall(Vector.build(500, 300), Vector.build(100, 100));
+
+        new Boss(Vector.build(300, 300));
     }
 }

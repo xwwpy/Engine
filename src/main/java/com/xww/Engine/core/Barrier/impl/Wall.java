@@ -19,6 +19,7 @@ public class Wall extends BaseWall {
         super(worldPosition, size, true);
         BaseWall.registerWall(this);
         Ground ground = new Ground(this.worldPosition, Vector.build(this.size.getFullX(), 0));
+        ground.setWhetherCanDown(false);
         BaseGround.registerBarrier(ground);
     }
 

@@ -30,11 +30,11 @@ public class TestCharacter extends Character{
 
 
     private void initIdleAnimation() {
-        this.currentAnimation = new Animation(this, 100);
-        this.animations.put("idle", this.currentAnimation);
-        Atlas atlas = new Atlas();
-        atlas.load("/Applications/程序/项目文件/javaProject/project01/src/game/game07/Resources/enemy/throw_sword/%d.png", 16, 1);
-        this.currentAnimation.add_frame(atlas);
+//        this.currentAnimation = new Animation(this, 100);
+//        this.animations.put("idle", this.currentAnimation);
+//        Atlas atlas = new Atlas();
+//        atlas.load("/Applications/程序/项目文件/javaProject/project01/src/game/game07/Resources/enemy/throw_sword/%d.png", 16, 1);
+//        this.currentAnimation.add_frame(atlas);
     }
 
     @Override
