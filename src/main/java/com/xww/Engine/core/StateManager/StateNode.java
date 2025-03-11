@@ -19,11 +19,14 @@ public abstract class StateNode {
 
     public abstract boolean whetherSuitThisState(); // 状态是否适合当前角色
 
+    public String id;
 
-    public StateNode(Character owner, int order, StateNode[] nextStates) {
+
+    public StateNode(Character owner, int order, StateNode[] nextStates, String id) {
         this.owner = owner;
         this.order = order;
         this.nextStates = nextStates;
+        this.id = id;
     }
 
     public StateNode selectNextState() {

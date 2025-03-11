@@ -1,40 +1,39 @@
 package com.xww.projects.game02.content.Boss;
 
+import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Barrier.BaseGround;
+import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
+import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
+import com.xww.Engine.core.Event.TimeEventManager;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
-import com.xww.Engine.core.StateManager.StateNode;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.DebugSetting;
+import com.xww.projects.game02.content.Boss.BossBullet.Barb;
+import com.xww.projects.game02.content.Boss.BossBullet.Silk;
+import com.xww.projects.game02.content.Boss.BossBullet.Sword;
 import com.xww.projects.game02.content.Boss.States.*;
-import com.xww.projects.game02.content.Player.PlayerJumpComponent;
+import com.xww.projects.game02.content.Player.Player;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class Boss extends Character {
     public static final int beHitZone = 0b1000;
     public static final int atkZone = 0b10000;
 
-    private boolean whetherThrowingBarb = false; // 是否正在发射弹道
-    private boolean whetherThrowingSilk = false; // 是否正在发射 silk
-    private boolean whetherThrowingSword = false; // 是否正在发射 sword
+    private final Player player;
 
-    private boolean whetherDashingOnFloor = false; // 是否正在地上dash
-
-    private boolean whetherDashingInAir = false; // 是否在空中dash
-
-    private boolean whetherAiming = false; // 是否在瞄准
-
-    public Boss(Vector worldPosition) {
+    public Boss(Vector worldPosition, Player player) {
         super(worldPosition,
                 Vector.build(150, 150),
-                Vector.build(150, 150),
-                Vector.build(0, 0),
+                Vector.build(80, 150),
+                Vector.build(35, 0),
                 20,
                 100,
                 200,
@@ -43,19 +42,42 @@ public class Boss extends Character {
                 0,
                 true,
                 1,
-                700,
+                500,
                 300,
                 100,
-                CharacterType.Player);
-        initAnimation();
+                CharacterType.Enemy);
         this.registerHitCollisionZone(beHitZone);
         this.registerActiveCollisionZone(atkZone);
         this.callBack = ActionAfterCollision.ActionAfterCollisionType.nullAction;
-        this.addCollider(new RectCollider(this.relativePosition, this, size));
+        this.addCollider(new RectCollider(this.relativePosition, this, logicSize));
         this.whetherCanRoll = false;
+        this.player = player;
+        this.stateMachine = new BossStateMachine(this);
+        initAnimation();
+        this.stateMachine.forceSwitch("idleState");
         Component.addComponent(this);
     }
 
+    @Override
+    protected void checkMove() {
+        update_direction();
+        // 预移动
+        Vector position = this.getLogicPosition();
+        pre_move();
+        Vector position1 = this.getLogicPosition();
+        BaseGround.whetherOnGround(position, position1, this);
+        BaseWall.whetherCrossWall(position, position1, this);
+        // 检查碰撞
+        // 当组件需要检测碰撞时才进行检测 并且需要主动碰撞
+        if (whetherCheckCollision && activeCollisionZone != CollisionDefaultConstValue.noCollisionChecking) {
+            ActionAfterCollision.CollisionInfo collisionInfo = checkCollision();
+            // 如果发生碰撞执行下面的逻辑
+            if (collisionInfo.isWhetherCollider()) {
+                // 发生碰撞后的回调函数
+                this.return_move(collisionAction(collisionInfo, true));
+            }
+        }
+    }
     private void initAnimation() {
     // idle
         Animation idle_left = new Animation(this, 100);
@@ -66,8 +88,7 @@ public class Boss extends Character {
         idle_right.add_frame(ResourceManager.getInstance().findAtlas("enemy_idle_right"));
         this.addAnimation("idle_right", idle_right);
         BossIdleState idleState = new BossIdleState(this, idle_left, idle_right);
-        this.stateMachine.register("idle_state", idleState);
-        this.stateMachine.forceSwitch("idle_state");
+        this.stateMachine.register("idleState", idleState);
 
     // jump
         Animation jump_left = new Animation(this, 100);
@@ -81,7 +102,7 @@ public class Boss extends Character {
         this.addAnimation("jump_right", jump_right);
 
         BossJumpState jumpState = new BossJumpState(this, jump_left, jump_right);
-        this.stateMachine.register("jump_state", jumpState);
+        this.stateMachine.register("jumpState", jumpState);
 
 
      // fall
@@ -96,7 +117,7 @@ public class Boss extends Character {
         this.addAnimation("fall_right", fall_right);
 
         BossFallState fallState = new BossFallState(this, fall_left, fall_right);
-        this.stateMachine.register("fall_state", fallState);
+        this.stateMachine.register("fallState", fallState);
 
 
      // run
@@ -109,21 +130,19 @@ public class Boss extends Character {
         this.addAnimation("run_right", run_right);
 
         BossRunState runState = new BossRunState(this, run_left, run_right);
-        this.stateMachine.register("run_state", runState);
+        this.stateMachine.register("runState", runState);
 
      // throw_barb
-        Animation throw_bard_left = new Animation(this, 100);
+        Animation throw_bard_left = new Animation(this, 200);
         throw_bard_left.add_frame(ResourceManager.getInstance().findAtlas("enemy_throw_barb"));
-        throw_bard_left.setIs_loop(false);
         this.addAnimation("throw_bard_left", throw_bard_left);
 
-        Animation throw_bard_right = new Animation(this, 100);
+        Animation throw_bard_right = new Animation(this, 200);
         throw_bard_right.add_frame(ResourceManager.getInstance().findAtlas("enemy_throw_barb_right"));
-        throw_bard_right.setIs_loop(false);
         this.addAnimation("throw_bard_right", throw_bard_right);
 
         BossThrowBarbState throwBarbState = new BossThrowBarbState(this, throw_bard_left, throw_bard_right);
-        this.stateMachine.register("throw_barb_state", throwBarbState);
+        this.stateMachine.register("throwBarbState", throwBarbState);
 
 
      // throw_silk
@@ -138,7 +157,7 @@ public class Boss extends Character {
         this.addAnimation("throw_silk_right", throw_silk_right);
 
         BossThrowSilkState throwSilkState = new BossThrowSilkState(this, throw_silk_left, throw_silk_right);
-        this.stateMachine.register("throw_silk_state", throwSilkState);
+        this.stateMachine.register("throwSilkState", throwSilkState);
 
 
      // throw_sword
@@ -153,7 +172,7 @@ public class Boss extends Character {
         this.addAnimation("throw_sword_right", throw_sword_right);
 
         BossThrowSwordState throwSwordState = new BossThrowSwordState(this, throw_sword_left, throw_sword_right);
-        this.stateMachine.register("throw_sword_state", throwSwordState);
+        this.stateMachine.register("throwSwordState", throwSwordState);
 
 
      // dash_in_air
@@ -166,7 +185,7 @@ public class Boss extends Character {
         this.addAnimation("dash_in_air_right", dash_in_air_right);
 
         BossDashInAirState dashInAirState = new BossDashInAirState(this, dash_in_air_left, dash_in_air_right);
-        this.stateMachine.register("dash_in_air_state", dashInAirState);
+        this.stateMachine.register("dashInAirState", dashInAirState);
 
 
      // dash_on_floor
@@ -179,7 +198,7 @@ public class Boss extends Character {
         this.addAnimation("dash_on_floor_right", dash_on_floor_right);
 
         BossDashOnFloorState dashOnFloorState = new BossDashOnFloorState(this, dash_on_floor_left, dash_on_floor_right);
-        this.stateMachine.register("dash_on_floor_state", dashOnFloorState);
+        this.stateMachine.register("dashOnFloorState", dashOnFloorState);
 
         // aim
         Animation aim_left = new Animation(this, 100);
@@ -193,7 +212,7 @@ public class Boss extends Character {
         this.addAnimation("aim_right", aim_right);
 
         BossAimState aimState = new BossAimState(this, aim_left, aim_right);
-        this.stateMachine.register("aim_state", aimState);
+        this.stateMachine.register("aimState", aimState);
 
         // squat
         Animation squat_left = new Animation(this, 100);
@@ -207,7 +226,7 @@ public class Boss extends Character {
         this.addAnimation("squat_right", squat_right);
 
         BossSquatState squatState = new BossSquatState(this, squat_left, squat_right);
-        this.stateMachine.register("squat_state", squatState);
+        this.stateMachine.register("squatState", squatState);
 
         // dead TODO
         Animation dead_left = new Animation(this, 100);
@@ -221,20 +240,10 @@ public class Boss extends Character {
         this.addAnimation("dead_right", dead_right);
 
         BossDeadState deadState = new BossDeadState(this, dead_left, dead_right);
-        this.stateMachine.register("dead_state", deadState);
-
-        aimState.setNextStates(new StateNode[]{dashInAirState, deadState});
-        dashInAirState.setNextStates(new StateNode[]{idleState, deadState, fallState});
-        dashOnFloorState.setNextStates(new StateNode[]{idleState, deadState, fallState});
-        fallState.setNextStates(new StateNode[]{idleState, deadState});
-        idleState.setNextStates(new StateNode[]{deadState, fallState, runState, jumpState, squatState, throwBarbState, throwSilkState, throwSwordState});
-        jumpState.setNextStates(new StateNode[]{deadState, fallState, aimState, throwSilkState});
-        runState.setNextStates(new StateNode[]{deadState, idleState, throwSilkState});
-        squatState.setNextStates(new StateNode[]{deadState, dashOnFloorState});
-        throwBarbState.setNextStates(new StateNode[]{deadState, idleState});
-        throwSilkState.setNextStates(new StateNode[]{deadState, idleState, aimState, fallState});
-        throwSwordState.setNextStates(new StateNode[]{deadState, idleState, squatState, jumpState, throwSilkState});
+        this.stateMachine.register("deadState", deadState);
     }
+
+
 
     @Override
     protected boolean tryAtk() {
@@ -253,68 +262,37 @@ public class Boss extends Character {
         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("enemy_hurt_" + random));
     }
 
+    @Override
+    protected void update_direction() {
+
+    }
+
+    public void updateBossDirection(){
+        this.whetherFacingLeft = player.getLeftTopWorldPosition().getFullX() < this.getLeftTopWorldPosition().getFullX();
+    }
+
+
 
     @Override
-    public void processKeyEvent(KeyEvent e) {
-        if (e.getID() == KeyEvent.KEY_PRESSED) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A:
-                    this.whetherRunLeft = true;
-                    break;
-                case KeyEvent.VK_D:
-                    this.whetherRunRight = true;
-                    break;
-                case KeyEvent.VK_W:
-                    if (this.jumpCount < this.jumpMaxCount) {
-                        if (this.whetherOnGround) {
-                            Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
-                            PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
-                            Component.addComponent(jumpComponent);
-                        }
-                        this.velocity.y = -jumpSpeed;
-                        this.whetherJumping = true;
-                        this.whetherOnGround = false;
-                        this.whetherDownGround = false;
-                        this.cantOnThisGround = null;
-                        this.jumpCount++;
-                        this.stateMachine.forceSwitch("jump_state");
-                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
+    public void on_update(Graphics g) {
+        super.on_update(g);
+    }
 
-                    }
-                    break;
-                case KeyEvent.VK_J:
-                    if (this.tryAtk()) {
-                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_1"));
-                        this.whetherCanAtk = false;
-                        this.stateMachine.forceSwitch("attack_state");
-                        this.whetherAtking = true;
-                        this.atkBackSwingTimer.restart();
-                        this.atk_intervalTimer.restart();
-                    }
-                    break;
-                case KeyEvent.VK_S:
-                    if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()) {
-                        this.whetherDownGround = true;
-                        this.whetherOnGround = false;
-                        cantOnThisGround = this.getLastOnGround();
-                    }
-                    break;
-                case KeyEvent.VK_SHIFT:
-                    break;
-                default:
-                    break;
+    @Override
+    public void attackByBullet(Bullet bullet){
+        if (!whetherInvulnerable) {
+            lastBeAttackedBullet = bullet;
+            lastBeAttackedTime = TimeEventManager.currentTime;
+            this.currentHp -= bullet.getDamage();
+            this.whetherInvulnerable = true;
+            invulnerableStateTimer.restart();
+            blinkTimer.restart();
+            this.onHit();
+            if (this.currentHp <= 0) {
+                this.stateMachine.forceSwitch("deadState");
             }
-        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_A:
-                    this.whetherRunLeft = false;
-                    break;
-                case KeyEvent.VK_D:
-                    this.whetherRunRight = false;
-                    break;
-                default:
-                    break;
-            }
+        } else {
+            onInvulnerableHit();
         }
     }
 
@@ -323,59 +301,30 @@ public class Boss extends Character {
         g.setColor(DebugSetting.DebugInfoColor);
         g.drawString("速度: " + this.velocity, this.getDrawPosition().getX(), this.getDrawPosition().getY() - 20);
         g.drawString("是否无敌: " + (this.whetherInvulnerable ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY());
-        g.drawString("是否正在翻滚: " + (this.isRolling ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
-        g.drawString("是否可以攻击: " + (this.whetherCanAtk ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
-        g.drawString("连跳次数: " + this.jumpMaxCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
-        g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
-        g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);
+        g.drawString("是否在地面: " + (this.whetherOnGround ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
+        g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
+        g.drawString("当前动作: " + this.stateMachine.getCurrentStateId(), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
+        g.drawString("当前速度: " + this.velocity, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
     }
 
-
-    public boolean isWhetherThrowingBarb() {
-        return whetherThrowingBarb;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setWhetherThrowingBarb(boolean whetherThrowingBarb) {
-        this.whetherThrowingBarb = whetherThrowingBarb;
+    // 创建一个Silk对象
+    public Silk silk() {
+        return new Silk(this, this.getLeftTopWorldPosition());
     }
 
-    public boolean isWhetherThrowingSilk() {
-        return whetherThrowingSilk;
+    public Sword sword() {
+        if (this.whetherFacingLeft) {
+            return new Sword(this, this.getLeftTopWorldPosition());
+        } else {
+            return new Sword(this, this.getLeftTopWorldPosition());
+        }
     }
 
-    public void setWhetherThrowingSilk(boolean whetherThrowingSilk) {
-        this.whetherThrowingSilk = whetherThrowingSilk;
-    }
-
-    public boolean isWhetherThrowingSword() {
-        return whetherThrowingSword;
-    }
-
-    public void setWhetherThrowingSword(boolean whetherThrowingSword) {
-        this.whetherThrowingSword = whetherThrowingSword;
-    }
-
-    public boolean isWhetherDashingOnFloor() {
-        return whetherDashingOnFloor;
-    }
-
-    public void setWhetherDashingOnFloor(boolean whetherDashingOnFloor) {
-        this.whetherDashingOnFloor = whetherDashingOnFloor;
-    }
-
-    public boolean isWhetherDashingInAir() {
-        return whetherDashingInAir;
-    }
-
-    public void setWhetherDashingInAir(boolean whetherDashingInAir) {
-        this.whetherDashingInAir = whetherDashingInAir;
-    }
-
-    public boolean isWhetherAiming() {
-        return whetherAiming;
-    }
-
-    public void setWhetherAiming(boolean whetherAiming) {
-        this.whetherAiming = whetherAiming;
+    public void barb() {
+        Barb.generateBarbs((200 - currentHp) / 10, this);
     }
 }

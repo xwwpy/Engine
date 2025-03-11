@@ -11,7 +11,7 @@ public class PlayerIdleState extends StateNode {
     private final Animation idleRight;
 
     public PlayerIdleState(Character owner, Animation idleLeft, Animation idleRight) {
-        super(owner, 0, null);
+        super(owner, 0, null, "idle_state");
         this.idleLeft = idleLeft;
         this.idleRight = idleRight;
     }

@@ -72,7 +72,7 @@ public class Player extends Character {
 
         PlayerIdleState idleState = new PlayerIdleState(this, idle_left, idle);
         this.stateMachine.register("idle_state", idleState);
-        this.stateMachine.setCurrentState(idleState);
+        this.stateMachine.setCurrentState("idle_state");
 
         Animation run = new Animation(this, 100);
         run.add_frame_by_name("player_run", 10, false);
@@ -315,5 +315,6 @@ public class Player extends Character {
         g.drawString("连跳次数: " + this.jumpMaxCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
         g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
         g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);
+        g.drawString("当前动作: " + this.stateMachine.getCurrentStateId(), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 120);
     }
 }

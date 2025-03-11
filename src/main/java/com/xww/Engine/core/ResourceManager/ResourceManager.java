@@ -111,9 +111,10 @@ public class ResourceManager {
                         // 判断文件是否符合指定包含的后缀
                         if (filePath.toString().endsWith(suf)){
                             // 判断文件是否符合模版
-                            if (StringUtils.suitTemplate(filePath.toString(), pathTemplate + suf)){
+                            int index = StringUtils.suitTemplate(filePath.toString(), pathTemplate + suf);
+                            if (index != -1){
                                 // 符合图集的模版时则加载该文件到图集中
-                                atlas.loadSingle(filePath.toString());
+                                atlas.loadSingle(filePath.toString(), index - 1);
                             }
                         }
                     });
@@ -121,6 +122,8 @@ public class ResourceManager {
             });
             if (atlas.getSize() > 0) {
                 atlasPool.put(atlasName, atlas);
+                // 为了实现根据序号有序排列
+                atlas.clearNull();
             }
         } catch (IOException e) {
             throw new RuntimeException("解析文件夹的图集失败");

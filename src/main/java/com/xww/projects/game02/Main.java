@@ -8,6 +8,7 @@ import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
+import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.BackGroundComponent;
 import com.xww.projects.game02.content.Boss.Boss;
 import com.xww.projects.game02.content.Player.Player;
@@ -60,19 +61,14 @@ public class Main {
 
     public static void initGame() {
         Component.addComponent(new BackGroundComponent());
-        for (int i = 1; i < 2; i++) {
-            new Player(Vector.build(100, 200));
-        }
-
-        BaseGround.registerBarrier(new Ground(Vector.build(100, 600)));
-        BaseGround.registerBarrier(new Ground(Vector.build(300, 500)));
+        Player player = new Player(Vector.build(100, 200));
         Ground ground = new Ground(Vector.build(0, 680));
         ground.setWhetherCanDown(false);
         BaseGround.registerBarrier(ground);
-        new Wall(Vector.build(300, 300));
-        new Wall(Vector.build(400, 500), Vector.build(100, 100));
-        new Wall(Vector.build(500, 300), Vector.build(100, 100));
+        new Wall(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
+        new Wall(Vector.build(FrameSetting.DEFAULT_WIDTH, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
 
-        new Boss(Vector.build(300, 300));
+        new Boss(Vector.build(300, 300), player);
+//        new Boss(Vector.build(600, 300), player);
     }
 }

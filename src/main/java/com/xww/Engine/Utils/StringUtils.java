@@ -39,9 +39,11 @@ public class StringUtils {
         } else return split[split.length - 2];
     }
 
-    public static boolean suitTemplate(String str, String template) {
+    public static int suitTemplate(String str, String template) {
         int strIndex = 0;
         int templateIndex = 0;
+        // 图像编号
+        int num = -1;
         while (strIndex < str.length() && templateIndex < template.length()) {
             if (str.charAt(strIndex) == template.charAt(templateIndex)) {
                 strIndex++;
@@ -53,21 +55,24 @@ public class StringUtils {
                         switch (template.charAt(templateIndex)){
                             // TODO 目前仅支持%d作为占位符
                             case 'd':
+                                StringBuilder temp = new StringBuilder();
                                 while (strIndex < str.length() && str.charAt(strIndex) >= '0' && str.charAt(strIndex) <= '9'){
+                                    temp.append(str.charAt(strIndex));
                                     strIndex++;
                                 }
+                                num = Integer.parseInt(temp.toString());
                                 templateIndex++;
                                 break;
                             default:
-                                return false;
+                                return -1;
                         }
                     }
                 } else {
-                    return false;
+                    return -1;
                 }
             }
         }
-        return true;
+        return num;
     }
 
     public static String convertToBinary(int src) {

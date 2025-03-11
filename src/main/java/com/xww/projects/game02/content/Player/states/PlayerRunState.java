@@ -19,7 +19,7 @@ public class PlayerRunState extends StateNode {
 
     private boolean running = false;
     public PlayerRunState(Character owner, Animation runLeftAnimation, Animation runRightAnimation) {
-        super(owner, 1, null);
+        super(owner, 1, null, "run_state");
         this.runLeftAnimation = runLeftAnimation;
         this.runRightAnimation = runRightAnimation;
         Timer timer = new Timer(500, (obj) -> {

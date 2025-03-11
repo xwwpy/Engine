@@ -593,4 +593,12 @@ public abstract class Character extends FreeComponent {
     public void setWhetherAtking(boolean whetherAtking) {
         this.whetherAtking = whetherAtking;
     }
+
+    public StateMachine getStateMachine() {
+        return stateMachine;
+    }
+
+    public void setStateMachine(StateMachine stateMachine) {
+        this.stateMachine = stateMachine;
+    }
 }

@@ -9,7 +9,7 @@ public class PlayerJumpState extends StateNode {
     protected Animation jumpRightAnimation;
 
     public PlayerJumpState(Character owner, Animation jumpLeftAnimation, Animation jumpRightAnimation) {
-        super(owner, 10, null);
+        super(owner, 10, null, "jump_state");
         this.jumpLeftAnimation = jumpLeftAnimation;
         this.jumpRightAnimation = jumpRightAnimation;
     }

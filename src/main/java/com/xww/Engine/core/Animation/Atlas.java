@@ -6,11 +6,13 @@ import com.xww.Engine.Utils.StringUtils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Objects;
 
 
 public class Atlas {
+    // 有序
     private final List<Image> img_lists = new ArrayList<>();
     public void load(String path_template, int num, int start) {
         img_lists.clear();
@@ -38,6 +40,15 @@ public class Atlas {
         img_lists.add(ImgUtils.loadImage(path));
     }
 
+    public void loadSingle(String path, int index) {
+        if (img_lists.size() < index + 1){
+            for (int i = img_lists.size(); i <= index + 1; i++) {
+                img_lists.add(null);
+            }
+        }
+        img_lists.add(index, ImgUtils.loadImage(path));
+    }
+
     public void loadSingle(String path, int width, int height) {
         img_lists.add(ImgUtils.getScaledImage(ImgUtils.loadImage(path), width, height));
     }
@@ -49,5 +60,9 @@ public class Atlas {
             img_lists.set(i, img_lists.get(img_lists.size() - i - 1));
             img_lists.set(img_lists.size() - i - 1, temp);
         }
+    }
+
+    public void clearNull() {
+        img_lists.removeIf(Objects::isNull);
     }
 }

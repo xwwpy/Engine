@@ -7,9 +7,20 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class CodeUtils {
+
+    private static final Random random = new Random();
+
+    /**
+     *
+     * @return [min, max] 之间的随机数
+     */
+    public static int getRandomNum(int min, int max) {
+        return random.nextInt(min, max + 1);
+    }
 
     public static long getTotalLines(String dictionaryPath){
         long totalLines = 0;

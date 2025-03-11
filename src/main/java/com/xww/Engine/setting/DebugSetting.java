@@ -7,7 +7,7 @@ import com.xww.Engine.core.Vector.Vector;
 import java.awt.*;
 
 public class DebugSetting {
-    public static boolean IS_DEBUG_ON = true;
+    public static boolean IS_DEBUG_ON = false;
     public static Color DebugInfoColor = Color.RED;
 
     public static Color ShowImgBoundaryColor = Color.blue;

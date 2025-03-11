@@ -8,7 +8,7 @@ public class PlayerRollState extends StateNode {
     protected Animation rollLeftAnimation;
     protected Animation rollRightAnimation;
     public PlayerRollState(Character owner, Animation rollLeftAnimation, Animation rollRightAnimation) {
-        super(owner, 20, null);
+        super(owner, 20, null, "roll_state");
         this.rollLeftAnimation = rollLeftAnimation;
         this.rollRightAnimation = rollRightAnimation;
     }

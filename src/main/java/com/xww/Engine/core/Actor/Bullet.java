@@ -63,6 +63,8 @@ public abstract class Bullet extends FreeComponent {
                         return;
                     }
                     character.attackByBullet(this);
+                } else if (component instanceof Bullet b) {
+                    this.crash();
                 } else {
                     System.out.println("暂未实现子弹对象与该种类型--" + component + "--碰撞后的行为");
                 }

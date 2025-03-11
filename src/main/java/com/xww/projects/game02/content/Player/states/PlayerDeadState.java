@@ -8,7 +8,7 @@ public class PlayerDeadState extends StateNode {
     protected Animation deadLeftAnimation;
     protected Animation deadRightAnimation;
     public PlayerDeadState(Character owner, Animation deadLeftAnimation, Animation deadRightAnimation) {
-        super(owner, 1000, null);
+        super(owner, 1000, null, "dead_state");
         this.deadLeftAnimation = deadLeftAnimation;
         this.deadRightAnimation = deadRightAnimation;
     }

@@ -8,7 +8,7 @@ public class PlayerAttackState extends StateNode {
     protected Animation atkLeftAnimation;
     protected Animation atkRightAnimation;
     public PlayerAttackState(Character owner, Animation atkLeftAnimation, Animation atkRightAnimation) {
-        super(owner, 100, null);
+        super(owner, 100, null, "attack_state");
         this.atkLeftAnimation = atkLeftAnimation;
         this.atkRightAnimation = atkRightAnimation;
     }

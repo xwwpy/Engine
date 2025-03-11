@@ -10,6 +10,8 @@ public class StateMachine {
     protected Map<String, StateNode> stateNodePool;
     private StateNode currentState;
 
+    private String currentStateId;
+
     private boolean needInit = true;
 
     public StateMachine(StateNode entryState) {
@@ -27,6 +29,7 @@ public class StateMachine {
                 this.currentState.on_exit();
             }
             this.currentState = this.stateNodePool.get(id);
+            currentStateId = id;
             needInit = true;
         }
     }
@@ -42,6 +45,7 @@ public class StateMachine {
             if (tempNode != currentState) {
                 currentState.on_exit();
                 currentState = tempNode;
+                this.currentStateId = currentState.id;
                 currentState.on_enter();
             }
         }
@@ -51,7 +55,11 @@ public class StateMachine {
         return currentState;
     }
 
-    public void setCurrentState(StateNode currentState) {
-        this.currentState = currentState;
+    public void setCurrentState(String id) {
+        forceSwitch(id);
+    }
+
+    public String getCurrentStateId() {
+        return currentStateId;
     }
 }

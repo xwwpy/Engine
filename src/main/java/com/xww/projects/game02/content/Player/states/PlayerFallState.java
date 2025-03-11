@@ -8,7 +8,7 @@ public class PlayerFallState extends StateNode {
     protected Animation fallRightAnimation;
     protected Animation fallLeftAnimation;
     public PlayerFallState(Character owner, Animation fallLeftAnimation, Animation fallRightAnimation) {
-        super(owner, 10, null);
+        super(owner, 10, null, "fall_state");
         this.fallLeftAnimation = fallLeftAnimation;
         this.fallRightAnimation = fallRightAnimation;
     }
