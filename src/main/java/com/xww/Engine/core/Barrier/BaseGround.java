@@ -84,6 +84,12 @@ public abstract class BaseGround {
         barriers_to_add.add(barrier);
     }
 
+    public static void clear() {
+        barriers.clear();
+        barriers_to_add.clear();
+        barriers_to_remove.clear();
+    }
+
     protected abstract void onRender(Graphics g);
 
     public Vector getWorldPosition() {

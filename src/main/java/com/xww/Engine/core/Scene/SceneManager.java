@@ -13,10 +13,10 @@ public class SceneManager {
 
     private BaseScene currentScene;
     public static final SceneManager sceneManagerIns = new SceneManager();
-    static {
-        sceneManagerIns.addScene("game", new GameScene());
-        sceneManagerIns.setCurrentScene("game");
-    }
+//    static {
+//        sceneManagerIns.addScene("game", new GameScene());
+//        sceneManagerIns.setCurrentScene("game");
+//    }
     private SceneManager(){}
 
     public void addScene(String name, BaseScene scene){

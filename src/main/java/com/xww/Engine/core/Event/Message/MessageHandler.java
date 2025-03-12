@@ -38,4 +38,10 @@ public abstract class MessageHandler {
     public void unregisterComponent(Component component) {
         components_to_remove.add(component);
     }
+
+    public void clear() {
+        components_to_add.clear();
+        components_to_remove.clear();
+        components.clear();
+    }
 }

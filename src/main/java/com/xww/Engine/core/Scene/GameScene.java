@@ -7,6 +7,8 @@ import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.Message.Impl.MouseMessageHandler;
 import com.xww.Engine.core.Event.Message.Message;
+import com.xww.Engine.core.Timer.TimerManager;
+import com.xww.Engine.gui.GameFrame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,6 +23,7 @@ public class GameScene implements BaseScene{
 
     @Override
     public void on_enter() {
+        GameFrame.addNecessaryComponent();
         this.reset();
     }
 
@@ -58,6 +61,18 @@ public class GameScene implements BaseScene{
         if (exitRunnable != null) {
             exitRunnable.run();
         }
+        Component.components.clear();
+        Component.components_to_remove.clear();
+        Component.components_to_add.clear();
+        Component.allComponents.clear();
+        Component.allComponents_to_add.clear();
+        Component.allComponents_to_remove.clear();
+        TimerManager.instance.clear();
+        MouseMessageHandler.mouseMessageHandlerInstance.clear();
+        KeyBoardMessageHandler.keyBoardMessageHandlerInstance.clear();
+        CollisionHandler.clear();
+        BaseGround.clear();
+        BaseWall.clear();
     }
 
     private static void updateComponent(Graphics g) {

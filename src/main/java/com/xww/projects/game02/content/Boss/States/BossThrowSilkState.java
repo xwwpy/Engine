@@ -31,8 +31,8 @@ public class BossThrowSilkState extends StateNode {
             if (owner.isWhetherOnGround()) {
                 owner.getStateMachine().forceSwitch("idleState");
             } else {
-                int ran = CodeUtils.getRandomNum(0, 1);
-                if (ran == 0) {
+                int ran = CodeUtils.getRandomNum(0, 2);
+                if (ran != 0) {
                     owner.getStateMachine().forceSwitch("aimState");
                 } else {
                     owner.getStateMachine().forceSwitch("fallState");

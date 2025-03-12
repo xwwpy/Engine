@@ -120,8 +120,8 @@ public class Barb extends Bullet {
     public static void generateBarbs(int num, Boss boss){
         // 根据throwBarbAnimation的时间内生成足够的barbs
         Timer generateBarbs = new Timer((double) 1600 / num, (obj) -> {
-            int x = CodeUtils.getRandomNum(50, FrameSetting.DEFAULT_HEIGHT - 50);
-            int y = CodeUtils.getRandomNum(50, FrameSetting.DEFAULT_HEIGHT - 200);
+            int x = CodeUtils.getRandomNum(0, FrameSetting.DEFAULT_WIDTH - 50);
+            int y = CodeUtils.getRandomNum(0, FrameSetting.DEFAULT_HEIGHT - 400);
             new Barb(boss, Vector.build(x, y));
         }, boss);
         generateBarbs.setRun_times(num);

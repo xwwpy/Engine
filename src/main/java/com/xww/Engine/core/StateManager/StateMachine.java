@@ -14,6 +14,8 @@ public class StateMachine {
 
     private boolean needInit = true;
 
+    private boolean whetherBannedForceSwitch = false;
+
     public StateMachine(StateNode entryState) {
         this.currentState = entryState;
         this.stateNodePool = new HashMap<>();
@@ -24,6 +26,7 @@ public class StateMachine {
     }
 
     public void forceSwitch(String id) {
+        if (whetherBannedForceSwitch) return;
         if (this.stateNodePool.containsKey(id)) {
             if (this.currentState != null) {
                 this.currentState.on_exit();
@@ -61,5 +64,9 @@ public class StateMachine {
 
     public String getCurrentStateId() {
         return currentStateId;
+    }
+
+    public void bannedForceSwitch() {
+        whetherBannedForceSwitch = true;
     }
 }

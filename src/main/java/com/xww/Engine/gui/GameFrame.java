@@ -180,6 +180,10 @@ public class GameFrame extends JFrame{
 
     private static void game_on_start() {
         TimeEventManager.start();
+        addNecessaryComponent();
+    }
+
+    public static void addNecessaryComponent(){
         // 添加更新屏幕位置的组件
         Component.addComponent(new ScreenInfoComponent(), false);
         // 添加默认的调试组件

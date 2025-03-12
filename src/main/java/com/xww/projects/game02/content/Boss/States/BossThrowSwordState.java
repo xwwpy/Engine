@@ -32,7 +32,7 @@ public class BossThrowSwordState extends StateNode {
                 owner.getStateMachine().forceSwitch("idleState");
             } else if (ran <= 20){
                 owner.getStateMachine().forceSwitch("squatState");
-            } else if (ran <= 30){
+            } else if (ran <= 35){
                 owner.getStateMachine().forceSwitch("jumpState");
             } else if (ran <= 40){
                 owner.getStateMachine().forceSwitch("throwSilkState");
@@ -48,7 +48,6 @@ public class BossThrowSwordState extends StateNode {
         createSwordTimer.neverOver();
         createSwordTimer.stopStart();
         TimerManager.instance.registerTimer(createSwordTimer);
-        //throwSwordState.setNextStates(new StateNode[]{deadState, idleState, squatState, jumpState, throwSilkState});
 
     }
 

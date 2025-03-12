@@ -11,8 +11,12 @@ import com.xww.Engine.core.Event.TimeEventManager;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.StateManager.StateNode;
+import com.xww.Engine.core.Timer.Timer;
+import com.xww.Engine.core.Timer.TimerManager;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.gui.Camera;
 import com.xww.Engine.setting.DebugSetting;
+import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.Boss.Boss;
 import com.xww.projects.game02.content.Player.states.*;
 
@@ -46,7 +50,7 @@ public class Player extends Character {
                 10,
                 100,
                 300,
-                500,
+                700,
                 1000,
                 500,
                 false,
@@ -59,6 +63,12 @@ public class Player extends Character {
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(this.relativePosition, this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
+
+//        Timer cameraFollowPlayerTimer = new Timer(0, (obj) -> {
+//            Camera.setPosition(Vector.build(this.getWorldPosition().sub(new Vector((double) FrameSetting.DEFAULT_WIDTH / 2, (double) FrameSetting.DEFAULT_HEIGHT / 2)).getFullX(), 0));
+//        }, this);
+//        cameraFollowPlayerTimer.setRun_times(Timer.INFINITE_TIMES);
+//        TimerManager.instance.registerTimer(cameraFollowPlayerTimer);
     }
 
     private void initAnimation() {

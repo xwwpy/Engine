@@ -2,7 +2,11 @@ package com.xww.projects.game02.content.Player.states;
 
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Scene.SceneManager;
 import com.xww.Engine.core.StateManager.StateNode;
+import com.xww.projects.game02.content.GameScene.PlayerScene;
+
+import java.awt.*;
 
 public class PlayerDeadState extends StateNode {
     protected Animation deadLeftAnimation;
@@ -24,7 +28,17 @@ public class PlayerDeadState extends StateNode {
     }
 
     @Override
+    public void on_update(Graphics g) {
+        super.on_update(g);
+        if (this.currentAnimation.isOver()){
+            PlayerScene.running = false;
+            PlayerScene.targetScene = "playerFailure";
+        }
+    }
+
+    @Override
     public void on_enter() {
+        owner.getStateMachine().bannedForceSwitch();
         deadLeftAnimation.reset_animation();
         deadRightAnimation.reset_animation();
     }

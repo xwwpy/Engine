@@ -2,6 +2,7 @@ package com.xww.projects.game02.content.Boss.States;
 
 import com.xww.Engine.core.Actor.Character;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Scene.SceneManager;
 import com.xww.Engine.core.StateManager.StateNode;
 
 public class BossDeadState extends StateNode {
@@ -26,6 +27,8 @@ public class BossDeadState extends StateNode {
     @Override
     public void on_enter() {
         owner.setAlive(false);
+        owner.getStateMachine().bannedForceSwitch();
+        SceneManager.sceneManagerIns.setCurrentScene("playerWin");
         deadLeftAnimation.reset_animation();
         deadRightAnimation.reset_animation();
     }

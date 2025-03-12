@@ -23,14 +23,14 @@ public class PlayerRunState extends StateNode {
         this.runLeftAnimation = runLeftAnimation;
         this.runRightAnimation = runRightAnimation;
         Timer timer = new Timer(500, (obj) -> {
-            if ((runSoundPlayer == null || runSoundPlayer.isComplete()) && running){
-                runSoundPlayer = MP3Player.getInstance().getPlayer(ResourceManager.getInstance().findAudioPath("player_run"));
-                MP3Player.getInstance().addPlayer(runSoundPlayer);
-            }
-            if (!running && runSoundPlayer != null){
-                runSoundPlayer.close();
-                runSoundPlayer = null;
-            }
+//            if ((runSoundPlayer == null || runSoundPlayer.isComplete()) && running){
+//                runSoundPlayer = MP3Player.getInstance().getPlayer(ResourceManager.getInstance().findAudioPath("player_run"));
+//                MP3Player.getInstance().addPlayer(runSoundPlayer);
+//            }
+//            if (!running && runSoundPlayer != null){
+//                runSoundPlayer.close();
+//                runSoundPlayer = null;
+//            }
         }, null);
         timer.setRun_times(Timer.INFINITE_TIMES);
         timer.start();
@@ -71,7 +71,7 @@ public class PlayerRunState extends StateNode {
     @Override
     public void on_exit() {
         running = false;
-        if (runSoundPlayer != null) runSoundPlayer.close();
-        runSoundPlayer = null;
+//        if (runSoundPlayer != null) runSoundPlayer.close();
+//        runSoundPlayer = null;
     }
 }

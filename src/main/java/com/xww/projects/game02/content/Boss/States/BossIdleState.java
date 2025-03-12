@@ -19,7 +19,7 @@ public class BossIdleState extends StateNode {
         super(owner, 0, null, "idleState");
         this.idleLeftAnimation = idleLeftAnimation;
         this.idleRightAnimation = idleRightAnimation;
-        idleTimer = new Timer(1000, (obj)->{
+        idleTimer = new Timer(100, (obj)->{
             int randomNum = CodeUtils.getRandomNum(0, 100);
             if (owner.getLeftTopWorldPosition().distance(((Boss)owner).getPlayer().getLeftTopWorldPosition()) < 300 && randomNum <= 40){
                 owner.getStateMachine().forceSwitch("throwSilkState");
@@ -42,7 +42,7 @@ public class BossIdleState extends StateNode {
                     }
                 } else if (randomNum <= 70) {
                     owner.getStateMachine().forceSwitch("squatState");
-                } else if (randomNum <= 80) {
+                } else if (randomNum <= 73) {
                     owner.getStateMachine().forceSwitch("throwSilkState");
                 } else if (randomNum <= 90) {
                     owner.getStateMachine().forceSwitch("throwBarbState");

@@ -27,4 +27,10 @@ public class TimerManager {
     public void registerTimer(Timer timer) {
         timer_to_add.add(timer);
     }
+
+    public void clear() {
+        this.timer.clear();
+        this.timer_to_add.clear();
+        this.timer_to_remove.clear();
+    }
 }

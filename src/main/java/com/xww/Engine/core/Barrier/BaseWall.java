@@ -76,6 +76,12 @@ public abstract class BaseWall {
         walls_to_add.add(wall);
     }
 
+    public static void clear() {
+        walls.clear();
+        walls_to_add.clear();
+        walls_to_remove.clear();
+    }
+
     protected abstract void onRender(Graphics g);
 
     public Vector getWorldPosition() {

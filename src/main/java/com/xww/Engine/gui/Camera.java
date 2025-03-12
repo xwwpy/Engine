@@ -11,4 +11,8 @@ public class Camera {
         velocity = velocity.add(GameFrame.getFrameVelocity(acceleration));
         camera_position = camera_position.add(GameFrame.getFrameVelocity(velocity));
     }
+
+    public static void setPosition(Vector position){
+        camera_position = position;
+    }
 }

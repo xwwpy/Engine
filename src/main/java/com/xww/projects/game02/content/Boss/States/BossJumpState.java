@@ -23,10 +23,10 @@ public class BossJumpState extends StateNode {
         this.jumpRightAnimation = jumpRightAnimation;
         jumpTimer = new Timer(500, (obj) -> {
             this.owner.setVelocity(Vector.Zero());
-            int random = CodeUtils.getRandomNum(0, 70);
+            int random = CodeUtils.getRandomNum(0, 90);
             if (random <= 50){
                 owner.getStateMachine().forceSwitch("aimState");
-            } else if (random <= 70){
+            } else {
                 owner.getStateMachine().forceSwitch("throwSilkState");
             }
         }, null);

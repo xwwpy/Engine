@@ -5,12 +5,17 @@ import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Component.Component;
 
 import com.xww.Engine.core.ResourceManager.ResourceManager;
+import com.xww.Engine.core.Scene.SceneManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.BackGroundComponent;
 import com.xww.projects.game02.content.Boss.Boss;
+import com.xww.projects.game02.content.GameScene.MenuScene;
+import com.xww.projects.game02.content.GameScene.PlayerFailureScene;
+import com.xww.projects.game02.content.GameScene.PlayerScene;
+import com.xww.projects.game02.content.GameScene.PlayerWinScene;
 import com.xww.projects.game02.content.Player.Player;
 import com.xww.Engine.core.Barrier.impl.Ground;
 import com.xww.Engine.core.Barrier.impl.Wall;
@@ -25,7 +30,11 @@ public class Main {
         // 加载资源
         GameFrame.init(()->{
             loadResources();
-            initGame();
+            SceneManager.sceneManagerIns.addScene("game", new PlayerScene());
+            SceneManager.sceneManagerIns.addScene("menu", new MenuScene());
+            SceneManager.sceneManagerIns.addScene("playerFailure", new PlayerFailureScene());
+            SceneManager.sceneManagerIns.addScene("playerWin", new PlayerWinScene());
+            SceneManager.sceneManagerIns.setCurrentScene("menu");
         });
         GameFrame.start();
         MP3Player.getInstance().shutdown();
@@ -53,13 +62,13 @@ public class Main {
         instance.loadImage("background", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/background.png");
         instance.loadImage("ui_heart", "/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/ui_heart.png");
         instance.loadAllAudio("/Applications/程序/项目文件/javaProject/GameEngine/src/main/java/com/xww/projects/game02/Resources/audio", ".mp3");
-        MP3Player.getInstance().setBGMPath(ResourceManager.getInstance().findAudioPath("bgm"));
-        MP3Player.getInstance().startBGM();
         long end = System.currentTimeMillis();
         System.out.println("加载资源耗时：" + (end - start) + "ms");
     }
 
     public static void initGame() {
+        MP3Player.getInstance().setBGMPath(ResourceManager.getInstance().findAudioPath("bgm"));
+        MP3Player.getInstance().startBGM();
         Component.addComponent(new BackGroundComponent());
         Player player = new Player(Vector.build(100, 200));
         Ground ground = new Ground(Vector.build(0, 680));
@@ -67,8 +76,6 @@ public class Main {
         BaseGround.registerBarrier(ground);
         new Wall(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
         new Wall(Vector.build(FrameSetting.DEFAULT_WIDTH, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
-
         new Boss(Vector.build(300, 300), player);
-//        new Boss(Vector.build(600, 300), player);
     }
 }

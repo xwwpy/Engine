@@ -18,7 +18,7 @@ public class Silk extends Bullet {
                 Vector worldPosition) {
         super(owner,
                 worldPosition,
-                Vector.build(300, 300),
+                Vector.build(250, 250),
                 Vector.Zero(),
                 Vector.Zero(),
                 200,
@@ -31,9 +31,9 @@ public class Silk extends Bullet {
         Animation silkRightAnimation = new Animation(this, 100);
         silkRightAnimation.add_frame(ResourceManager.getInstance().findAtlas("enemy_silk_right"));
         silkRightAnimation.setIs_loop(true);
-        this.relativePosition = Vector.build(-75, -75);
+        this.relativePosition = Vector.build(-50, -50);
         this.currentAnimation = ((Boss)owner).isWhetherFacingLeft() ? silkLeftAnimation : silkRightAnimation;
-        this.addCollider(new RectCollider(Vector.Zero(), this, Vector.build(300, 300)));
+        this.addCollider(new RectCollider(Vector.Zero(), this, this.size));
         Component.addComponent(this);
     }
 

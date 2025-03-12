@@ -21,7 +21,7 @@ public class MP3Player {
     private volatile boolean isPlayingBGM = false;
     private String bgmPath;
 
-    private boolean whetherCloseMusic = false;
+    private boolean whetherCloseMusic = true;
 
     public void setWhetherCloseMusic(boolean whetherCloseMusic) {
         this.whetherCloseMusic = whetherCloseMusic;

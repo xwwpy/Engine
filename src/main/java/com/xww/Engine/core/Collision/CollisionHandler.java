@@ -88,4 +88,10 @@ public class CollisionHandler {
         // 4. 判断是否发生碰撞
         return new ActionAfterCollision.CollisionInfo((distanceX * distanceX + distanceY * distanceY) < (otherCircle.getRadius() * otherCircle.getRadius()), ActionAfterCollision.collisionDirection.RectLeft, otherCircle.owner, selfRect, otherCircle);
     }
+
+    public static void clear() {
+        colliders.clear();
+        colliders_to_add.clear();
+        colliders_to_remove.clear();
+    }
 }
