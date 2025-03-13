@@ -37,10 +37,10 @@ public class GameFrame extends JFrame{
             if (--currentTimeIndex <= 0){
                 currentTimeIndex = FrameSetting.timeSpeed;
                 graphics.setColor(Color.BLACK);
-                graphics.clearRect(0, 0, FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
+                graphics.fillRect(Camera.camera_position.getX(), Camera.camera_position.getY(), FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
                 GameFrame.on_update(graphics);
+                DrawUtils.drawImage(image, Vector.Zero(), g);
             }
-            DrawUtils.drawImage(image, Vector.Zero(), g);
         }
 
     }
@@ -180,7 +180,6 @@ public class GameFrame extends JFrame{
 
     private static void game_on_start() {
         TimeEventManager.start();
-        addNecessaryComponent();
     }
 
     public static void addNecessaryComponent(){

@@ -263,8 +263,10 @@ public abstract class Character extends FreeComponent {
         g.drawRect(drawPosition.getX(), drawPosition.getY() - 30, this.hp * 2, 20);
         g.fillRect(drawPosition.getX(), drawPosition.getY() - 30, this.currentHp * 2, 20);
         g.setColor(Color.BLACK);
+        Font font = g.getFont();
         g.setFont(new Font("微软雅黑", Font.PLAIN, 20));
         g.drawString("" + this.currentHp + "/" + this.hp, drawPosition.getX(), drawPosition.getY() - 20);
+        g.setFont(font);
     }
 
     /**
