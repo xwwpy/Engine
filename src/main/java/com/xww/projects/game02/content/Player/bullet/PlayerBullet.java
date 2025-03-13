@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class PlayerBullet extends Bullet {
     private final Animation animation;
-    private static final Vector bSize = Vector.build((double) 1620 / 8, (double) 324 / 1.6);
+    private static final Vector bSize = Vector.build((double) 1620 / 4, 324);
 
     private final Vector relativePosition;
 
@@ -31,25 +31,23 @@ public class PlayerBullet extends Bullet {
             case Up:
                 animation = new Animation(this, each_frame_time);
                 animation.add_frame_by_name("player_vfx_attack_up", 5, bSize);
-                this.addCollider(new RectCollider(Vector.build(68, 541 - 451 - 80), this, Vector.build(498 - 446, 468 - 296)));
-                this.addCollider(new RectCollider(Vector.build(0, 550 - 471), this, Vector.build(321 - 250, 30)));
-                this.addCollider(new RectCollider(Vector.build(256 - 135, 550 - 471), this, Vector.build(321 - 250, 30)));
+                this.addCollider(new RectCollider(Vector.build(655 - 629, (double) 324 / 2), this, Vector.build((468 - 296) * 2, (498 - 446) * 1.6)));
+                this.addCollider(new RectCollider(Vector.build(780 - 632, 20), this, Vector.build(863 - 778, (652 - 451) * 1.5)));
                 break;
             case Down:
                 animation = new Animation(this, each_frame_time);
                 animation.add_frame_by_name("player_vfx_attack_down", 5, bSize);
-                this.addCollider(new RectCollider(Vector.build(68, 541 - 451 - 80), this, Vector.build(498 - 446, 468 - 296)));
-                this.addCollider(new RectCollider(Vector.build(0, 550 - 471), this, Vector.build(321 - 250, 30)));
-                this.addCollider(new RectCollider(Vector.build(256 - 135, 550 - 471), this, Vector.build(321 - 250, 30)));
+                this.addCollider(new RectCollider(Vector.build(655 - 629, (double) 324 / 2), this, Vector.build((468 - 296) * 2, (498 - 446) * 1.6)));
+                this.addCollider(new RectCollider(Vector.build(780 - 632, 20), this, Vector.build(863 - 778, (652 - 451) * 1.5)));
                 break;
             case Left:
                 animation = new Animation(this, each_frame_time);
-                this.addCollider(new RectCollider(Vector.build(8, 541 - 451), this, Vector.build(468 - 296, 498 - 446)));
+                this.addCollider(new RectCollider(Vector.build(28, (541 - 451) * 1.6), this, Vector.build((468 - 296) * 2, (498 - 446) * 1.6)));
                 animation.add_frame_by_name("player_vfx_attack_left", 5, bSize);
                 break;
             case Right:
                 animation = new Animation(this, each_frame_time);
-                this.addCollider(new RectCollider(Vector.build(20, 541 - 451), this, Vector.build(468 - 296, 498 - 446)));
+                this.addCollider(new RectCollider(Vector.build(28, (541 - 451) * 1.6), this, Vector.build((468 - 296) * 2, (498 - 446) * 1.6)));
                 animation.add_frame_by_name("player_vfx_attack_right", 5, bSize);
                 break;
             default:

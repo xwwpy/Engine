@@ -32,10 +32,11 @@ public class Player extends Character {
     public static boolean whetherInBulletTime = false;
 
     public enum AttackDirection {
-        Left(Vector.build(-20, -20)),
-        Right(Vector.build(-20, -20)),
-        Up(Vector.build(0, 0)),
-        Down(Vector.build(0, 0));
+        // TODO
+        Left(Vector.build(315 - 435, -93)),
+        Right(Vector.build(315 - 435, -93)),
+        Up(Vector.build(-110, -100)),
+        Down(Vector.build(-110, -100));
         private final Vector relativePos;
         AttackDirection(Vector relativePos){
             this.relativePos = relativePos;
@@ -262,7 +263,7 @@ public class Player extends Character {
                     }
                     break;
                 case KeyEvent.VK_J:
-                    if (this.tryAtk()) {
+                    if ((!this.isRolling || !this.whetherOnGround) && this.tryAtk()) {
                         int random = (int) (Math.random() * 3) + 1;
                         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_" + random));
                         this.whetherCanAtk = false;
@@ -342,7 +343,7 @@ public class Player extends Character {
         g.drawString("速度: " + this.velocity, this.getDrawPosition().getX(), this.getDrawPosition().getY() - 20);
         g.drawString("是否无敌: " + (this.whetherInvulnerable ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY());
         g.drawString("是否正在翻滚: " + (this.isRolling ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
-        g.drawString("是否可以攻击: " + (this.whetherCanAtk ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
+        g.drawString("是否可以攻击: " + (this.whetherCanAtk && (!this.isRolling || !this.whetherOnGround) ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
         g.drawString("连跳次数: " + this.jumpMaxCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
         g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
         g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);
