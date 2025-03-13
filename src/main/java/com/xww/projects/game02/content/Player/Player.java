@@ -12,12 +12,11 @@ import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.StateManager.StateNode;
 import com.xww.Engine.core.Timer.Timer;
-import com.xww.Engine.core.Timer.TimerManager;
 import com.xww.Engine.core.Vector.Vector;
-import com.xww.Engine.gui.Camera;
 import com.xww.Engine.setting.DebugSetting;
 import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.Boss.Boss;
+import com.xww.projects.game02.content.Player.bullet.PlayerBullet;
 import com.xww.projects.game02.content.Player.states.*;
 
 import java.awt.*;
@@ -27,6 +26,10 @@ public class Player extends Character {
 
     public static final int atkZone = 0b1000;
     public static final int beHitZone = 0b10000;
+
+    public final Timer bulletTimer;
+
+    public static boolean whetherInBulletTime = false;
 
     public enum AttackDirection {
         Left(Vector.build(-20, -20)),
@@ -63,7 +66,13 @@ public class Player extends Character {
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(this.relativePosition, this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
-
+        this.bulletTimer = new Timer(1000, (obj) -> {
+            whetherInBulletTime = false;
+            FrameSetting.timeSpeed = 1;
+        }, this);
+        bulletTimer.stopStart();
+        bulletTimer.neverOver();
+        this.addTimer(bulletTimer);
 //        Timer cameraFollowPlayerTimer = new Timer(0, (obj) -> {
 //            Camera.setPosition(Vector.build(this.getWorldPosition().sub(new Vector((double) FrameSetting.DEFAULT_WIDTH / 2, (double) FrameSetting.DEFAULT_HEIGHT / 2)).getFullX(), 0));
 //        }, this);
@@ -201,6 +210,7 @@ public class Player extends Character {
     @Override
     public void attackByBullet(Bullet bullet){
         if (!whetherInvulnerable) {
+            if (bullet.getDamage() <= 0) return;
             lastBeAttackedBullet = bullet;
             lastBeAttackedTime = TimeEventManager.currentTime;
             this.currentHp -= bullet.getDamage();
@@ -212,6 +222,7 @@ public class Player extends Character {
                 this.stateMachine.forceSwitch("dead_state");
             }
         } else {
+            if (bullet.getDamage() <= 0) return;
             onInvulnerableHit();
         }
     }
@@ -219,6 +230,11 @@ public class Player extends Character {
 
     @Override
     public void processKeyEvent(KeyEvent e) {
+        if (this.currentHp <= 0){
+            whetherRunLeft = false;
+            whetherRunRight = false;
+            return;
+        }
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_A:
@@ -280,6 +296,11 @@ public class Player extends Character {
                 case KeyEvent.VK_D:
                     this.whetherRunRight = false;
                     break;
+                case KeyEvent.VK_O:
+                    whetherInBulletTime = true;
+                    FrameSetting.timeSpeed = 3;
+                    bulletTimer.restart();
+                    break;
                 default:
                     break;
             }
@@ -288,7 +309,7 @@ public class Player extends Character {
 
     @Override
     protected void processFall(double fullY) {
-        if (fullY > 500){
+        if (fullY > 700){
             MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_land"));
             this.currentHp -= (int) ((fullY / 1000) * this.getMass());
             Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 3, size.getFullY() / 1.2));
@@ -311,7 +332,7 @@ public class Player extends Character {
     @Override
     public void receiveCollision(ActionAfterCollision.CollisionInfo collisionInfo) {
         if (collisionInfo.getOtherCollider().getOwner() instanceof Boss boss){
-            this.attackByBullet(new DefaultBullet(boss, 5));
+            this.attackByBullet(new DefaultBullet(boss, Boss.bossHitDamage));
         }
     }
 

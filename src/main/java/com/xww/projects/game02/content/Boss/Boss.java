@@ -29,6 +29,8 @@ public class Boss extends Character {
 
     private final Player player;
 
+    public static int bossHitDamage = 2;
+
     public Boss(Vector worldPosition, Player player) {
         super(worldPosition,
                 Vector.build(150, 150),
@@ -295,6 +297,7 @@ public class Boss extends Character {
             onInvulnerableHit();
         }
     }
+
 
     @Override
     protected void showDebugInfo(Graphics g) {

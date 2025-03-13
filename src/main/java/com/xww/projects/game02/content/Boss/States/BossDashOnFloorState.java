@@ -59,6 +59,7 @@ public class BossDashOnFloorState extends StateNode {
     public void on_enter() {
         dashOnFloorLeftAnimation.reset_animation();
         dashOnFloorRightAnimation.reset_animation();
+        Boss.bossHitDamage = 10;
         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("enemy_dash"));
         owner.setVelocity(Vector.build(owner.isWhetherFacingLeft() ? -owner.getRunSpeed() * 2 : owner.getRunSpeed() * 2, 0));
         dashOnFloorTimer.restart();
@@ -75,6 +76,7 @@ public class BossDashOnFloorState extends StateNode {
 
     @Override
     public void on_exit() {
+        Boss.bossHitDamage = 2;
         dashOnFloorTimer.stopStart();
         owner.setEnableGravity(true);
     }

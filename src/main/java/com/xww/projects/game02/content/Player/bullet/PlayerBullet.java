@@ -1,4 +1,4 @@
-package com.xww.projects.game02.content.Player;
+package com.xww.projects.game02.content.Player.bullet;
 
 import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Animation.Animation;
@@ -22,10 +22,10 @@ public class PlayerBullet extends Bullet {
                 bSize,
                 Vector.Zero(),
                 Vector.Zero(),
-                500,
+                65 * 5,
                 true,
                 Player.atkZone,
-                20);
+                5);
         this.relativePosition = attackDirection.getRelativePos();
         switch(attackDirection){
             case Up:

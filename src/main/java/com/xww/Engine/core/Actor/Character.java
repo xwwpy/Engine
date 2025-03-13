@@ -258,6 +258,13 @@ public abstract class Character extends FreeComponent {
      */
     protected void on_render(Graphics g) {
         this.stateMachine.update(g);
+        Vector drawPosition = this.getDrawPosition();
+        g.setColor(Color.RED);
+        g.drawRect(drawPosition.getX(), drawPosition.getY() - 30, this.hp * 2, 20);
+        g.fillRect(drawPosition.getX(), drawPosition.getY() - 30, this.currentHp * 2, 20);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+        g.drawString("" + this.currentHp + "/" + this.hp, drawPosition.getX(), drawPosition.getY() - 20);
     }
 
     /**

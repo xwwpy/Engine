@@ -24,7 +24,7 @@ public class Silk extends Bullet {
                 200,
                 true,
                 Boss.atkZone,
-                5);
+                10);
         Animation silkLeftAnimation = new Animation(this, 100);
         silkLeftAnimation.add_frame(ResourceManager.getInstance().findAtlas("enemy_silk"));
         silkLeftAnimation.setIs_loop(true);

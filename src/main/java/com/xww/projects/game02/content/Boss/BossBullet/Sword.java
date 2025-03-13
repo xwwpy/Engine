@@ -24,7 +24,7 @@ public class Sword extends Bullet {
                 1000,
                 true,
                 Boss.atkZone,
-                20);
+                15);
 
         Animation left = new Animation(this, 100);
         left.add_frame(ResourceManager.getInstance().findAtlas("enemy_sword"));

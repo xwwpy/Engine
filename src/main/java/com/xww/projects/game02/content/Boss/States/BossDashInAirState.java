@@ -51,6 +51,7 @@ public class BossDashInAirState extends StateNode {
     public void on_enter() {
         dashInAirLeftAnimation.reset_animation();
         dashInAirRightAnimation.reset_animation();
+        Boss.bossHitDamage = 10;
         Player player = ((Boss) owner).getPlayer();
         Vector position = player.getLeftTopWorldPosition();
         Vector position2 = owner.getLeftTopWorldPosition();
@@ -81,6 +82,7 @@ public class BossDashInAirState extends StateNode {
 
     @Override
     public void on_exit() {
+        Boss.bossHitDamage = 2;
         dashInAirTimer.stopStart();
         owner.setEnableGravity(true);
     }

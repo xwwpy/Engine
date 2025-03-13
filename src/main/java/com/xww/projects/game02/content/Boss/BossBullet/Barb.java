@@ -14,7 +14,7 @@ import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.Boss.Boss;
 import com.xww.projects.game02.content.Player.Player;
-import com.xww.projects.game02.content.Player.PlayerBullet;
+import com.xww.projects.game02.content.Player.bullet.PlayerBullet;
 
 import java.awt.*;
 
@@ -39,7 +39,7 @@ public class Barb extends Bullet {
     public Barb(Component owner, Vector worldPosition) {
         super(owner,
                 worldPosition,
-                Vector.build(40, 40),
+                Vector.build(50, 50),
                 Vector.Zero(),
                 Vector.Zero(),
                 20,

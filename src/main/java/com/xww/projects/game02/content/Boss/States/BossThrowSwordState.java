@@ -19,7 +19,7 @@ public class BossThrowSwordState extends StateNode {
 
     private final Timer throwSwordTimer;
 
-    private final Timer createSwordTimer;
+    private Timer createSwordTimer = null;
 
 
     public BossThrowSwordState(Character owner, Animation throwSwordLeftAnimation, Animation throwSwordRightAnimation) {
@@ -41,9 +41,12 @@ public class BossThrowSwordState extends StateNode {
         throwSwordTimer.neverOver();
         throwSwordTimer.stopStart();
         TimerManager.instance.registerTimer(throwSwordTimer);
-
         createSwordTimer = new Timer(1000, (obj)->{
-            ((Boss)owner).sword();
+            int ran = CodeUtils.getRandomNum(0, 60);
+            ((Boss) owner).sword();
+            if (ran > 40) {
+                owner.getStateMachine().forceSwitch("throwSwordState");
+            }
         }, null);
         createSwordTimer.neverOver();
         createSwordTimer.stopStart();
