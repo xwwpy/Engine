@@ -6,7 +6,6 @@ import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
-import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.TimeEventManager;
@@ -92,6 +91,15 @@ public abstract class Character extends FreeComponent {
 
     protected Timer atkBackSwingTimer;
     protected int atkBackSwingTime;
+
+    protected boolean whetherCanClimbWall = false;
+    protected BaseWall currentClimbWall = null;
+
+    protected boolean whetherUp = false; // 必须在墙上时才可以
+
+    protected boolean whetherDown = false; // 必须在墙上时才可以
+
+    protected Vector climbSpeed = Vector.Zero();
 
     public Character(Vector worldPosition,
                      Vector size,
@@ -210,7 +218,19 @@ public abstract class Character extends FreeComponent {
 
     @Override
     protected void checkGravity() {
-        if (!whetherOnGround) super.checkGravity();
+        if (!whetherOnGround) {
+            if (enableGravity){
+                if (currentClimbWall != null){
+                    this.velocity.add_to_self(GameFrame.getFrameVelocity(gravity.mul(((double) (100 - currentClimbWall.getF()) / 100))));
+                } else this.velocity.add_to_self(GameFrame.getFrameVelocity(gravity));
+            }
+        }
+    }
+
+    @Override
+    protected void pre_move() {
+        lastMove = GameFrame.getFrameVelocity(this.velocity.add(climbSpeed));
+        this.worldPosition.add_to_self(lastMove);
     }
 
     @Override
@@ -228,6 +248,16 @@ public abstract class Character extends FreeComponent {
             this.velocity.x = tempVelocity;
             this.velocity = this.velocity.add_to_self(GameFrame.getFrameVelocity(this.acceleration));
         }
+
+        if(currentClimbWall != null) {
+            this.velocity.x = 0;
+            double tempV = 0;
+            if (whetherUp) tempV -= jumpSpeed;
+            if (whetherDown) tempV += jumpSpeed;
+            climbSpeed.y = tempV;
+            if (tempV != 0) this.velocity.y = 0;
+        }
+
         // 预移动
         Vector position = this.getLogicPosition();
         pre_move();
@@ -276,7 +306,7 @@ public abstract class Character extends FreeComponent {
     protected abstract boolean tryAtk();
 
 
-    protected void resetJumpState() {
+    public void resetJumpState() {
         this.whetherJumping = false;
         this.jumpCount = 0;
     }
@@ -344,6 +374,8 @@ public abstract class Character extends FreeComponent {
         // 修正位置
         double dis = barrier.getWorldPosition().getFullY() - (this.getLogicSize().getFullY() + this.getLogicPosition().getFullY());
         this.worldPosition.add_to_self(Vector.build(0, dis));
+        // 当落地时自动取消对墙体的攀爬状态
+        clearClimbState();
         // 防止某些极端情况
         lastMove.setY(0);
     }
@@ -416,6 +448,21 @@ public abstract class Character extends FreeComponent {
         } else if (this.velocity.getFullX() < 0) {
             this.whetherFacingLeft = true;
         }
+    }
+
+    protected void jumpSuccess() {
+        clearClimbState();
+    }
+
+    protected void clearClimbState() {
+        currentClimbWall = null;
+        this.whetherUp = false;
+        this.whetherDown = false;
+        this.climbSpeed.y = 0;
+    }
+
+    protected void jumpFailed(){
+
     }
 
     public CharacterType getCharacterType() {
@@ -609,5 +656,29 @@ public abstract class Character extends FreeComponent {
 
     public void setStateMachine(StateMachine stateMachine) {
         this.stateMachine = stateMachine;
+    }
+
+    public BaseWall getCurrentClimbWall() {
+        return currentClimbWall;
+    }
+
+    public void setCurrentClimbWall(BaseWall currentClimbWall) {
+        this.currentClimbWall = currentClimbWall;
+    }
+
+    public boolean isWhetherCanClimbWall() {
+        return whetherCanClimbWall;
+    }
+
+    public void setWhetherCanClimbWall(boolean whetherCanClimbWall) {
+        this.whetherCanClimbWall = whetherCanClimbWall;
+    }
+
+    public boolean isWhetherUp() {
+        return whetherUp;
+    }
+
+    public void setWhetherUp(boolean whetherUp) {
+        this.whetherUp = whetherUp;
     }
 }

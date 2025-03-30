@@ -4,6 +4,7 @@ import com.xww.Engine.Utils.CodeUtils;
 import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Animation.Animation;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
+import com.xww.Engine.core.Collision.CircleCollider;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
@@ -73,7 +74,7 @@ public class Barb extends Bullet {
         this.addTimer(this.idleTimer);
         this.addTimer(this.dashTimer);
         this.addTimer(this.breakTimer);
-        this.addCollider(new RectCollider(Vector.Zero(), this, this.getSize()));
+        this.addCollider(new CircleCollider(Vector.Zero(), this, this.getSize().getFullX() / 2));
         Component.addComponent(this);
     }
 
@@ -111,6 +112,7 @@ public class Barb extends Bullet {
             this.currentAnimation = whetherFacingLeft ? breakLeftAnimation : breakRightAnimation;
             MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("barb_break"));
             this.damage = 0;
+            this.velocity = Vector.Zero();
             this.idleTimer.stopStart();
             this.dashTimer.stopStart();
             this.breakTimer.restart();

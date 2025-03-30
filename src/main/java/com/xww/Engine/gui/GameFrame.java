@@ -37,7 +37,7 @@ public class GameFrame extends JFrame{
             if (--currentTimeIndex <= 0){
                 currentTimeIndex = FrameSetting.timeSpeed;
                 graphics.setColor(Color.BLACK);
-                graphics.fillRect(Camera.camera_position.getX(), Camera.camera_position.getY(), FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
+                graphics.clearRect(0, 0, FrameSetting.DEFAULT_WIDTH, FrameSetting.DEFAULT_HEIGHT);
                 GameFrame.on_update(graphics);
                 DrawUtils.drawImage(image, Vector.Zero(), g);
             }

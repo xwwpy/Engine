@@ -2,6 +2,7 @@ package com.xww.projects.game02.content.Boss.BossBullet;
 
 import com.xww.Engine.core.Actor.Bullet;
 import com.xww.Engine.core.Animation.Animation;
+import com.xww.Engine.core.Collision.CircleCollider;
 import com.xww.Engine.core.Collision.RectCollider;
 import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
@@ -33,7 +34,7 @@ public class Silk extends Bullet {
         silkRightAnimation.setIs_loop(true);
         this.relativePosition = Vector.build(-125, -125);
         this.currentAnimation = ((Boss)owner).isWhetherFacingLeft() ? silkLeftAnimation : silkRightAnimation;
-        this.addCollider(new RectCollider(Vector.Zero(), this, this.size));
+        this.addCollider(new CircleCollider(Vector.Zero(), this, 200));
         Component.addComponent(this);
     }
 

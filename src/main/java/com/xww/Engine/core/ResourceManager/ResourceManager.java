@@ -129,6 +129,62 @@ public class ResourceManager {
             throw new RuntimeException("解析文件夹的图集失败");
         }
     }
+    /**
+     * 加载所有图集 默认名称为该图集的上层文件夹名称 如果含有图集的文件夹中还有子文件夹 则名称为上层文件夹名称加上子文件夹名称
+     * @param template 图集名称的模版不包含后缀 目前仅支持%d
+     * @param startIndex 图集的起始序号
+     * @param prefix    图集名称的前缀用于得到图集的存储的名称 如prefix为null 则为文件夹名称 如prefix为"enemy" 则为enemy_文件夹名称
+     * @param suffix    支持的文件的后缀名
+     *
+     */
+    public void loadAllAtlas(String path, String template, int startIndex, String prefix, String... suffix) {
+        File file = new File(path);
+        // 得到图集资源的名称
+        String atlasName;
+        if (prefix != null) {
+            atlasName = prefix + "_" + StringUtils.getDictionaryName(file.toPath());
+        } else {
+            atlasName = StringUtils.getDictionaryName(file.toPath());
+        }
+        // 得到文件夹下的所有文件或文件夹
+        Atlas atlas = new Atlas();
+        StringBuilder pathTemplate = new StringBuilder(path);
+        // 此时的pathTemplate 不包括后缀名
+        if (path.endsWith("/")){
+            pathTemplate.append(template);
+        } else {
+            pathTemplate.append("/").append(template);
+        }
+        // 处理该文件夹中的所有文件
+        try(DirectoryStream<Path> stream =  Files.newDirectoryStream(file.toPath())) {
+            stream.forEach((filePath) -> {
+                if (filePath.toFile().isDirectory()){
+                    // 递归处理文件夹
+                    loadAllAtlas(filePath.toString(), template, startIndex, atlasName, suffix);
+                } else {
+                    // 处理文件
+                    Arrays.stream(suffix).forEach((suf)->{
+                        // 判断文件是否符合指定包含的后缀
+                        if (filePath.toString().endsWith(suf)){
+                            // 判断文件是否符合模版
+                            int index = StringUtils.suitTemplate(filePath.toString(), pathTemplate + suf);
+                            if (index != -1){
+                                // 符合图集的模版时则加载该文件到图集中
+                                atlas.loadSingle(filePath.toString(), index - startIndex);
+                            }
+                        }
+                    });
+                }
+            });
+            if (atlas.getSize() > 0) {
+                atlasPool.put(atlasName, atlas);
+                // 为了实现根据序号有序排列
+                atlas.clearNull();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("解析文件夹的图集失败");
+        }
+    }
 
     /**
      * 处理带有指定后缀的文件

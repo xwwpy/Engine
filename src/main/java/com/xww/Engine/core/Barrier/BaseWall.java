@@ -23,6 +23,9 @@ public abstract class BaseWall {
     protected boolean whether_enable = true;
     protected boolean whether_alive = true;
 
+    protected boolean whetherEnableClimb = true;
+    protected int f = 80;
+
 
     protected boolean whetherRenderOnlyForDebug;
 
@@ -62,10 +65,22 @@ public abstract class BaseWall {
                 if (!(nowPosition.getFullY() > wallPos.getFullY() + wallSize.getFullY() || nowPosition.getFullY() + size.getFullY() < wallPos.getFullY())){
                     if (lastPosition.getFullX() + size.getFullX() <= wallPos.getFullX() && nowPosition.getFullX() + size.getFullX() >= wallPos.getFullX()){
                         double dis =  nowPosition.getFullX() + size.getFullX() - wallPos.getFullX();
-                        character.changePosition(Vector.build(-dis, 0));
+                        if (wall.whetherEnableClimb && character.isWhetherCanClimbWall()) {
+                            character.setCurrentClimbWall(wall);
+                            character.getVelocity().y = 0;
+                            character.setWhetherJumping(false);
+                            character.resetJumpState();
+                        }
+                        character.changePosition(Vector.build(- (dis + 1), 0));
                     } else if (lastPosition.getFullX() >= wallPos.getFullX() + wallSize.getFullX() && nowPosition.getFullX() <= wallPos.getFullX() + wallSize.getFullX()){
                         double dis =  wallPos.getFullX() + wallSize.getFullX() - nowPosition.getFullX();
-                        character.changePosition(Vector.build(dis, 0));
+                        if (wall.whetherEnableClimb && character.isWhetherCanClimbWall()) {
+                            character.setCurrentClimbWall(wall);
+                            character.getVelocity().y = 0;
+                            character.setWhetherJumping(false);
+                            character.resetJumpState();
+                        }
+                        character.changePosition(Vector.build(dis + 1, 0));
                     }
                 }
             }
@@ -136,5 +151,21 @@ public abstract class BaseWall {
 
     public void setWhether_alive(boolean whether_alive) {
         this.whether_alive = whether_alive;
+    }
+
+    public boolean isWhetherEnableClimb() {
+        return whetherEnableClimb;
+    }
+
+    public void setWhetherEnableClimb(boolean whetherEnableClimb) {
+        this.whetherEnableClimb = whetherEnableClimb;
+    }
+
+    public int getF() {
+        return f;
+    }
+
+    public void setF(int f) {
+        this.f = f;
     }
 }

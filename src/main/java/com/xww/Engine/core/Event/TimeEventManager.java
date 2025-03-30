@@ -14,7 +14,6 @@ public class TimeEventManager{
     public static void start(){
         gameStartTime = System.nanoTime();
         tick();
-        TimerManager.instance.update();
     }
     public static double getRunTime(){
         return (currentTime - gameStartTime) / 1000_000_000.0;

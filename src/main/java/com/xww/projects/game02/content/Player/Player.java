@@ -12,7 +12,9 @@ import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.StateManager.StateNode;
 import com.xww.Engine.core.Timer.Timer;
+import com.xww.Engine.core.Timer.TimerManager;
 import com.xww.Engine.core.Vector.Vector;
+import com.xww.Engine.gui.Camera;
 import com.xww.Engine.setting.DebugSetting;
 import com.xww.Engine.setting.FrameSetting;
 import com.xww.projects.game02.content.Boss.Boss;
@@ -32,7 +34,6 @@ public class Player extends Character {
     public static boolean whetherInBulletTime = false;
 
     public enum AttackDirection {
-        // TODO
         Left(Vector.build(315 - 435, -93)),
         Right(Vector.build(315 - 435, -93)),
         Up(Vector.build(-110, -100)),
@@ -52,22 +53,23 @@ public class Player extends Character {
                 Vector.build(232 - 137, 333 - 257),
                 Vector.build(38, 55),
                 10,
-                100,
-                300,
-                700,
+                200,
+                600,
+                800,
                 1000,
                 500,
                 false,
-                5,
+                2,
                 500,
                 200,
                 400,
                 CharacterType.Player);
         initAnimation();
+        this.whetherCanClimbWall = true;
         this.registerHitCollisionZone(beHitZone);
         this.addCollider(new RectCollider(this.relativePosition, this, Vector.build(92, 440 - 366)));
         Component.addComponent(this);
-        this.bulletTimer = new Timer(1000, (obj) -> {
+        this.bulletTimer = new Timer(2000, (obj) -> {
             whetherInBulletTime = false;
             FrameSetting.timeSpeed = 1;
         }, this);
@@ -75,7 +77,7 @@ public class Player extends Character {
         bulletTimer.neverOver();
         this.addTimer(bulletTimer);
 //        Timer cameraFollowPlayerTimer = new Timer(0, (obj) -> {
-//            Camera.setPosition(Vector.build(this.getWorldPosition().sub(new Vector((double) FrameSetting.DEFAULT_WIDTH / 2, (double) FrameSetting.DEFAULT_HEIGHT / 2)).getFullX(), 0));
+//            Camera.setPosition(Vector.build(this.getWorldPosition().sub(new Vector((double) FrameSetting.DEFAULT_WIDTH / 2, 0)).getFullX(), 0));
 //        }, this);
 //        cameraFollowPlayerTimer.setRun_times(Timer.INFINITE_TIMES);
 //        TimerManager.instance.registerTimer(cameraFollowPlayerTimer);
@@ -245,25 +247,12 @@ public class Player extends Character {
                     this.whetherRunRight = true;
                     break;
                 case KeyEvent.VK_W:
-                    if (this.jumpCount < this.jumpMaxCount) {
-                        if (this.whetherOnGround) {
-                            Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
-                            PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
-                            Component.addComponent(jumpComponent);
-                        }
-                        this.velocity.y = -jumpSpeed;
-                        this.whetherJumping = true;
-                        this.whetherOnGround = false;
-                        this.whetherDownGround = false;
-                        this.cantOnThisGround = null;
-                        this.jumpCount++;
-                        this.stateMachine.forceSwitch("jump_state");
-                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
-
-                    }
+                    tryJump();
                     break;
                 case KeyEvent.VK_J:
-                    if ((!this.isRolling || !this.whetherOnGround) && this.tryAtk()) {
+                    if (
+//                            (!this.isRolling || !this.whetherOnGround) &&
+                            this.tryAtk()) {
                         int random = (int) (Math.random() * 3) + 1;
                         MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_" + random));
                         this.whetherCanAtk = false;
@@ -286,6 +275,17 @@ public class Player extends Character {
                         this.onRoll();
                     }
                     break;
+
+                case KeyEvent.VK_I:
+                    if (currentClimbWall != null){
+                        whetherUp = true;
+                    }
+                    break;
+                case KeyEvent.VK_K:
+                    if (currentClimbWall != null){
+                        whetherDown = true;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -299,8 +299,14 @@ public class Player extends Character {
                     break;
                 case KeyEvent.VK_O:
                     whetherInBulletTime = true;
-                    FrameSetting.timeSpeed = 3;
+                    FrameSetting.timeSpeed = 4;
                     bulletTimer.restart();
+                    break;
+                case KeyEvent.VK_I:
+                    whetherUp = false;
+                    break;
+                case KeyEvent.VK_K:
+                    whetherDown = false;
                     break;
                 default:
                     break;
@@ -308,9 +314,31 @@ public class Player extends Character {
         }
     }
 
+    protected void tryJump() {
+        if (this.jumpCount < this.jumpMaxCount) {
+            if (this.whetherOnGround) {
+                Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
+                PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
+                Component.addComponent(jumpComponent);
+            }
+            this.velocity.y = -jumpSpeed;
+            this.whetherJumping = true;
+            this.whetherOnGround = false;
+            this.whetherDownGround = false;
+            this.cantOnThisGround = null;
+            this.jumpCount++;
+            // 当跳跃时将当前所攀爬的墙体置为空
+            super.jumpSuccess();
+            this.stateMachine.forceSwitch("jump_state");
+            MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
+        } else {
+            super.jumpFailed();
+        }
+    }
+
     @Override
     protected void processFall(double fullY) {
-        if (fullY > 700){
+        if (fullY > 700 && !this.whetherInvulnerable){
             MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_land"));
             this.currentHp -= (int) ((fullY / 1000) * this.getMass());
             Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 3, size.getFullY() / 1.2));
@@ -343,7 +371,10 @@ public class Player extends Character {
         g.drawString("速度: " + this.velocity, this.getDrawPosition().getX(), this.getDrawPosition().getY() - 20);
         g.drawString("是否无敌: " + (this.whetherInvulnerable ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY());
         g.drawString("是否正在翻滚: " + (this.isRolling ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 20);
-        g.drawString("是否可以攻击: " + (this.whetherCanAtk && (!this.isRolling || !this.whetherOnGround) ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
+        g.drawString("是否可以攻击: " +
+                (this.whetherCanAtk
+//                        && (!this.isRolling || !this.whetherOnGround)
+                        ? "是" : "否"), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 40);
         g.drawString("连跳次数: " + this.jumpMaxCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 60);
         g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
         g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);

@@ -70,12 +70,13 @@ public class Main {
         MP3Player.getInstance().setBGMPath(ResourceManager.getInstance().findAudioPath("bgm"));
         MP3Player.getInstance().startBGM();
         Component.addComponent(new BackGroundComponent());
-        Player player = new Player(Vector.build(100, 200));
+        Player player = new Player(Vector.build(100, 400));
         Ground ground = new Ground(Vector.build(0, 680));
         ground.setWhetherCanDown(false);
         BaseGround.registerBarrier(ground);
         new Wall(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
         new Wall(Vector.build(FrameSetting.DEFAULT_WIDTH, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
         new Boss(Vector.build(300, 300), player);
+        new Boss(Vector.build(900, 300), player);
     }
 }

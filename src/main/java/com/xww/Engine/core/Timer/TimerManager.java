@@ -29,8 +29,8 @@ public class TimerManager {
     }
 
     public void clear() {
-        this.timer.clear();
-        this.timer_to_add.clear();
-        this.timer_to_remove.clear();
+        this.timer_to_remove.addAll(timer);
+        this.timer_to_remove.addAll(timer_to_add);
+        timer_to_add.clear();
     }
 }

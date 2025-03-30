@@ -60,6 +60,9 @@ public class StringUtils {
                                     temp.append(str.charAt(strIndex));
                                     strIndex++;
                                 }
+                                if (temp.isEmpty()){
+                                    return -1;
+                                }
                                 num = Integer.parseInt(temp.toString());
                                 templateIndex++;
                                 break;

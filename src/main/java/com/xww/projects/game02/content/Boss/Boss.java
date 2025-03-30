@@ -13,7 +13,6 @@ import com.xww.Engine.core.Event.TimeEventManager;
 import com.xww.Engine.core.ResourceManager.ResourceManager;
 import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.Vector.Vector;
-import com.xww.Engine.gui.GameFrame;
 import com.xww.Engine.setting.DebugSetting;
 import com.xww.projects.game02.content.Boss.BossBullet.Barb;
 import com.xww.projects.game02.content.Boss.BossBullet.Silk;
@@ -319,15 +318,11 @@ public class Boss extends Character {
         return new Silk(this, this.getLeftTopWorldPosition());
     }
 
-    public Sword sword() {
-        if (this.whetherFacingLeft) {
-            return new Sword(this, this.getLeftTopWorldPosition());
-        } else {
-            return new Sword(this, this.getLeftTopWorldPosition());
-        }
+    public void sword() {
+        new Sword(this, this.getLeftTopWorldPosition());
     }
 
     public void barb() {
-        Barb.generateBarbs((200 - currentHp) / 10, this);
+        Barb.generateBarbs((200 - currentHp) / 15, this);
     }
 }
