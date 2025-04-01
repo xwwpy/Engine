@@ -270,7 +270,7 @@ public class Player extends Character {
                     }
                     break;
                 case KeyEvent.VK_SHIFT:
-                    if (this.whetherCanRoll && !this.isRolling) {
+                    if (this.whetherCanRoll && !this.isRolling && this.currentClimbWall == null) {
                         // 进行翻滚操作
                         this.onRoll();
                     }

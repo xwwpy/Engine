@@ -22,10 +22,13 @@ import com.xww.Engine.core.Barrier.impl.Wall;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
+    public static int level = 2;
     public static void main(String[] args) {
         // 加载资源
         GameFrame.init(()->{
@@ -71,12 +74,14 @@ public class Main {
         MP3Player.getInstance().startBGM();
         Component.addComponent(new BackGroundComponent());
         Player player = new Player(Vector.build(100, 400));
-        Ground ground = new Ground(Vector.build(0, 680));
-        ground.setWhetherCanDown(false);
-        BaseGround.registerBarrier(ground);
-        new Wall(Vector.build(-10, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
-        new Wall(Vector.build(FrameSetting.DEFAULT_WIDTH, 0), Vector.build(10, FrameSetting.DEFAULT_HEIGHT));
         new Boss(Vector.build(300, 300), player);
-        new Boss(Vector.build(900, 300), player);
+
+        try {
+            Class<?> aClass = ClassLoader.getSystemClassLoader().loadClass("com.xww.projects.game02.Resources.Level.Level" + level);
+            Method initGame = aClass.getDeclaredMethod("initGame");
+            initGame.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -454,7 +454,7 @@ public abstract class Character extends FreeComponent {
         clearClimbState();
     }
 
-    protected void clearClimbState() {
+    public void clearClimbState() {
         currentClimbWall = null;
         this.whetherUp = false;
         this.whetherDown = false;

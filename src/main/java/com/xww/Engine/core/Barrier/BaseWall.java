@@ -82,6 +82,11 @@ public abstract class BaseWall {
                         }
                         character.changePosition(Vector.build(dis + 1, 0));
                     }
+                } else {
+                    // 当角色离开墙的范围内，自动解除锁定墙体的状态
+                    if (character.getCurrentClimbWall() == wall){
+                        character.clearClimbState();
+                    }
                 }
             }
         }
