@@ -23,6 +23,7 @@ public class TestCharacter extends Character{
                 500,
                 100,
                 200,
+                200,
                 CharacterType.Player);
         initIdleAnimation();
         this.addCollider(new RectCollider(Vector.Zero(), this, size));

@@ -45,7 +45,8 @@ public class Boss extends Character {
                 1,
                 500,
                 300,
-                100,
+                0,
+                200,
                 CharacterType.Enemy);
         this.registerHitCollisionZone(beHitZone);
         this.registerActiveCollisionZone(atkZone);

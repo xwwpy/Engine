@@ -1,4 +1,4 @@
-package com.xww.projects.game02.Resources.Level;
+package com.xww.projects.game02.content.Level;
 
 import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Barrier.impl.Ground;

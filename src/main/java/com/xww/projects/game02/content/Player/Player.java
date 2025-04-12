@@ -63,6 +63,7 @@ public class Player extends Character {
                 500,
                 200,
                 400,
+                200,
                 CharacterType.Player);
         initAnimation();
         this.whetherCanClimbWall = true;
@@ -233,7 +234,7 @@ public class Player extends Character {
 
     @Override
     public void processKeyEvent(KeyEvent e) {
-        if (this.currentHp <= 0){
+        if (this.currentHp <= 0) {
             whetherRunLeft = false;
             whetherRunRight = false;
             return;
@@ -250,41 +251,19 @@ public class Player extends Character {
                     tryJump();
                     break;
                 case KeyEvent.VK_J:
-                    if (
-//                            (!this.isRolling || !this.whetherOnGround) &&
-                            this.tryAtk()) {
-                        int random = (int) (Math.random() * 3) + 1;
-                        MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_" + random));
-                        this.whetherCanAtk = false;
-                        this.stateMachine.forceSwitch("attack_state");
-                        this.whetherAtking = true;
-                        this.atkBackSwingTimer.restart();
-                        this.atk_intervalTimer.restart();
-                    }
+                    tryAttack();
                     break;
                 case KeyEvent.VK_S:
-                    if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()){
-                        this.whetherDownGround = true;
-                        this.whetherOnGround = false;
-                        cantOnThisGround = this.getLastOnGround();
-                    }
+                    tryDownGround();
                     break;
                 case KeyEvent.VK_SHIFT:
-                    if (this.whetherCanRoll && !this.isRolling && this.currentClimbWall == null) {
-                        // 进行翻滚操作
-                        this.onRoll();
-                    }
+                    tryRoll();
                     break;
-
                 case KeyEvent.VK_I:
-                    if (currentClimbWall != null){
-                        whetherUp = true;
-                    }
+                    tryClimbUp();
                     break;
                 case KeyEvent.VK_K:
-                    if (currentClimbWall != null){
-                        whetherDown = true;
-                    }
+                    tryClimbDown();
                     break;
                 default:
                     break;
@@ -303,36 +282,14 @@ public class Player extends Character {
                     bulletTimer.restart();
                     break;
                 case KeyEvent.VK_I:
-                    whetherUp = false;
+                    clearClimbUpState();
                     break;
                 case KeyEvent.VK_K:
-                    whetherDown = false;
+                    clearClimbDownState();
                     break;
                 default:
                     break;
             }
-        }
-    }
-
-    protected void tryJump() {
-        if (this.jumpCount < this.jumpMaxCount) {
-            if (this.whetherOnGround) {
-                Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
-                PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
-                Component.addComponent(jumpComponent);
-            }
-            this.velocity.y = -jumpSpeed;
-            this.whetherJumping = true;
-            this.whetherOnGround = false;
-            this.whetherDownGround = false;
-            this.cantOnThisGround = null;
-            this.jumpCount++;
-            // 当跳跃时将当前所攀爬的墙体置为空
-            super.jumpSuccess();
-            this.stateMachine.forceSwitch("jump_state");
-            MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
-        } else {
-            super.jumpFailed();
         }
     }
 
@@ -379,5 +336,6 @@ public class Player extends Character {
         g.drawString("当前连跳次数: " + this.jumpCount, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 80);
         g.drawString("当前生命值: " + this.currentHp + "/" + this.hp, this.getDrawPosition().getX(), this.getDrawPosition().getY() + 100);
         g.drawString("当前动作: " + this.stateMachine.getCurrentStateId(), this.getDrawPosition().getX(), this.getDrawPosition().getY() + 120);
+        g.drawString(whetherOnGround ? "在地面上": "不在地面上", this.getDrawPosition().getX(), this.getDrawPosition().getY() + 140);
     }
 }

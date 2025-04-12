@@ -6,13 +6,17 @@ import com.xww.Engine.core.Barrier.BaseGround;
 import com.xww.Engine.core.Barrier.BaseWall;
 import com.xww.Engine.core.Collision.ActionAfterCollision;
 import com.xww.Engine.core.Collision.CollisionDefaultConstValue;
+import com.xww.Engine.core.Component.Component;
 import com.xww.Engine.core.Component.FreeComponent;
 import com.xww.Engine.core.Event.Message.Impl.KeyBoardMessageHandler;
 import com.xww.Engine.core.Event.TimeEventManager;
+import com.xww.Engine.core.ResourceManager.ResourceManager;
+import com.xww.Engine.core.Sound.MP3Player;
 import com.xww.Engine.core.StateManager.StateMachine;
 import com.xww.Engine.core.Timer.Timer;
 import com.xww.Engine.core.Vector.Vector;
 import com.xww.Engine.gui.GameFrame;
+import com.xww.projects.game02.content.Player.PlayerJumpComponent;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -43,7 +47,7 @@ public abstract class Character extends FreeComponent {
 
     protected boolean whetherRender = true; // 是否进行渲染 配合闪烁定时器实现闪烁效果
     protected Timer blinkTimer; // 无敌闪烁定时器
-    protected int blinkCount = 30; // 闪烁次数
+    protected int blinkCount = 20; // 闪烁次数
     protected Timer invulnerableStateTimer; // 切换无敌状态定时器
 
     protected boolean whetherFacingLeft; // 是否朝向左
@@ -101,6 +105,8 @@ public abstract class Character extends FreeComponent {
 
     protected Vector climbSpeed = Vector.Zero();
 
+    protected int climbSpeedY;
+
     public Character(Vector worldPosition,
                      Vector size,
                      Vector logicSize, // 角色实际大小
@@ -115,6 +121,7 @@ public abstract class Character extends FreeComponent {
                      int jumpMaxCount,
                      int jumpSpeed,
                      int runSpeed,
+                     int climbSpeedY,
                      int atkBackSwingTime,
                      CharacterType characterType) {
         super(worldPosition,
@@ -143,6 +150,7 @@ public abstract class Character extends FreeComponent {
         this.jumpCount = 0;
         this.jumpSpeed = jumpSpeed;
         this.runSpeed = runSpeed;
+        this.climbSpeedY = climbSpeedY;
         this.characterType = characterType;
         this.logicSize = logicSize;
         this.relativePosition = relativePosition;
@@ -188,6 +196,7 @@ public abstract class Character extends FreeComponent {
         rollWholeTimeTimer.neverOver();
 
         atkBackSwingTimer = new Timer(atkBackSwingTime, (obj) -> {
+            // TODO有待于进一步完善
             this.whetherAtking = false;
         }, this);
         atkBackSwingTimer.setRun_times(1);
@@ -252,8 +261,8 @@ public abstract class Character extends FreeComponent {
         if(currentClimbWall != null) {
             this.velocity.x = 0;
             double tempV = 0;
-            if (whetherUp) tempV -= jumpSpeed;
-            if (whetherDown) tempV += jumpSpeed;
+            if (whetherUp) tempV -= climbSpeedY;
+            if (whetherDown && !whetherOnGround) tempV += climbSpeedY;
             climbSpeed.y = tempV;
             if (tempV != 0) this.velocity.y = 0;
         }
@@ -373,7 +382,7 @@ public abstract class Character extends FreeComponent {
         }
         // 修正位置
         double dis = barrier.getWorldPosition().getFullY() - (this.getLogicSize().getFullY() + this.getLogicPosition().getFullY());
-        this.worldPosition.add_to_self(Vector.build(0, dis));
+        this.worldPosition.add_to_self(Vector.build(0, dis - 1));
         // 当落地时自动取消对墙体的攀爬状态
         clearClimbState();
         // 防止某些极端情况
@@ -450,6 +459,53 @@ public abstract class Character extends FreeComponent {
         }
     }
 
+    protected void tryRoll() {
+        if (this.whetherCanRoll && !this.isRolling && this.currentClimbWall == null) {
+            // 进行翻滚操作
+            this.onRoll();
+        }
+    }
+    protected void tryAttack() {
+        if (
+//                            (!this.isRolling || !this.whetherOnGround) &&
+                this.tryAtk()) {
+            int random = (int) (Math.random() * 3) + 1;
+            MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_attack_" + random));
+            this.whetherCanAtk = false;
+            this.stateMachine.forceSwitch("attack_state");
+            this.whetherAtking = true;
+            this.atkBackSwingTimer.restart();
+            this.atk_intervalTimer.restart();
+        }
+    }
+    protected void tryJump() {
+        if (this.jumpCount < this.jumpMaxCount) {
+            if (this.whetherOnGround) {
+                Vector pos = Vector.build(this.worldPosition.x, this.worldPosition.y).add_to_self(Vector.build(size.getFullX() / 6, size.getFullY() / 4));
+                PlayerJumpComponent jumpComponent = new PlayerJumpComponent(pos);
+                Component.addComponent(jumpComponent);
+            }
+            this.velocity.y = -jumpSpeed;
+            this.whetherJumping = true;
+            this.whetherOnGround = false;
+            this.whetherDownGround = false;
+            this.cantOnThisGround = null;
+            this.jumpCount++;
+            // 当跳跃时将当前所攀爬的墙体置为空
+            this.jumpSuccess();
+            this.stateMachine.forceSwitch("jump_state");
+            MP3Player.getInstance().addAudio(ResourceManager.getInstance().findAudioPath("player_jump"));
+        } else {
+            this.jumpFailed();
+        }
+    }
+    protected void tryDownGround() {
+        if (this.whetherOnGround && this.getLastOnGround().isWhetherCanDown()){
+            this.whetherDownGround = true;
+            this.whetherOnGround = false;
+            cantOnThisGround = this.getLastOnGround();
+        }
+    }
     protected void jumpSuccess() {
         clearClimbState();
     }
@@ -459,6 +515,27 @@ public abstract class Character extends FreeComponent {
         this.whetherUp = false;
         this.whetherDown = false;
         this.climbSpeed.y = 0;
+    }
+
+    protected void clearClimbDownState() {
+        whetherDown = false;
+    }
+
+    protected void clearClimbUpState() {
+        whetherUp = false;
+    }
+
+    protected void tryClimbDown() {
+        if (currentClimbWall != null){
+            whetherDown = true;
+        }
+    }
+
+    protected void tryClimbUp() {
+        if (currentClimbWall != null){
+            whetherUp = true;
+            this.whetherOnGround = false;
+        }
     }
 
     protected void jumpFailed(){

@@ -18,6 +18,7 @@ public class Player extends Character {
                   int jumpMaxCount,
                   int jumpSpeed,
                   int runSpeed,
+                  int climbSpeedY,
                   int atkBackSwingTime,
                   CharacterType characterType) {
         super(worldPosition,
@@ -34,6 +35,7 @@ public class Player extends Character {
                 jumpMaxCount,
                 jumpSpeed,
                 runSpeed,
+                climbSpeedY,
                 atkBackSwingTime,
                 characterType);
     }

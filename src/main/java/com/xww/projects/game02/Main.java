@@ -77,7 +77,7 @@ public class Main {
         new Boss(Vector.build(300, 300), player);
 
         try {
-            Class<?> aClass = ClassLoader.getSystemClassLoader().loadClass("com.xww.projects.game02.Resources.Level.Level" + level);
+            Class<?> aClass = ClassLoader.getSystemClassLoader().loadClass("com.xww.projects.game02.content.Level.Level" + level);
             Method initGame = aClass.getDeclaredMethod("initGame");
             initGame.invoke(null);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {

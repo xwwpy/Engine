@@ -27,6 +27,7 @@ public abstract class BaseObject extends Character {
                 500,
                 200,
                 200,
+                200,
                 CharacterType.Player);
         this.objectType = objectType;
     }

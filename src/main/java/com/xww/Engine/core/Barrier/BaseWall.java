@@ -24,7 +24,7 @@ public abstract class BaseWall {
     protected boolean whether_alive = true;
 
     protected boolean whetherEnableClimb = true;
-    protected int f = 80;
+    protected int f = 99;
 
 
     protected boolean whetherRenderOnlyForDebug;
